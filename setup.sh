@@ -1,7 +1,9 @@
 export FLASK_APP=application:app
 export FLASK_DEBUG=true
 
-POTENTIAL_VENV=~/.virtualenvs/ma-last
+THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
+
+POTENTIAL_VENV="$THIS_DIR/venv"
 if [ -z "$VIRTUAL_ENV" ] && [ -d "$POTENTIAL_VENV" ]; then
     . "$POTENTIAL_VENV/bin/activate"
 fi
