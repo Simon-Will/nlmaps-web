@@ -1,46 +1,59 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    {% block head %}
+    <head>
+        {% block head %}
 
-    {% block meta %}
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    {% endblock %}
+        {% block meta %}
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        {% endblock %}
 
-    {#- Possibility to add additional meta information in inherited pages #}
-    {% block additional_meta %}{% endblock %}
+        {#- Page title #}
+        <title>{% block title %}{% if page is defined %}{{ page | replace('_', ' ') | title }}{% endif %}{% endblock %}</title>
 
-    {#- Page title #}
-    <title>{% block title %}{% if page is defined %}{{ page | replace('_', ' ') | title }}{% endif %}{% endblock %}</title>
+        {#- Favicon #}
+        {% block favicon %}<link rel="shortcut icon" type="image/ico" href="{{ url_for('static', filename='img/favicon.ico') }}" />{% endblock %}
 
-    {#- Favicon #}
-    {% block favicon %}<link rel="shortcut icon" type="image/ico" href="{{ url_for('static', filename='img/favicon.ico') }}" />{% endblock %}
+        {#- Base style #}
+        {% block base_style %}
+        <link href="http://localhost:5000/static/css/base.css" rel="stylesheet" type="text/css">
+        {% endblock %}
 
-    {#- Base styles #}
-    {% block base_style %}
-        <link href="http://localhost:5000/static/base.css" rel="stylesheet">
-    {% endblock %}
+        {#- Base scripts #}
+        {% block base_scripts %}
+        <script src="http://localhost:5000/static/js/base.js" type="text/javascript"></script>
+        {% endblock %}
 
-    {% endblock %}
-  </head>
-  <body>
-    {#- Header #}
+        {#- Page-specific style #}
+        {% block page_style %}
+        <link href="http://localhost:5000/static/css/{{ page }}.css" rel="stylesheet" type="text/css">
+        {% endblock %}
 
-    {% block header %}
-    <div id="header">
-      <h1>NLMaps Web</h1>
-    </div>
-    {% endblock %}
+        {#- Page-specific scripts #}
+        {% block page_scripts %}
+        <script src="http://localhost:5000/static/js/{{ page }}.js" type="text/javascript"></script>
+        {% endblock %}
 
-    {#- Main Wrapper #}
-    <div id="wrapper">
-      {% block main %}
-      <div class="row">
-        {% block content %}{% endblock %}
-      </div>
-      {% endblock %}
-    </div>
-  </body>
+        {#- Way to add additional content to head #}
+        {% block additional_head %}{% endblock %}
+
+        {% endblock %}
+    </head>
+    <body>
+        {#- Header #}
+
+        {% block header %}
+        <div id="header">
+            <h1>NLMaps Web</h1>
+        </div>
+        {% endblock %}
+
+        {#- Main Wrapper #}
+        <div id="wrapper">
+            {% block main %}
+            {% block content %}{% endblock %}
+            {% endblock %}
+        </div>
+    </body>
 </html>

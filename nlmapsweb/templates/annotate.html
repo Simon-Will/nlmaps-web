@@ -4,18 +4,6 @@
 
 {% block content %}
 
-{% if query %}
-<p>Query: {{ query }}</p>
-<p>Lin: {{ lin }}</p>
-<p>MRL: {{ func }}</p>
-
-<h5>Key-Value Pairs</h5>
-{% for (key, val), alts  in alternatives.items() %}
-<p>{{ key }}, {{ val }}: {{ alts }}</p>
-{% endfor %}
-
-
-{% endif %}
 
 <form method="POST">
   {{ form.hidden_tag() }}
