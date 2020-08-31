@@ -9,15 +9,12 @@ window.onload = function() {
         format: new ol.format.GeoJSON()
     });
 
-    vectorSource.on('change', function() {
+    vectorSource.on('addfeature', function() {
         let features = vectorSource.getFeatures();
         if (features.length > 0) {
             let center = ol.extent.getCenter(vectorSource.getExtent());
             mapView.setCenter(center);
         }
-        let mapStatus = document.getElementById('map-status');
-        mapStatus.innerHTML = 'Retrieved ' + features.length + ' results.';
-        mapStatus.hidden = false;
     });
 
     let container = document.getElementById('popup');
@@ -34,9 +31,9 @@ window.onload = function() {
     });
 
     closer.onclick = function () {
-        //overlay.setPosition(undefined);
-        overlay.hidden = true;
-        //closer.blur();
+        overlay.setPosition(undefined);
+        //overlay.hidden = true;
+        closer.blur();
         return false;
     };
 
@@ -61,38 +58,108 @@ window.onload = function() {
         overlay.hidden = false;
     });
 
+    function presentAnswerResult(answerResult) {
+        let mapStatus = document.getElementById('query-status');
+
+        mapStatus.innerHTML = 'Retrieved '
+            + answerResult.geojson.features.length + ' results.';
+        mapStatus.hidden = false;
+
+        if (answerResult.geojson.features.length > 0) {
+            vectorSource.addFeatures(
+                vectorSource.getFormat().readFeatures(
+                    answerResult.geojson,
+                    {featureProjection: 'EPSG:3857'}
+                )
+            );
+        }
+
+        let content = '';
+        if (answerResult.success) {
+            content += '<p>' + htmlEscape(answerResult.answer) + '</p>\n';
+        } else {
+            content += '<p>Error: ' + htmlEscape(answerResult.error) + '</p>\n';
+        }
+        let resultDiv = document.getElementById('query-result');
+        resultDiv.innerHTML = content;
+        resultDiv.hidden = false;
+    }
+
     function mapQuery(mrl) {
-        let mapStatus = document.getElementById('map-status');
+        vectorSource.clear();
+
+        let mapStatus = document.getElementById('query-status');
         mapStatus.innerHTML = 'Retrieving result …';
         mapStatus.hidden = false;
-        console.log(mrl);
 
-        let geojsonURL = new URL('http://localhost:5000/geojson');
+        let geojsonURL = new URL('http://localhost:5000/answer_mrl');
         geojsonURL.searchParams.set('mrl', mrl);
-        vectorSource.setUrl(geojsonURL.toString());
-        vectorSource.refresh();
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    let answerResult = JSON.parse(xhr.responseText);
+                    presentAnswerResult(answerResult);
+                } else {
+                    mapStatus.innerHTML = 'Error while retrieving result';
+                    mapStatus.hidden = false;
+                }
+            }
+        };
+        xhr.open('GET', geojsonURL.toString());
+        xhr.send();
+    }
+
+    function resetResults() {
+        let parseResultDiv = document.getElementById('parse-result');
+        parseResultDiv.hidden = true;
+
+        let parseResultContentDiv = document.getElementById(
+            'parse-result-content');
+        parseResultContentDiv.innerHTML = '';
+
+        let mrlQueryForm = document.getElementById('mrl-query-form');
+        mrlQueryForm.querySelector("input[name='mrl']").value = '';
+
+        let answerResultDiv = document.getElementById('query-result');
+        answerResultDiv.innerHTML = '';
+        answerResultDiv.hidden = true;
+
+        let refineMrlButton = document.getElementById('refine-mrl');
+        refineMrlButton.hidden = false;
+
+        let confirmMrlButton = document.getElementById('confirm-mrl');
+        confirmMrlButton.hidden = false;
+
+        vectorSource.clear();
     }
 
     function presentParseResult(parseResult) {
         let resultDiv = document.getElementById('parse-result');
-        let content = '<p>Query: ' + htmlEscape(parseResult.nl) + '</p>\n'
-            + '<p>MRL: ' + htmlEscape(parseResult.mrl) + '</p>\n';
-        //content += '<h5>Key Value Pairs</p>\n';
-        //for (let keyValPair in parseResult.alternatives) {
-        //    content += '<p>' + htmlEscape(keyValPair[0])
-        //        + ': ' + htmlEscape(keyValPair[1]) + ' | '
-        //        + htmlEscape(parseResult.alternatives[keyValPair].toString());
-        //}
-        resultDiv.innerHTML = content;
+        let resultContentDiv = document.getElementById('parse-result-content');
+        let content = '';
+        if (parseResult.success) {
+            content += '<p>Query: ' + htmlEscape(parseResult.nl) + '</p>\n';
+            content += '<p>MRL: ' + htmlEscape(parseResult.mrl) + '</p>\n';
+            let mrlQueryForm = document.getElementById('mrl-query-form');
+            mrlQueryForm.querySelector("input[name='mrl']").value = parseResult.mrl;
+        } else {
+            content += '<p>Error: ' + htmlEscape(parseResult.error) + '</p>\n';
+            if (parseResult.lin) {
+                content += '<p>Lin: ' + htmlEscape(parseResult.lin) + '</p>\n';
+            }
+        }
+        resultContentDiv.innerHTML = content;
+        resultDiv.hidden = false;
         mapQuery(parseResult.mrl);
     }
 
 
-    let queryForm = document.getElementById('query-form');
-    queryForm.onsubmit = function() {
-        event.preventDefault();
-        event.stopPropagation();
-        let parseStatus = document.getElementById('parse-status');
+    let nlQueryForm = document.getElementById('nl-query-form');
+    nlQueryForm.onsubmit = function() {
+        resetResults();
+
+        let parseStatus = document.getElementById('query-status');
         parseStatus.innerHTML = 'Parsing query …';
         parseStatus.hidden = false;
 
@@ -101,19 +168,43 @@ window.onload = function() {
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status == 200) {
-                    let parseResult = JSON.parse(xhr.responseText);
-                    presentParseResult(parseResult);
-                    parseStatus.innerHTML = '';
-                    parseStatus.hidden = true;
+                let parseResult = JSON.parse(xhr.responseText);
+                if (xhr.status === 200) {
+                    parseStatus.innerHTML = 'Parsed query.';
+                    parseStatus.hidden = false;
                 } else {
                     parseStatus.innerHTML = 'Parsing failed.';
                     parseStatus.hidden = false;
                 }
+                presentParseResult(parseResult);
             }
         };
 
         xhr.open('POST', this.action);
         xhr.send(formData);
+        return false;
+    };
+
+    let mrlQueryForm = document.getElementById('mrl-query-form');
+    mrlQueryForm.onsubmit = function() {
+        let formData = new FormData(this);
+        mapQuery(formData.get('mrl'));
+        return false;
+    };
+
+    let parseResultJudgement = document.getElementById('parse-result-judgement');
+    let refineMrlButton = document.getElementById('refine-mrl');
+    let confirmMrlButton = document.getElementById('confirm-mrl');
+
+    refineMrlButton.onclick = function(){
+        parseResultJudgement.hidden = true;
+        let mrlQueryForm = document.getElementById('mrl-query-form');
+        mrlQueryForm.hidden = false;
+        return false;
+    };
+
+    confirmMrlButton.onclick = function(){
+        parseResultJudgement.hidden = true;
+        return false;
     };
 };

@@ -18,3 +18,30 @@
 .status {
     border: 1px solid blue;
 }
+
+.container-horizonal-flex {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
+/* https://www.color-hex.com/color-palette/895 */
+button {
+    margin: -0.1rem 0 0;
+    padding: 0.4rem 0.4rem 0.4rem 3rem;
+    border: solid 0.1rem #e8e8e8;
+}
+
+.bg-success {
+ 	  background-color: #88d8b0;
+}
+
+.bg-warning {
+ 	  background-color: #ffcc5c;
+}
+
+.bg-danger {
+ 	  background-color: #ff6f69;
+}

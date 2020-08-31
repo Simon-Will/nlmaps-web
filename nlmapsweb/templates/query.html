@@ -9,21 +9,33 @@
 {% endblock %}
 
 {% block content %}
-<form id="query-form" method="POST" action="/parse" class="row">
-    {{ form.hidden_tag() }}
-    {{ form.query.label }} {{ form.query(size=100) }}
-    <input id="query_submit" type="submit" value="Submit">
+<form id="nl-query-form" method="POST" action="/parse" class="row">
+    {{ nl_query_form.hidden_tag() }}
+    {{ nl_query_form.nl.label }} {{ nl_query_form.nl(size=100) }}
+    <input type="submit" value="Submit">
 </form>
 
-<div id="parse-status" class="status row" hidden></div>
-<div id="map-status" class="status row" hidden></div>
+<div id="parse-result" class="row" hidden>
+    <div id="parse-result-content"></div>
+    <div id="parse-result-judgement" class="container-horizontal-flex">
+        <button id="refine-mrl" class="bg-warning">Refine MRL</button>
+        <button id="confirm-mrl" class="bg-success">That’s correct!</button>
+    </div>
+    <form id="mrl-query-form" method="POST" action="/geojson" hidden>
+        {{ mrl_query_form.hidden_tag() }}
+        {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
+        <input type="submit" value="Resubmit">
+    </form>
+</div>
+
+<div id="query-result" class="row" hidden></div>
+
+<div id="query-status" class="status row" hidden></div>
 
 <div id="map" class="map" class="row"></div>
 <div id="popup" class="ol-popup">
     <a href="#" id="popup-closer" class="ol-popup-closer"></a>
     <div id="popup-content"></div>
 </div>
-
-<div id="parse-result" class="row"></div>
 
 {% endblock %}

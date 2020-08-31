@@ -10,6 +10,7 @@ in `app.py` and is as follows:
 3. Read sensitive values given in ENVIRONMENT VARIABLE
 """
 
+import os
 from pathlib import Path
 
 DEBUG = False
@@ -33,5 +34,10 @@ PARSE_COMMAND = [
 
 ANSWER_COMMAND = [
     'ssh', 'cluster',
-    '/opt/slurm/bin/srun -p main /home/students/will/get_geojson.sh'
+    '/opt/slurm/bin/srun -J overpass-query -p main /home/students/will/get_geojson.sh'
 ]
+
+SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
+    (Path(os.path.dirname(__file__)) / '../nlmapsweb.db').resolve()
+)
+SQLALCHEMY_ECHO = False

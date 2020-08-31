@@ -1,5 +1,6 @@
 from collections import defaultdict
 import json
+import re
 
 from flask import current_app
 
@@ -43,3 +44,11 @@ def check_key_val_pair(key, val):
                 alternatives.append((potential_key, potential_val))
 
     return alternatives
+
+
+def get_key_val_pairs(mrl):
+    key_val_pairs = []
+    for match in re.finditer(r"keyval\('(?P<key>[^']+)','(?P<val>[^']+)'\)",
+                             mrl):
+        key_val_pairs.append((match.group('key'), match.group('val')))
+    return key_val_pairs

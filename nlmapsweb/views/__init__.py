@@ -1,1 +1,1 @@
-from .query import get_geojson, query, parse_nl
+from .query import answer_mrl, query, parse_nl
