@@ -1,4 +1,7 @@
 window.onload = function() {
+    CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
+        .getAttribute('content');
+
     let mapView = new ol.View({
         center: ol.proj.fromLonLat([8.69079, 49.40768]),  // Heidelberg
         zoom: 12
@@ -94,6 +97,7 @@ window.onload = function() {
 
         let geojsonURL = new URL('http://localhost:5000/answer_mrl');
         geojsonURL.searchParams.set('mrl', mrl);
+
         let xhr = new XMLHttpRequest();
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
@@ -112,7 +116,13 @@ window.onload = function() {
 
     function resetResults() {
         let parseResultDiv = document.getElementById('parse-result');
+        parseResultDiv.removeAttribute('data-system-mrl');
         parseResultDiv.hidden = true;
+
+        let parseResultNl = document.getElementById('parse-result-nl');
+        parseResultNl.innerHTML = '';
+        let parseResultMrl = document.getElementById('parse-result-mrl');
+        parseResultMrl.innerHTML = '';
 
         let parseResultContentDiv = document.getElementById(
             'parse-result-content');
@@ -120,16 +130,14 @@ window.onload = function() {
 
         let mrlQueryForm = document.getElementById('mrl-query-form');
         mrlQueryForm.querySelector("input[name='mrl']").value = '';
+        mrlQueryForm.hidden = true;
 
         let answerResultDiv = document.getElementById('query-result');
         answerResultDiv.innerHTML = '';
         answerResultDiv.hidden = true;
 
-        let refineMrlButton = document.getElementById('refine-mrl');
-        refineMrlButton.hidden = false;
-
-        let confirmMrlButton = document.getElementById('confirm-mrl');
-        confirmMrlButton.hidden = false;
+        let parseResultJudgement = document.getElementById('parse-result-judgement');
+        parseResultJudgement.hidden = false;
 
         vectorSource.clear();
     }
@@ -137,12 +145,21 @@ window.onload = function() {
     function presentParseResult(parseResult) {
         let resultDiv = document.getElementById('parse-result');
         let resultContentDiv = document.getElementById('parse-result-content');
+        let parseResultNl = document.getElementById('parse-result-nl');
+        let parseResultMrl = document.getElementById('parse-result-mrl');
+
         let content = '';
         if (parseResult.success) {
-            content += '<p>Query: ' + htmlEscape(parseResult.nl) + '</p>\n';
-            content += '<p>MRL: ' + htmlEscape(parseResult.mrl) + '</p>\n';
+            parseResultNl.innerHTML = htmlEscape(parseResult.nl);
+            resultDiv.setAttribute('data-nl', parseResult.nl);
+
+            parseResultMrl.innerHTML = htmlEscape(parseResult.mrl);
+            resultDiv.setAttribute('data-current-mrl', parseResult.mrl);
+            resultDiv.setAttribute('data-system-mrl', parseResult.mrl);
+
             let mrlQueryForm = document.getElementById('mrl-query-form');
             mrlQueryForm.querySelector("input[name='mrl']").value = parseResult.mrl;
+            mapQuery(parseResult.mrl);
         } else {
             content += '<p>Error: ' + htmlEscape(parseResult.error) + '</p>\n';
             if (parseResult.lin) {
@@ -151,7 +168,6 @@ window.onload = function() {
         }
         resultContentDiv.innerHTML = content;
         resultDiv.hidden = false;
-        mapQuery(parseResult.mrl);
     }
 
 
@@ -188,7 +204,13 @@ window.onload = function() {
     let mrlQueryForm = document.getElementById('mrl-query-form');
     mrlQueryForm.onsubmit = function() {
         let formData = new FormData(this);
+        let newMrl = formData.get('mrl');
+
         mapQuery(formData.get('mrl'));
+
+        document.getElementById('parse-result')
+            .setAttribute('data-current-mrl', newMrl);
+        document.getElementById('parse-result-mrl').innerHTML = htmlEscape(newMrl);
         return false;
     };
 
@@ -197,7 +219,6 @@ window.onload = function() {
     let confirmMrlButton = document.getElementById('confirm-mrl');
 
     refineMrlButton.onclick = function(){
-        parseResultJudgement.hidden = true;
         let mrlQueryForm = document.getElementById('mrl-query-form');
         mrlQueryForm.hidden = false;
         return false;
@@ -205,6 +226,35 @@ window.onload = function() {
 
     confirmMrlButton.onclick = function(){
         parseResultJudgement.hidden = true;
+        let mrlQueryForm = document.getElementById('mrl-query-form');
+        mrlQueryForm.hidden = true;
+
+        let formData = new FormData();
+        let parseResult = document.getElementById('parse-result');
+        formData.append('nl', parseResult.getAttribute('data-nl'));
+        formData.append('systemMrl',
+                        parseResult.getAttribute('data-system-mrl'));
+        formData.append('correctMrl',
+                        parseResult.getAttribute('data-current-mrl'));
+        formData.append('csrf_token', CSRF_TOKEN);
+
+
+        let xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                let parseStatus = document.getElementById('query-status');
+                if (xhr.status === 200) {
+                    parseStatus.innerHTML = 'Feedback received. Thanks!';
+                    parseStatus.hidden = false;
+                } else {
+                    parseStatus.innerHTML = 'Feedback not received.';
+                    parseStatus.hidden = false;
+                }
+            }
+        };
+
+        xhr.open('POST', 'http://localhost:5000/feedback');
+        xhr.send(formData);
         return false;
     };
 };

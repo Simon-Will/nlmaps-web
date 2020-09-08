@@ -1,0 +1,23 @@
+.feedback-type-correct {
+    background-color: forestgreen;
+}
+
+.feedback-type-incorrect {
+    background-color: red;
+}
+
+.feedback-type-system-error {
+    background-color: orange;
+}
+
+.feedback-type-unknown {
+    background-color: lightblue;
+}
+
+.feedback-nl {
+    font-size: smaller;
+}
+
+.feedback-mrl {
+    font-size: smaller;
+}

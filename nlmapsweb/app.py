@@ -3,7 +3,9 @@ import os
 from flask import Flask
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from flask_wtf.csrf import CSRFProtect
 
+csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
 
@@ -11,6 +13,7 @@ migrate = Migrate()
 def create_app() -> Flask:
     app = Flask(__name__)
     config_app(app)
+    init_csrf(app)
     init_sqlalchemy(app)
     init_migrate(app)
     init_views(app)
@@ -30,6 +33,11 @@ def load_default_config_file(app: Flask) -> None:
     app.config.from_object('config.default')
     app.logger.info('Loaded config defaults for all environments.')
     app.logger.debug(f'{app.config}')
+
+def init_csrf(app: Flask) -> None:
+    app.logger.info('Start initializing CSRF protection.')
+    csrf.init_app(app=app)
+    app.logger.info('CSRF protection initialized.')
 
 
 def init_sqlalchemy(app: Flask) -> None:

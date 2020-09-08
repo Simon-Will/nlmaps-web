@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+
+{% set page = 'feedback' %}
+
+{% block content %}
+<div class="row">
+    <table>
+        <thead>
+            <tr>
+                <th>Type</th>
+                <th>Counter</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for type, count in stats.items() %}
+            <tr>
+                <td>{{ type }}</td>
+                <td>{{ count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+<div class="row container-vertical-flex">
+    {% for piece in feedback %}
+    <div class="row feedback-piece feedback-type-{{ piece.type }}">
+        <p class="feedback-nl">NL: {{ piece.nl }}</p>
+        <p class="feedback-mrl mrl">Sys: {{ piece.systemMrl }}</p>
+        <p class="feedback-mrl mrl">Corr: {{ piece.correctMrl }}</p>
+    </div>
+    {% endfor %}
+</div>
+{% endblock %}

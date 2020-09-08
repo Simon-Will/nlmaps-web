@@ -27,6 +27,14 @@
     margin-bottom: 1em;
 }
 
+.container-vertical-flex {
+    display: flex;
+    flex-direction: column;
+    align-items: left;
+    margin-top: 1em;
+    margin-bottom: 1em;
+}
+
 /* https://www.color-hex.com/color-palette/895 */
 button {
     margin: -0.1rem 0 0;
@@ -44,4 +52,8 @@ button {
 
 .bg-danger {
  	  background-color: #ff6f69;
+}
+
+.mrl {
+    word-break: break-word;
 }
