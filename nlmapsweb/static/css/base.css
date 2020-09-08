@@ -7,16 +7,18 @@
 #wrapper {
     display: flex;
     flex-direction: column;
-    align-items: center;
+    align-items: stretch;
+    flex: 1 1 auto;
 }
 
 .row {
-    margin-top: 1em;
-    margin-bottom: 1em;
+    margin-bottom: 0.5em;
 }
 
-.status {
-    border: 1px solid blue;
+.block {
+    background-color: #eee;
+    border: solid 1pt #ccc;
+    padding: 1em;
 }
 
 .container-horizonal-flex {
@@ -36,11 +38,13 @@
 }
 
 /* https://www.color-hex.com/color-palette/895 */
+/*
 button {
     margin: -0.1rem 0 0;
     padding: 0.4rem 0.4rem 0.4rem 3rem;
     border: solid 0.1rem #e8e8e8;
 }
+*/
 
 .bg-success {
  	  background-color: #88d8b0;
@@ -56,4 +60,15 @@ button {
 
 .mrl {
     word-break: break-word;
+}
+
+.messages {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    font-size: smaller;
+}
+
+.message-error {
+    color: red;
 }

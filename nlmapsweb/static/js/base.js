@@ -9,3 +9,18 @@ function htmlEscape(str) {
         .replace(/>/g, '&gt;')
         .replace(/\//g, '&#x2F;');
 }
+
+
+class Block {
+    constructor(element) {
+        this.element = element;
+    }
+
+    hide() {
+        this.hidden = true;
+    }
+
+    show() {
+        this.hidden = false;
+    }
+}
