@@ -10,6 +10,19 @@ function htmlEscape(str) {
         .replace(/\//g, '&#x2F;');
 }
 
+function makeTag(key, val, makeLink = false) {
+    const content = document.createTextNode(key + '=' + val);
+    let tagElm;
+    if (makeLink) {
+        tagElm = document.createElement('a');
+        tagElm.href = 'https://wiki.openstreetmap.org/wiki/Tag:'
+            + content.textContent;
+        tagElm.appendChild(content);
+    } else {
+        tagElm = content;
+    }
+    return tagElm;
+}
 
 class Block {
     constructor(element) {
@@ -17,10 +30,10 @@ class Block {
     }
 
     hide() {
-        this.hidden = true;
+        this.element.hidden = true;
     }
 
     show() {
-        this.hidden = false;
+        this.element.hidden = false;
     }
 }

@@ -85,6 +85,32 @@ window.onload = function() {
         xhr.send();
     }
 
+    function diagnoseProblems(nl, mrl, callback) {
+        messagesBlock.addMessage('Diagnosing potential MRL problems…');
+
+        const formData = new FormData();
+        formData.append('nl', nl);
+        formData.append('mrl', mrl);
+        formData.append('csrf_token', CSRF_TOKEN);
+
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const diagnoseResult = JSON.parse(xhr.responseText);
+                    messagesBlock.addMessage('Received diagnose result.');
+                    console.log(diagnoseResult);
+                    callback(diagnoseResult);
+                } else {
+                    messagesBlock.addMessage('Diagnosing failed.', true);
+                }
+            }
+        };
+        xhr.open('POST', 'http://localhost:5000/diagnose');
+        xhr.send(formData);
+        return false;
+    }
+
     class MessagesBlock extends Block {
         constructor(element) {
             super(element);
@@ -203,11 +229,14 @@ window.onload = function() {
         constructor(element) {
             super(element);
             this.form = this.element.querySelector('#mrl-query-form');
+            this.alternatives = this.element
+                .querySelector('#mrl-edit-help-alternatives');
         }
 
         reset() {
             this.element.hidden = true;
             this.setMrl(null);
+            this.alternatives.innerHTML = '';
         }
 
         show() {
@@ -217,6 +246,30 @@ window.onload = function() {
         setMrl(mrl) {
             if (mrl) {
                 this.form.querySelector("input[name='mrl']").value = mrl;
+
+                const thisMrlEditBlock = this;
+                diagnoseProblems(mrlInfoBlock.nl, mrl, function(diagnoseResult) {
+                    diagnoseResult.alternatives.forEach(function(tuple) {
+                        const key = tuple[0][0];
+                        const val = tuple[0][1];
+                        const common = tuple[1];
+                        const alts = tuple[2];
+
+                        const li = document.createElement('li');
+                        const common_text = common ? '[Common] ' : '[Uncommon] ';
+                        li.appendChild(document.createTextNode(common_text));
+                        li.appendChild(makeTag(key, val));
+                        li.appendChild(document.createTextNode(': '));
+                        const tags = alts.map(keyval => makeTag(keyval[0], keyval[1], true));
+                        for (let i = 0; i < tags.length - 1; ++i) {
+                            li.appendChild(tags[i]);
+                            li.appendChild(document.createTextNode(', '));
+                        }
+                        li.appendChild(tags[tags.length - 1]);
+
+                        thisMrlEditBlock.alternatives.appendChild(li);
+                    });
+                });
             } else {
                 this.form.querySelector("input[name='mrl']").value = '';
             }
@@ -237,8 +290,6 @@ window.onload = function() {
         }
 
         processMrl(mrl) {
-            this.reset();
-
             const thisAnswerBlock = this;
             processAnswerResult(mrl, function(answerResult) {
                 messagesBlock.addMessage(
@@ -292,6 +343,7 @@ window.onload = function() {
 
     nlQueryForm.onsubmit = function() {
         mrlInfoBlock.reset();
+        mrlEditBlock.reset();
         messagesBlock.reset();
         answerBlock.reset();
         messagesBlock.addMessage('Parsing query …');
@@ -322,6 +374,8 @@ window.onload = function() {
 
     mrlQueryForm.onsubmit = function() {
         const formData = new FormData(this);
+        answerBlock.reset();
+        mrlEditBlock.reset();
         mrlInfoBlock.processMrl(formData.get('mrl'));
         return false;
     };

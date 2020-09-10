@@ -5,9 +5,8 @@ from flask import current_app
 
 from nlmapsweb.app import db
 from nlmapsweb.models import ParseLog
-from nlmapsweb.processing.result import Result
 from nlmapsweb.processing.converting import functionalise
-from nlmapsweb.taginfo import check_key_val_pair, get_key_val_pairs
+from nlmapsweb.processing.result import Result
 
 
 def parse_to_lin(nl_query):
@@ -28,12 +27,11 @@ def parse_to_lin(nl_query):
 
 class ParseResult(Result):
 
-    def __init__(self, success, nl, lin, mrl, error=None, alternatives=None):
+    def __init__(self, success, nl, lin, mrl, error=None):
         super().__init__(success, error)
         self.nl = nl
         self.lin = lin
         self.mrl = mrl
-        self.alternatives = alternatives
 
         log = ParseLog(nl=nl, lin=lin)
         db.session.add(log)
@@ -51,16 +49,7 @@ class ParseResult(Result):
             error = 'Parsed linear query is ungrammatical'
             return cls(False, nl, lin, mrl, error=error)
 
-        try:
-            alternatives = {}
-            key_val_pairs = get_key_val_pairs(mrl)
-            for key, val in key_val_pairs:
-                alternatives[(key, val)] = check_key_val_pair(key, val)
-        except:
-            error = 'Failed to check key value pairs'
-            return cls(False, nl, lin, mrl, error=error)
-
-        return cls(True, nl, lin, mrl, alternatives=alternatives)
+        return cls(True, nl, lin, mrl)
 
     def to_dict(self):
         return {'nl': self.nl, 'lin': self.lin, 'mrl': self.mrl,

@@ -1,7 +1,6 @@
 from sqlalchemy import Column, Unicode
 
 from nlmapsweb.models.base import BaseModel
-from nlmapsweb.parser import functionalise
 
 
 class ParseLog(BaseModel):
@@ -20,4 +19,6 @@ class ParseLog(BaseModel):
 
     @property
     def mrl(self):
+        # TODO: Resolve this import hell …
+        from nlmapsweb.processing.converting import functionalise
         return functionalise(self.lin)

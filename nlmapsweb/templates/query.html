@@ -33,6 +33,9 @@
 </div>
 
 <div id="mrl-edit-block" class="row block" hidden>
+    <div id="mrl-edit-help">
+        <ul id="mrl-edit-help-alternatives"></ul>
+    </div>
     <form id="mrl-query-form" method="POST" action="/geojson">
         {{ mrl_query_form.hidden_tag() }}
         {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}

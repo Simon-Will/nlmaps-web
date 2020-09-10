@@ -11,3 +11,8 @@ class NlQueryForm(BaseForm):
 
 class MrlQueryForm(BaseForm):
     mrl = StringField('MRL Query', validators=[DataRequired()])
+
+
+class DiagnoseForm(BaseForm):
+    nl = StringField('NL Query', validators=[DataRequired()])
+    mrl = StringField('MRL Query', validators=[DataRequired()])

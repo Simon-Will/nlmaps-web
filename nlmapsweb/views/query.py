@@ -1,9 +1,10 @@
 from flask import current_app, jsonify, render_template, request
 
 from nlmapsweb.app import db
-from nlmapsweb.forms import FeedbackForm, MrlQueryForm, NlQueryForm
+from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, MrlQueryForm,
+                             NlQueryForm)
 from nlmapsweb.models import Feedback
-from nlmapsweb.processing import AnswerResult, ParseResult
+from nlmapsweb.processing import AnswerResult, DiagnoseResult, ParseResult
 
 
 @current_app.route('/parse', methods=['POST'])
@@ -39,6 +40,24 @@ def query():
                            nl_query_form=nl_query_form)
 
 
+@current_app.route('/diagnose', methods=['POST'])
+def diagnose():
+    print('Foobar')
+    form = DiagnoseForm()
+    if form.validate_on_submit():
+        print('VALID')
+        print(form.data)
+        nl = form.nl.data
+        mrl = form.mrl.data
+        result = DiagnoseResult.from_nl_mrl(nl, mrl)
+        status = 200 if result.success else 500
+        return jsonify(result.to_dict()), status
+
+    print(form.data)
+    print('INVALID')
+    return 'Bad Request', 401
+
+
 @current_app.route('/feedback', methods=['POST'])
 def feedback():
     form = FeedbackForm()
@@ -49,6 +68,4 @@ def feedback():
         db.session.add(fb)
         db.session.commit()
         return 'OK', 200
-    else:
-        print(form.errors)
     return 'Bad Request!', 400
