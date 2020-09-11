@@ -24,7 +24,7 @@
 
 <div id="mrl-info-block" class="row block" hidden>
     <p id="mrl-info-nl"></p>
-    <p id="mrl-info-lin"></p>
+    <p id="mrl-info-lin" hidden></p>
     <p id="mrl-info-mrl"></p>
     <div id="mrl-judgement" class="container-horizontal-flex" hidden>
         <button id="confirm-mrl" class="bg-success">That’s correct!</button>
@@ -34,6 +34,7 @@
 
 <div id="mrl-edit-block" class="row block" hidden>
     <div id="mrl-edit-help">
+        <ul id="mrl-edit-help-area"></ul>
         <ul id="mrl-edit-help-alternatives"></ul>
     </div>
     <form id="mrl-query-form" method="POST" action="/geojson">

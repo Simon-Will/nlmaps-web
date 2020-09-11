@@ -231,12 +231,15 @@ window.onload = function() {
             this.form = this.element.querySelector('#mrl-query-form');
             this.alternatives = this.element
                 .querySelector('#mrl-edit-help-alternatives');
+            this.area = this.element
+                .querySelector('#mrl-edit-help-area');
         }
 
         reset() {
             this.element.hidden = true;
             this.setMrl(null);
             this.alternatives.innerHTML = '';
+            this.area.innerHTML = '';
         }
 
         show() {
@@ -269,6 +272,20 @@ window.onload = function() {
 
                         thisMrlEditBlock.alternatives.appendChild(li);
                     });
+
+                    if (diagnoseResult.area) {
+                        if (diagnoseResult.area.count) {
+                            thisMrlEditBlock.area.innerHTML = 'Found '
+                                + diagnoseResult.area.count.toString()
+                                + ' results for area “' + diagnoseResult.area.name
+                                + '”.';
+                        } else {
+                            thisMrlEditBlock.area.innerHTML = 'Found no results for area “'
+                                + diagnoseResult.area.name + '”.';
+                        }
+                    } else {
+                        thisMrlEditBlock.area.innerHTML = 'Problem with area query.';
+                    }
                 });
             } else {
                 this.form.querySelector("input[name='mrl']").value = '';

@@ -41,3 +41,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     (Path(os.path.dirname(__file__)) / '../nlmapsweb.db').resolve()
 )
 SQLALCHEMY_ECHO = False
+
+OVERPASS_URL='http://overpass-api.de/api/interpreter'
