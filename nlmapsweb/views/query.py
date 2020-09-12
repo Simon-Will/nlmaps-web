@@ -5,6 +5,7 @@ from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, MrlQueryForm,
                              NlQueryForm)
 from nlmapsweb.models import Feedback
 from nlmapsweb.processing import AnswerResult, DiagnoseResult, ParseResult
+from nlmapsweb.processing.converting import delete_spaces
 
 
 @current_app.route('/parse', methods=['POST'])
@@ -23,7 +24,7 @@ def parse_nl():
 def answer_mrl():
     mrl = request.args.get('mrl')
     if mrl:
-        print(mrl)
+        mrl = delete_spaces(mrl)
         result = AnswerResult.from_mrl(mrl)
         status = 200 if result.success else 500
 
@@ -42,19 +43,15 @@ def query():
 
 @current_app.route('/diagnose', methods=['POST'])
 def diagnose():
-    print('Foobar')
     form = DiagnoseForm()
     if form.validate_on_submit():
-        print('VALID')
-        print(form.data)
         nl = form.nl.data
         mrl = form.mrl.data
+        mrl = delete_spaces(mrl)
         result = DiagnoseResult.from_nl_mrl(nl, mrl)
         status = 200 if result.success else 500
         return jsonify(result.to_dict()), status
 
-    print(form.data)
-    print('INVALID')
     return 'Bad Request', 401
 
 
@@ -63,9 +60,17 @@ def feedback():
     form = FeedbackForm()
     if form.validate_on_submit():
         data = form.get_data(exclude=['csrf_token'])
-        print(data)
+
+        # TODO: Do this in form.
+        if data['systemMrl']:
+            data['systemMrl'] = delete_spaces(data['systemMrl'])
+        if data['correctMrl']:
+            data['correctMrl'] = delete_spaces(data['correctMrl'])
+
+        current_app.logger.info('Received feedback: {}', data)
         fb = Feedback(**data)
         db.session.add(fb)
         db.session.commit()
         return 'OK', 200
+
     return 'Bad Request!', 400
