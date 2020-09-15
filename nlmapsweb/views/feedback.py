@@ -1,6 +1,6 @@
 from collections import Counter
 
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, render_template
 
 from nlmapsweb.app import db
 from nlmapsweb.models import Feedback

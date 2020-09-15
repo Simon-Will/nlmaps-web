@@ -18,7 +18,8 @@
 .block {
     background-color: #eee;
     border: solid 1pt #ccc;
-    padding: 1em;
+    padding-left: 1em;
+    padding-right: 1em;
 }
 
 .container-horizonal-flex {
@@ -71,4 +72,33 @@ button {
 
 .message-error {
     color: red;
+}
+
+.block-expanded:hover {
+    background-color: #ddd;
+}
+
+.block-collapsed:hover {
+    background-color: #ddd;
+}
+
+.block-expanded::before {
+    content: '▲';
+    padding-right: 5px;
+}
+
+.block-collapsed::before {
+    content: '▼';
+    padding-right: 5px;
+}
+
+.block-header {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+}
+
+.block-body {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    border-top: solid 1pt #ccc;
 }

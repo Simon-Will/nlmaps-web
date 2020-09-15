@@ -10,41 +10,102 @@
 
 {% block content %}
 
+<div id="info-block"  class="row block">
+    <div class="block-header">
+        <span class="block-title">NLMaps Introduction</span>
+    </div>
+    <div class="block-body">
+        <p>Issue geographical queries in plain English! Here are some examples:</p>
+        <ul>
+            <li>Is there any café in walking distance of Heiliggeistkirche in Heidelberg?</li>
+            <li>How many playgrounds does Oxford have?</li>
+            <li>What is the closest drinking water fountain from Musée du Louvre in Paris?</li>
+            <li>pubs in northern Schwäbisch Hall</li>
+        </ul>
+
+        <p>This project is a work in progress. Please note:
+            <ul>
+                <li>Use the correct full name of things including capitalization. E.g. “Musée du Louvre”, not “Louvre” and not even “musée du louvre”.</li>
+                <li>Use localized city names. E.g. “Praha”, not “Prague”.</li>
+                <li>The process is still quite slow for some queries. Please have
+                    some patience.</li>
+            </ul>
+        </p>
+
+        <p>Help improve this project by asking queries and correcting the corresponding query in the machine-readable language (MRL) that is produced. Don’t know what to ask for? Imagine you’re in one of the following situations. What might you want to know?
+            <ul>
+                <li>You’re planning a city trip (to Leipzig, for example). What do you need to know beforehand? What do you want to know once you’re there?</li>
+                <li>You’re new in town and have to get some things done. E.g. send a letter, look for some kind of physician, find some place to play sports, etc.</li>
+                <li>You’re researching about interesting recreational places in some town. Where can you have a barbecue, have a drink or play a sport?</li>
+                <li>You’re making a map of important infrastructure for some area. What institutions should be on there?</li>
+            </ul>
+        </p>
+
+        <p>Also take a look at <a href="{{ url_for('available_tags') }}">this long
+            list of things you can ask for</a>.</p>
+    </div>
+</div>
+
 <div id="nl-query-block" class="row block">
-    <form id="nl-query-form" method="POST" action="/parse" class="row">
-        {{ nl_query_form.hidden_tag() }}
-        {{ nl_query_form.nl.label }} {{ nl_query_form.nl(size=100) }}
-        <input type="submit" value="Submit">
-    </form>
+    <div class="block-header">
+        <span class="block-title">Query</span>
+    </div>
+    <div class="block-body">
+        <form id="nl-query-form" method="POST" action="/parse" class="row">
+            {{ nl_query_form.hidden_tag() }}
+            {{ nl_query_form.nl.label }} {{ nl_query_form.nl(size=100) }}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
 </div>
 
 <div id="messages-block" class="row block" hidden>
-    <ol id="messages" class="messages"></ol>
+    <div class="block-header">
+        <span class="block-title">Log</span>
+    </div>
+    <div class="block-body">
+        <ol id="messages" class="messages"></ol>
+    </div>
 </div>
 
 <div id="mrl-info-block" class="row block" hidden>
-    <p id="mrl-info-nl"></p>
-    <p id="mrl-info-lin" hidden></p>
-    <p id="mrl-info-mrl"></p>
-    <div id="mrl-judgement" class="container-horizontal-flex" hidden>
-        <button id="confirm-mrl" class="bg-success">That’s correct!</button>
-        <button id="adjust-mrl" class="bg-warning">Adjust MRL</button>
+    <div class="block-header">
+        <span class="block-title">MRL Info</span>
+    </div>
+    <div class="block-body">
+        <p id="mrl-info-nl"></p>
+        <p id="mrl-info-lin" hidden></p>
+        <p id="mrl-info-mrl"></p>
+        <div id="mrl-judgement" class="container-horizontal-flex" hidden>
+            <button id="confirm-mrl" class="bg-success">That’s correct!</button>
+            <button id="adjust-mrl" class="bg-warning">Adjust MRL</button>
+        </div>
     </div>
 </div>
 
 <div id="mrl-edit-block" class="row block" hidden>
-    <div id="mrl-edit-help">
-        <ul id="mrl-edit-help-area"></ul>
-        <ul id="mrl-edit-help-alternatives"></ul>
+    <div class="block-header">
+        <span class="block-title">MRL Edit</span>
     </div>
-    <form id="mrl-query-form" method="POST" action="/geojson">
-        {{ mrl_query_form.hidden_tag() }}
-        {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
-        <input type="submit" value="Resubmit">
-    </form>
+    <div class="block-body">
+        <div id="mrl-edit-help">
+            <ul id="mrl-edit-help-area"></ul>
+            <ul id="mrl-edit-help-alternatives"></ul>
+        </div>
+        <form id="mrl-query-form" method="POST" action="/geojson">
+            {{ mrl_query_form.hidden_tag() }}
+            {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
+            <input type="submit" value="Resubmit">
+        </form>
+    </div>
 </div>
 
 <div id="answer-block" class="row block" hidden>
+    <div class="block-header">
+        <span class="block-title">Answer</span>
+    </div>
+    <div class="block-body">
+    </div>
 </div>
 
 <div id="map" class="map"></div>

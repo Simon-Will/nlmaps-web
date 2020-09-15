@@ -14,8 +14,21 @@ window.onload = function() {
     vectorSource.on('addfeature', function() {
         let features = vectorSource.getFeatures();
         if (features.length > 0) {
-            let center = ol.extent.getCenter(vectorSource.getExtent());
-            mapView.setCenter(center);
+            let extent = vectorSource.getExtent();
+            if (features.length === 1) {
+                mapView.setCenter(ol.extent.getCenter(extent));
+                mapView.setZoom(12);
+            } else {
+                // Widen the extent a little so that none of the features sit on
+                // the edge.
+                const xdiff = extent[2] - extent[0];
+                const ydiff = extent[3] - extent[1];
+                extent[0] -= 0.05 * xdiff;
+                extent[1] -= 0.05 * ydiff;
+                extent[2] += 0.05 * xdiff;
+                extent[3] += 0.05 * ydiff;
+                mapView.fit(extent);
+            }
         }
     });
 
@@ -98,8 +111,6 @@ window.onload = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     const diagnoseResult = JSON.parse(xhr.responseText);
-                    messagesBlock.addMessage('Received diagnose result.');
-                    console.log(diagnoseResult);
                     callback(diagnoseResult);
                 } else {
                     messagesBlock.addMessage('Diagnosing failed.', true);
@@ -116,12 +127,12 @@ window.onload = function() {
             super(element);
 
             this.bufSize = 5;
-            this.messagesElm = element.querySelector('#messages');
+            this.messagesElm = this.body.querySelector('#messages');
         }
 
         reset() {
             this.messagesElm.innerHTML = '';
-            this.element.hidden = true;
+            this.setVisibility('hidden');
         }
 
         addMessage(content, error = false) {
@@ -139,17 +150,17 @@ window.onload = function() {
                 this.messagesElm.removeChild(this.messagesElm.firstChild);
             }
 
-            this.element.hidden = false;
+            this.setVisibility('expanded');
         }
     }
 
     class MrlInfoBlock extends Block {
         constructor(element) {
             super(element);
-            this.nlElm = element.querySelector('#mrl-info-nl');
-            this.linElm = element.querySelector('#mrl-info-lin');
-            this.mrlElm = element.querySelector('#mrl-info-mrl');
-            this.judgementElm = element.querySelector('#mrl-judgement');
+            this.nlElm = this.body.querySelector('#mrl-info-nl');
+            this.linElm = this.body.querySelector('#mrl-info-lin');
+            this.mrlElm = this.body.querySelector('#mrl-info-mrl');
+            this.judgementElm = this.body.querySelector('#mrl-judgement');
 
             this.nl = null;
             this.lin = null;
@@ -201,7 +212,7 @@ window.onload = function() {
             this.nlElm.innerHTML = htmlEscape(this.nl);
             this.linElm.innerHTML = htmlEscape(this.lin);
 
-            this.element.hidden = false;
+            this.setVisibility('expanded');
 
             this.processMrl(parseResult.mrl);
         }
@@ -228,22 +239,22 @@ window.onload = function() {
     class MrlEditBlock extends Block {
         constructor(element) {
             super(element);
-            this.form = this.element.querySelector('#mrl-query-form');
-            this.alternatives = this.element
+            this.form = this.body.querySelector('#mrl-query-form');
+            this.alternatives = this.body
                 .querySelector('#mrl-edit-help-alternatives');
-            this.area = this.element
+            this.area = this.body
                 .querySelector('#mrl-edit-help-area');
         }
 
         reset() {
-            this.element.hidden = true;
+            this.setVisibility('hidden');
             this.setMrl(null);
             this.alternatives.innerHTML = '';
             this.area.innerHTML = '';
         }
 
         show() {
-            this.element.hidden = false;
+            this.setVisibility('expanded');
         }
 
         setMrl(mrl) {
@@ -268,6 +279,7 @@ window.onload = function() {
                             li.appendChild(tags[i]);
                             li.appendChild(document.createTextNode(', '));
                         }
+                        // TODO: Fix: arg1 not an object
                         li.appendChild(tags[tags.length - 1]);
 
                         thisMrlEditBlock.alternatives.appendChild(li);
@@ -296,14 +308,14 @@ window.onload = function() {
     class AnswerBlock extends Block {
         constructor(element) {
             super(element);
-            this.mapElm = element.querySelector('#map');
+            this.mapElm = this.body.querySelector('#map');
         }
 
         reset() {
             vectorSource.clear();
 
-            this.element.innerHTML = '';
-            this.element.hidden = true;
+            this.body.innerHTML = '';
+            this.setVisibility('hidden');
         }
 
         processMrl(mrl) {
@@ -330,8 +342,8 @@ window.onload = function() {
                 } else {
                     content = 'Error: ' + answerResult.error;
                 }
-                thisAnswerBlock.element.innerHTML = htmlEscape(content);
-                thisAnswerBlock.element.hidden = false;
+                thisAnswerBlock.body.innerHTML = htmlEscape(content);
+                thisAnswerBlock.setVisibility('expanded');
             });
         }
     }
@@ -343,6 +355,7 @@ window.onload = function() {
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
           .getAttribute('content');
 
+    const infoBlock = new Block(document.getElementById('info-block'));
     const nlQueryBlock = new Block(document.getElementById('nl-query-block'));
     const messagesBlock = new MessagesBlock(document.getElementById('messages-block'));
     const mrlInfoBlock = new MrlInfoBlock(document.getElementById('mrl-info-block'));
