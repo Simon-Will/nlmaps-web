@@ -1,5 +1,4 @@
 from sqlalchemy import Column, DateTime, Integer
-from sqlalchemy.ext.declarative import declarative_base, declared_attr
 
 from nlmapsweb.app import db
 from nlmapsweb.utils.helper import get_utc_now

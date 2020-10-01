@@ -61,6 +61,7 @@ button {
 
 .mrl {
     word-break: break-word;
+    font-size: smaller;
 }
 
 .messages {

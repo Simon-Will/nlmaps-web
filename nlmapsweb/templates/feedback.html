@@ -3,6 +3,7 @@
 {% set page = 'feedback' %}
 
 {% block content %}
+<a href="{{ url_for('export_feedback') }}">Export feedback as dataset</a>
 <div class="row">
     <table>
         <thead>
@@ -24,10 +25,10 @@
 </div>
 <div class="row container-vertical-flex">
     {% for piece in feedback %}
-    <div class="row feedback-piece feedback-type-{{ piece.type }}">
-        <p class="feedback-nl">NL: {{ piece.nl }}</p>
-        <p class="feedback-mrl mrl">Sys: {{ piece.systemMrl }}</p>
-        <p class="feedback-mrl mrl">Corr: {{ piece.correctMrl }}</p>
+    <div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.get_sys_to_corr_opcodes(as_json=True) }}">
+        <p class="feedback-nl">{{ piece.nl }}</p>
+        <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
+        <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
     </div>
     {% endfor %}
 </div>

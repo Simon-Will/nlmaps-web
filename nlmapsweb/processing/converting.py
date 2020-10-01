@@ -7,13 +7,26 @@ from mrl import NLmaps
 
 def functionalise(lin):
     try:
-        func = NLmaps().functionalise(lin.strip())
+        mrl = NLmaps().functionalise(lin.strip())
     except:
         current_app.logger.warning(traceback.format_exc())
         return None
 
-    current_app.logger.info('Functionalised "{}" to "{}"'.format(lin, func))
-    return func
+    current_app.logger.info('Functionalised "{}" to "{}"'.format(lin, mrl))
+    return mrl
+
+
+def linearise(mrl):
+    try:
+        # “Preprocessing” contains merging multi-word values into one
+        # €-separated token. After that, it is linearised.
+        lin = NLmaps().preprocess_mrl(mrl.strip())
+    except:
+        current_app.logger.warning(traceback.format_exc())
+        return None
+
+    current_app.logger.info('Linearised "{}" to "{}"'.format(mrl, lin))
+    return lin
 
 
 def delete_spaces(mrl):

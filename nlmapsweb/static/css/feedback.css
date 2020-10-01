@@ -1,23 +1,50 @@
+.feedback-piece {
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+    border-width: medium;
+    border-style: solid;
+}
+
 .feedback-type-correct {
-    background-color: forestgreen;
+    border-color: forestgreen;
 }
 
 .feedback-type-incorrect {
-    background-color: red;
+    border-color: red;;
 }
 
 .feedback-type-system-error {
-    background-color: orange;
+    border-color: orange;;
 }
 
 .feedback-type-unknown {
-    background-color: lightblue;
+    border-color: lightblue;;
 }
 
 .feedback-nl {
     font-size: smaller;
 }
 
-.feedback-mrl {
-    font-size: smaller;
+.feedback-nl::before {
+    content: "NL: "
+}
+
+.feedback-sys::before {
+    content: "Sys: "
+}
+
+.feedback-corr::before {
+    content: "Cor: "
+}
+
+.highlight-replace {
+    background-color: lightblue;
+}
+
+.highlight-delete {
+    background-color: red;
+}
+
+.highlight-insert {
+    background-color: forestgreen;
 }

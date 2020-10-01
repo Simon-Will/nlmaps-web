@@ -77,15 +77,24 @@ window.onload = function() {
 
     // Begin block behavior
 
+    let RESULT_RETRIEVAL_XHR = null;
     function processAnswerResult(mrl, callback) {
+        if (RESULT_RETRIEVAL_XHR) {
+            RESULT_RETRIEVAL_XHR.abort();
+            RESULT_RETRIEVAL_XHR = null;
+            messagesBlock.addMessage('Aborting result retrieval.', true);
+        }
+
         messagesBlock.addMessage('Retrieving result …');
 
         const geojsonURL = new URL('http://localhost:5000/answer_mrl');
         geojsonURL.searchParams.set('mrl', mrl);
 
         const xhr = new XMLHttpRequest();
+        RESULT_RETRIEVAL_XHR = xhr;
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
+                RESULT_RETRIEVAL_XHR = null;
                 if (xhr.status === 200) {
                     const answerResult = JSON.parse(xhr.responseText);
                     callback(answerResult);
@@ -371,7 +380,19 @@ window.onload = function() {
 
     // Begin events
 
+    let PARSING_XHR = null;
     nlQueryForm.onsubmit = function() {
+        if (PARSING_XHR) {
+            PARSING_XHR.abort();
+            PARSING_XHR = null;
+            messagesBlock.addMessage('Aborting parsing.', true);
+        }
+        if (RESULT_RETRIEVAL_XHR) {
+            RESULT_RETRIEVAL_XHR.abort();
+            RESULT_RETRIEVAL_XHR = null;
+            messagesBlock.addMessage('Aborting result retrieval.', true);
+        }
+
         mrlInfoBlock.reset();
         mrlEditBlock.reset();
         messagesBlock.reset();
@@ -381,8 +402,10 @@ window.onload = function() {
         const formData = new FormData(this);
 
         const xhr = new XMLHttpRequest();
+        PARSING_XHR = xhr;
         xhr.onreadystatechange = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
+                PARSING_XHR = null;
                 let parseResult = JSON.parse(xhr.responseText);
                 if (xhr.status === 200) {
                     messagesBlock.addMessage('Parsed query.');
