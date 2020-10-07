@@ -10,6 +10,14 @@ function htmlEscape(str) {
         .replace(/\//g, '&#x2F;');
 }
 
+function flashMessage(parentElm, text = 'Updated!', cssClass = 'bg-success') {
+    const updatedElm = document.createElement('p');
+    updatedElm.innerHTML = text;
+    updatedElm.classList.add(cssClass);
+    parentElm.appendChild(updatedElm);
+    window.setTimeout(function() {console.log('Time up'); updatedElm.remove();}, 3000);
+}
+
 function makeTag(key, val, makeLink = false) {
     const content = document.createTextNode(key + '=' + val);
     let tagElm;

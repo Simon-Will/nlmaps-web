@@ -11,7 +11,8 @@ class Tag(BaseModel):
 
     name = Column(
         Unicode(100),
-        nullable=False
+        nullable=False,
+        unique=True,
     )
 
     feedback_pieces = relationship(

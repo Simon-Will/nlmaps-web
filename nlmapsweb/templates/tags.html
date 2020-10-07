@@ -1,0 +1,26 @@
+{% extends 'base.html' %}
+
+{% set page = 'tags' %}
+
+{% block content %}
+<div class="row">
+    <table>
+        <thead>
+            <tr>
+                <th>Tag</th>
+                <th>Count</th>
+                <th>Percentage</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tag, count in tag_counts.items() %}
+            <tr>
+                <td>{{ tag.name }}</td>
+                <td>{{ count }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

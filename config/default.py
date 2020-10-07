@@ -31,6 +31,8 @@ PARSE_COMMAND = [
         ' /home/students/will/public/ma/joeynmt/configs/staniek_nlmaps_lin_char_upper2_cpu.yaml'
     )
 ]
+#' /home/students/will/public/ma/joeynmt/configs/will_nlmaps2.1_lin_char_cpu.yaml'
+#' /home/students/will/public/ma/joeynmt/configs/staniek_nlmaps_lin_char_upper2_cpu.yaml'
 
 ANSWER_COMMAND = [
     'ssh', 'cluster',

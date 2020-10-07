@@ -8,7 +8,7 @@ import jinja2
 
 PREFIX = """{% extends 'base.html' %}
 
-{% set page = 'available_tags' %}
+{% set page = 'osm_tags' %}
 
 {% block content %}
 <h2>Available Tags</h2>

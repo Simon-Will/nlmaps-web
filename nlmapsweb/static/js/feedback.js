@@ -17,7 +17,6 @@ window.onload = function() {
     document.querySelectorAll('.feedback-piece').forEach(function(elm) {
         const opcodes = JSON.parse(elm.getAttribute('data-opcodes'));
         if (opcodes) {
-            console.log(opcodes);
             const feedbackSysElm = elm.querySelector('.feedback-sys');
             const feedbackSys = feedbackSysElm.innerHTML;
             const feedbackCorrElm = elm.querySelector('.feedback-corr');
@@ -38,4 +37,52 @@ window.onload = function() {
             });
         }
     });
-}
+
+    function add_tags(tags) {
+        document.querySelectorAll('.feedback-tags-form select')
+            .forEach(function(selectElm) {
+                tags.forEach(function(tag) {
+                    const option = document.createElement('option');
+                    option.appendChild(document.createTextNode(tag));
+                    option.setAttribute('value', tag);
+                    selectElm.appendChild(option);
+                });
+            });
+    }
+
+    function selectTagsInForm(tags, form) {
+        tags.forEach(function(tag) {
+            form.querySelector('option[value="' + tag + '"]')
+                .selected = 'selected';
+        });
+    }
+
+    document.querySelectorAll('.feedback-tags-form').forEach(function(form) {
+        form.onsubmit = function() {
+            const formData = new FormData(this);
+
+            thisForm = this;
+            let xhr = new XMLHttpRequest();
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        const response = JSON.parse(xhr.responseText);
+                        console.log(response);
+                        if (response.newTags) {
+                            add_tags(response.newTags);
+                            selectTagsInForm(response.newTags, thisForm);
+                        }
+                        thisForm.querySelector('input[name="new_tags"]').value = '';
+                        console.log('Updated');
+                        flashMessage(thisForm, 'Tagged!');
+                    } else {
+                        flashMessage(thisForm, 'Tagging failed!', 'bg-warning');
+                    }
+                }
+            };
+            xhr.open('POST', this.action);
+            xhr.send(formData);
+            return false;
+        };
+    });
+};

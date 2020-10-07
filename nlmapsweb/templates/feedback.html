@@ -3,33 +3,24 @@
 {% set page = 'feedback' %}
 
 {% block content %}
-<a href="{{ url_for('export_feedback') }}">Export feedback as dataset</a>
-<div class="row">
-    <table>
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Counter</th>
-                <th>Percentage</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for type, count in stats.items() %}
-            <tr>
-                <td>{{ type }}</td>
-                <td>{{ count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+<div class="row container-horizontal-flex">
+    {% if prev_id %}
+    <a href="{{ url_for('feedback_piece', id=prev_id) }}">Previous</a>
+    {% endif %}
+    {% if prev_id %}
+    <a href="{{ url_for('feedback_piece', id=next_id) }}">Next</a>
+    {% endif %}
 </div>
-<div class="row container-vertical-flex">
-    {% for piece in feedback %}
-    <div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.get_sys_to_corr_opcodes(as_json=True) }}">
-        <p class="feedback-nl">{{ piece.nl }}</p>
-        <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
-        <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
-    </div>
-    {% endfor %}
+<div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.get_sys_to_corr_opcodes(as_json=True) }}">
+    <p class="feedback-nl">{{ piece.nl }}</p>
+    <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
+    <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
 </div>
+<form class="row container-vertical-flex" method="post">
+    {{ form.hidden_tag() }}
+    {{ form.nl.label }} {{ form.nl() }}
+    {{ form.systemMrl.label }} {{ form.systemMrl() }}
+    {{ form.correctMrl.label }} {{ form.correctMrl() }}
+    <input type="submit"  value="Submit">
+</form>
 {% endblock %}
