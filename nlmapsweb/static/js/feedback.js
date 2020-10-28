@@ -1,4 +1,7 @@
 window.onload = function() {
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
+          .getAttribute('content');
+
     function makeSpan(string, start, end, cssClass) {
         const span = document.createElement('span');
         span.appendChild(document.createTextNode(string.substring(start, end)));
@@ -85,4 +88,26 @@ window.onload = function() {
             return false;
         };
     });
+
+    document.getElementById('parse-unparsed').onclick = function() {
+        const formData = new FormData();
+        formData.append('model', this.getAttribute('data-model'));
+        formData.append('csrf_token', CSRF_TOKEN);
+        let xhr = new XMLHttpRequest();
+
+        const thisButton = this;
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    thisButton.parentElement.appendChild(
+                        document.createTextNode('Parsed'));
+                } else {
+                    console.log(xhr.responseText);
+                }
+            }
+        };
+
+        xhr.open('POST', 'http://localhost:5000/batch_parse');
+        xhr.send(formData);
+    };
 };

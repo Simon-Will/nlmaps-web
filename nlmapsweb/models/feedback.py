@@ -1,11 +1,8 @@
-import difflib
-import json
-
 from sqlalchemy import Column, Unicode
 from sqlalchemy.orm import relationship
 
 from nlmapsweb.models.base import BaseModel
-from nlmapsweb.models.feedback_tag_association import feedback_tag_association
+from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 
 
 class Feedback(BaseModel):
@@ -27,36 +24,19 @@ class Feedback(BaseModel):
         nullable=True,
     )
 
-    tags = relationship(
-        'Tag',
-        secondary=feedback_tag_association,
-        back_populates='feedback_pieces'
-    )
+    parse_taggings = relationship('ParseTagging', back_populates='feedback_piece')
 
     def system_is_correct(self) -> bool:
         return self.systemMrl and self.systemMrl == self.correctMrl
 
     @property
     def type(self):
-        if not self.systemMrl:
-            return 'system-error'
+        return get_feedback_type(self.systemMrl, self.correctMrl)
 
-        if self.correctMrl:
-            if self.systemMrl == self.correctMrl:
-                return 'correct'
-            else:
-                return 'incorrect'
-        else:
-            return 'unknown'
+    @property
+    def opcodes(self):
+        return get_opcodes(self.systemMrl, self.correctMrl)
 
-    def get_sys_to_corr_opcodes(self, as_json=False):
-        if self.type == 'incorrect':
-            opcodes = difflib.SequenceMatcher(
-                a=self.systemMrl, b=self.correctMrl).get_opcodes()
-        else:
-            opcodes = None
-
-        if as_json:
-            opcodes = json.dumps(opcodes)
-
-        return opcodes
+    @property
+    def opcodes_json(self):
+        return get_opcodes(self.systemMrl, self.correctMrl, as_json=True)

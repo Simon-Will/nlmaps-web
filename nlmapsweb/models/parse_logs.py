@@ -1,4 +1,5 @@
 from sqlalchemy import Column, Unicode
+from sqlalchemy.orm import relationship
 
 from nlmapsweb.models.base import BaseModel
 
@@ -12,13 +13,19 @@ class ParseLog(BaseModel):
         nullable=False,
     )
 
+    model = Column(
+        Unicode(200),
+        nullable=False
+    )
+
     lin = Column(
         Unicode(500),
         nullable=True,
     )
 
-    @property
-    def mrl(self):
-        # TODO: Resolve this import hell …
-        from nlmapsweb.processing.converting import functionalise
-        return functionalise(self.lin)
+    mrl = Column(
+        Unicode(500),
+        nullable=True,
+    )
+
+    parse_taggings = relationship('ParseTagging', back_populates='parse_log')

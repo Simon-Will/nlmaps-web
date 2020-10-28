@@ -6,23 +6,13 @@
 <p class="row">
     <a href="{{ url_for('export_feedback') }}">Export feedback as dataset</a>
 </p>
-<form method="GET" action="{{ url_for('list_feedback') }}">
-    {{ parsing_model_form.model() }}
-    <input type="submit" value="Compare">
-</form>
-
-{% if stats['unparsed'] %}
-<p>There are {{ stats['unparsed'] }} unparsed queries.
-    <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
-</p>
-{% endif %}
-
 <div class="row">
     <table>
         <thead>
             <tr>
                 <th>Type</th>
                 <th>Count</th>
+                <th>Percentage</th>
             </tr>
         </thead>
         <tbody>
@@ -30,30 +20,28 @@
             <tr>
                 <td>{{ type }}</td>
                 <td>{{ count }}</td>
+                <td></td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 </div>
-
 <div class="row container-vertical-flex">
     {% for piece in feedback %}
-    <div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.opcodes_json }}">
+    <div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.get_sys_to_corr_opcodes(as_json=True) }}">
         <p class="feedback-nl">{{ piece.nl }}</p>
         <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
         <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
-        {% if tag_forms %}
         {% with tag_form = tag_forms[piece.id] %}
         {% if tag_form %}
-        <form method="POST" action="{{ url_for('update_parse_taggings') }}" class="feedback-tags-form">
+        <form method="POST" action="{{ url_for('tag_feedback') }}" class="feedback-tags-form">
             {{ tag_form.hidden_tag() }}
-            {{ tag_form.tags(size=tag_form.tags_size) }}
+            {{ tag_form.tags() }}
             {{ tag_form.new_tags.label }} {{ tag_form.new_tags() }}
             <input type="submit"  value="Submit">
         </form>
         {% endif %}
         {% endwith %}
-        {% endif %}
         <a href="{{ url_for('feedback_piece', id=piece.id) }}">Detail Edit</a>
     </div>
     {% endfor %}

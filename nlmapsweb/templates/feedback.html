@@ -3,7 +3,7 @@
 {% set page = 'feedback' %}
 
 {% block content %}
-<div class="row container-horizontal-flex">
+<div class="row">
     {% if prev_id %}
     <a href="{{ url_for('feedback_piece', id=prev_id) }}">Previous</a>
     {% endif %}
@@ -11,10 +11,13 @@
     <a href="{{ url_for('feedback_piece', id=next_id) }}">Next</a>
     {% endif %}
 </div>
-<div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.get_sys_to_corr_opcodes(as_json=True) }}">
+<div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.opcodes_json }}">
     <p class="feedback-nl">{{ piece.nl }}</p>
     <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
     <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
+</div>
+<div class="row container-horizontal-flex" style="justify-content: flex-end;">
+    <a href="{{ url_for('delete_feedback_piece', id=piece.id) }}">Delete</a>
 </div>
 <form class="row container-vertical-flex" method="post">
     {{ form.hidden_tag() }}

@@ -2,7 +2,6 @@ from sqlalchemy import Column, Unicode
 from sqlalchemy.orm import relationship
 
 from nlmapsweb.models.base import BaseModel
-from nlmapsweb.models.feedback_tag_association import feedback_tag_association
 
 
 class Tag(BaseModel):
@@ -15,8 +14,4 @@ class Tag(BaseModel):
         unique=True,
     )
 
-    feedback_pieces = relationship(
-        'Feedback',
-        secondary=feedback_tag_association,
-        back_populates='tags'
-    )
+    parse_taggings = relationship('ParseTagging', back_populates='tags')

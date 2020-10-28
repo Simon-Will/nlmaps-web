@@ -21,6 +21,10 @@
     border-color: lightblue;;
 }
 
+.feedback-type-unparsed {
+    border-color: lightgray;;
+}
+
 .feedback-nl {
     font-size: smaller;
 }

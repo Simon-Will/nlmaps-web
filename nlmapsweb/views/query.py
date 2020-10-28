@@ -4,15 +4,17 @@ from nlmapsweb.app import db
 from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, MrlQueryForm,
                              NlQueryForm)
 from nlmapsweb.models import Feedback
-from nlmapsweb.processing import AnswerResult, DiagnoseResult, ParseResult
+from nlmapsweb.processing.answering import AnswerResult
+from nlmapsweb.processing.diagnosing import DiagnoseResult
 from nlmapsweb.processing.converting import delete_spaces
+from nlmapsweb.processing.parsing import ParseResult
 
 
 @current_app.route('/parse', methods=['POST'])
 def parse_nl():
     form = NlQueryForm()
     if form.validate_on_submit():
-        nl = form.nl.data
+        nl = form.nl.data.strip()
         result = ParseResult.from_nl(nl)
         status = 200 if result.success else 500
         return jsonify(result.to_dict()), status
@@ -62,6 +64,8 @@ def feedback():
         data = form.get_data(exclude=['csrf_token'])
 
         # TODO: Do this in form.
+        if data['nl']:
+            data['nl'] = data['nl'].strip()
         if data['systemMrl']:
             data['systemMrl'] = delete_spaces(data['systemMrl'])
         if data['correctMrl']:

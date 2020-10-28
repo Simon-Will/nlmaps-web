@@ -23,16 +23,23 @@ MA_DIR = Path('/home/gorgor/ma')
 
 MOST_COMMON_TAGS = MA_DIR / 'data/most_common_tags/most_common_tags.json'
 
-PARSE_COMMAND = [
-    'ssh', 'last',
-    (
-        'cd /home/students/will/public/ma/joeynmt;'
-        ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
-        ' /home/students/will/public/ma/joeynmt/configs/staniek_nlmaps_lin_char_upper2_cpu.yaml'
-    )
-]
-#' /home/students/will/public/ma/joeynmt/configs/will_nlmaps2.1_lin_char_cpu.yaml'
-#' /home/students/will/public/ma/joeynmt/configs/staniek_nlmaps_lin_char_upper2_cpu.yaml'
+PARSE_COMMANDS = {
+    'staniek_nlmaps_lin_char': [
+        'ssh', 'last', (
+            'cd /home/students/will/public/ma/joeynmt;'
+            ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
+            ' /home/students/will/public/ma/joeynmt/configs/staniek_nlmaps_lin_char_upper2_cpu.yaml'
+        )
+    ],
+    'will_nlmaps_3beta.noise.plusv2_lin_char': [
+        'ssh', 'last', (
+            'cd /home/students/will/public/ma/joeynmt;'
+            ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
+            ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3beta.noise.plusv2_lin_char_cpu.yaml'
+        )
+    ]
+}
+CURRENT_MODEL = 'staniek_nlmaps_lin_char'
 
 ANSWER_COMMAND = [
     'ssh', 'cluster',

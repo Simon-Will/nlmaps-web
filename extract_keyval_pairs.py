@@ -54,10 +54,15 @@ def main(filename):
     print(PREFIX)
     print(body)
     print(SUFFIX)
-
-    #for key, vals in tags.items():
-    #    print('{}: {}'.format(key, ', '.join(vals)))
     
+    #all_tags = []
+    #for key, vals in tags.items():
+    #    for val in vals:
+    #        all_tags.append('{}={}'.format(key, val))
+
+    #for tag in sorted(all_tags):
+    #    print(tag)
+
 
 if __name__ == '__main__':
     main(sys.argv[1])
