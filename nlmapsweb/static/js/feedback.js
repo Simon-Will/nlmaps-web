@@ -89,25 +89,28 @@ window.onload = function() {
         };
     });
 
-    document.getElementById('parse-unparsed').onclick = function() {
-        const formData = new FormData();
-        formData.append('model', this.getAttribute('data-model'));
-        formData.append('csrf_token', CSRF_TOKEN);
-        let xhr = new XMLHttpRequest();
+    const parseUnparsedButton = document.getElementById('parse-unparsed');
+    if (parseUnparsedButton) {
+        parseUnparsedButton.onclick = function() {
+            const formData = new FormData();
+            formData.append('model', this.getAttribute('data-model'));
+            formData.append('csrf_token', CSRF_TOKEN);
+            let xhr = new XMLHttpRequest();
 
-        const thisButton = this;
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    thisButton.parentElement.appendChild(
-                        document.createTextNode('Parsed'));
-                } else {
-                    console.log(xhr.responseText);
+            const thisButton = this;
+            xhr.onreadystatechange = function() {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    if (xhr.status === 200) {
+                        thisButton.parentElement.appendChild(
+                            document.createTextNode('Parsed'));
+                    } else {
+                        console.log(xhr.responseText);
+                    }
                 }
-            }
-        };
+            };
 
-        xhr.open('POST', 'http://localhost:5000/batch_parse');
-        xhr.send(formData);
-    };
+            xhr.open('POST', 'http://localhost:5000/batch_parse');
+            xhr.send(formData);
+        };
+    }
 };
