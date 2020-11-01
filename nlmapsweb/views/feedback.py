@@ -12,6 +12,7 @@ from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.forms.parse_taggings import ParseTaggingForm
 from nlmapsweb.forms.feedback import FeedbackForm
 from nlmapsweb.forms.parsing_model import ParsingModelForm
+from nlmapsweb.utils.plotting import fig_to_base64, plot_tagged_percentages
 
 
 FeedbackPiece = namedtuple(
@@ -64,6 +65,7 @@ def list_feedback():
     parsing_model_form = ParsingModelForm(request.args)
     feedback = Feedback.query.all()
     tag_forms = None
+    tag_plot_b64 = None
 
     model = parsing_model_form.data['model']
     if model:
@@ -97,24 +99,32 @@ def list_feedback():
             for piece in feedback
             if piece.type == 'incorrect'
         }
+        tag_counts = {tag.name: 0 for tag in Tag.query.all()}
+        tag_counts.update(Counter(tag for tag_form in tag_forms.values()
+                                  for tag in tag_form.tags.data))
+        tag_plot = plot_tagged_percentages(tag_counts, total=len(feedback))
+        tag_plot_b64 = fig_to_base64(tag_plot, 'jpg')
 
     stats = Counter(piece.type for piece in feedback)
-    return render_template(
-        'list_feedback.html', feedback=feedback, model=model,
-        parsing_model_form=parsing_model_form, stats=stats,
-        tag_forms=tag_forms
-    )
 
-    #if request.args.get('types'):
-    #    types = {type.strip() for type in request.args.get('types').split(',')}
-    #    feedback = [piece for piece in feedback if piece.type in types]
+    if request.args.get('types'):
+        types = {type.strip() for type in request.args.get('types').split(',')}
+        feedback = [piece for piece in feedback if piece.type in types]
 
     #if request.args.get('tags'):
     #    tags = {tag.strip() for tag in request.args.get('tags').split(',')}
     #    feedback = [piece for piece in feedback if tags.intersection([tag.name for tag in piece.tags])]
 
-    #if request.args.get('untagged'):
-    #    feedback = [piece for piece in feedback if not piece.tags]
+    if request.args.get('untagged'):
+        feedback = [piece for piece in feedback
+                    if piece.type == 'incorrect'
+                    and not tag_forms[piece.id].tags.data]
+
+    return render_template(
+        'list_feedback.html', feedback=feedback, model=model,
+        parsing_model_form=parsing_model_form, stats=stats,
+        tag_forms=tag_forms, tag_plot_b64=tag_plot_b64
+    )
 
 
 @current_app.route('/update_parse_taggings', methods=['POST'])
