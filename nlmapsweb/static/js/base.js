@@ -10,12 +10,13 @@ function htmlEscape(str) {
         .replace(/\//g, '&#x2F;');
 }
 
-function flashMessage(parentElm, text = 'Updated!', cssClass = 'bg-success') {
+function flashMessage(parentElm, text = 'Updated!', cssClass = 'bg-success', milliseconds = 2000) {
     const updatedElm = document.createElement('p');
     updatedElm.innerHTML = text;
     updatedElm.classList.add(cssClass);
     parentElm.appendChild(updatedElm);
-    window.setTimeout(function() {console.log('Time up'); updatedElm.remove();}, 3000);
+    window.setTimeout(function() {console.log('Time up'); updatedElm.remove();},
+                      milliseconds);
 }
 
 function makeTag(key, val, makeLink = false) {
