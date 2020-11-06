@@ -259,7 +259,7 @@ window.onload = function() {
         }
 
         processFeatures(features) {
-           // TODO: mrlEditBlock.setFeatures(features);
+            mrlEditBlock.setFeatures(features);
 
             if (features) {
                 this.features = features;
@@ -279,13 +279,13 @@ window.onload = function() {
                 formData.append('mrl', mrl);
                 formData.append('csrf_token', CSRF_TOKEN);
 
-                const thisBlock = this;
+                const thisMrlInfoBlock = this;
                 const xhr = new XMLHttpRequest();
                 xhr.onreadystatechange = function() {
                     if (xhr.readyState === XMLHttpRequest.DONE) {
                         if (xhr.status === 200) {
                             const features = JSON.parse(xhr.responseText);
-                            thisBlock.processFeatures(features);
+                            thisMrlInfoBlock.processFeatures(features);
                         } else {
                             messagesBlock.addMessage('Retrieving features failed.',
                                                      true);
@@ -301,7 +301,8 @@ window.onload = function() {
     class MrlEditBlock extends Block {
         constructor(element) {
             super(element);
-            this.form = this.body.querySelector('#mrl-query-form');
+            this.mrlForm = this.body.querySelector('#mrl-query-form');
+            this.featuresForm = this.body.querySelector('#query-features-form');
             this.alternatives = this.body
                 .querySelector('#mrl-edit-help-alternatives');
             this.area = this.body
@@ -311,6 +312,7 @@ window.onload = function() {
         reset() {
             this.setVisibility('hidden');
             this.setMrl(null);
+            this.setFeatures(null);
             this.alternatives.innerHTML = '';
             this.area.innerHTML = '';
         }
@@ -321,7 +323,7 @@ window.onload = function() {
 
         setMrl(mrl) {
             if (mrl) {
-                this.form.querySelector("input[name='mrl']").value = mrl;
+                this.mrlForm.querySelector("input[name='mrl']").value = mrl;
 
                 const thisMrlEditBlock = this;
                 diagnoseProblems(mrlInfoBlock.nl, mrl, function(diagnoseResult) {
@@ -332,7 +334,7 @@ window.onload = function() {
                         const alts = tuple[2];
 
                         const li = document.createElement('li');
-                        const common_text = common ? '[Common] ' : '[Uncommon] ';
+                        const common_text = common ? '[Common] ' : '[Uncommon or non-existent] ';
                         li.appendChild(document.createTextNode(common_text));
                         li.appendChild(makeTag(key, val));
                         li.appendChild(document.createTextNode(': '));
@@ -362,7 +364,43 @@ window.onload = function() {
                     }
                 });
             } else {
-                this.form.querySelector("input[name='mrl']").value = '';
+                //this.mrlForm.querySelector("input[name='mrl']").value = '';
+                this.mrlForm.reset();
+            }
+        }
+
+        setFeatures(features) {
+            if (features && contains(['around_query', 'in_query'], features.query_type)) {
+                const query_type_select = this.featuresForm.querySelector("select[name='query_type']");
+                query_type_select.value = features.query_type;
+
+                this.featuresForm.querySelector("input[name='target_nwr']").value
+                    = JSON.stringify(features.target_nwr);
+                this.featuresForm.querySelector("select[name='qtype']").value
+                    = JSON.stringify(features.qtype);
+                this.featuresForm.querySelector("select[name='cardinal_direction']").value
+                    = features.cardinal_direction;
+
+                if (features.center_nwr) {
+                    this.featuresForm.querySelector("input[name='center_nwr']").value
+                        = JSON.stringify(features.center_nwr);
+                }
+                if (features.area) {
+                    this.featuresForm.querySelector("input[name='area']").value
+                        = features.area;
+                }
+                if (features.maxdist) {
+                    this.featuresForm.querySelector("input[name='maxdist']").value
+                        = features.maxdist;
+                }
+                if (features.around_topx) {
+                    this.featuresForm.querySelector("input[name='around_topx']").value
+                        = features.around_topx;
+                }
+
+                query_type_select.dispatchEvent(new Event('change'));
+            } else {
+                this.featuresForm.reset();
             }
         }
     }
@@ -426,8 +464,10 @@ window.onload = function() {
 
     const nlQueryForm = document.getElementById('nl-query-form');
     const mrlQueryForm = document.getElementById('mrl-query-form');
+    const queryFeaturesForm = document.getElementById('query-features-form');
     const confirmMrlButton = document.getElementById('confirm-mrl');
     const adjustMrlButton = document.getElementById('adjust-mrl');
+    const switchAdjustFormButton = document.getElementById('switch-adjust-form');
 
     // End globals
 
@@ -480,12 +520,17 @@ window.onload = function() {
 
     mrlQueryForm.onsubmit = function() {
         const formData = new FormData(this);
-        const mrl = formData.get('mrl')
+        const mrl = formData.get('mrl');
         answerBlock.reset();
         mrlEditBlock.reset();
 
         mrlInfoBlock.processMrl(mrl, true);
         return false;
+    };
+
+    queryFeaturesForm.onsubmit = function() {
+        // TODO
+        1;
     };
 
     confirmMrlButton.onclick = function(){
@@ -520,6 +565,42 @@ window.onload = function() {
         mrlEditBlock.show();
         return false;
     };
+
+    switchAdjustFormButton.onclick = function() {
+        if (mrlQueryForm.hidden) {
+            this.innerHTML = 'Switch to features form';
+            queryFeaturesForm.hidden = true;
+            mrlQueryForm.hidden = false;
+        } else {
+            this.innerHTML = 'Switch to MRL form';
+            queryFeaturesForm.hidden = false;
+            mrlQueryForm.hidden = true;
+        }
+    };
+
+    queryFeaturesForm.querySelector("select[name='query_type']")
+        .addEventListener('change', function() {
+            if (this.value === 'in_query') {
+                queryFeaturesForm.querySelector("input[name='area']").readonly = false;
+
+                queryFeaturesForm.querySelector("input[name='center_nwr']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = true;
+                queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
+            } else if (this.value === 'around_query') {
+                if (!queryFeaturesForm.querySelector("input[name='center_nwr']").value) {
+                    queryFeaturesForm.querySelector("input[name='area']").readonly = true;
+                }
+                queryFeaturesForm.querySelector("input[name='center_nwr']").hidden = false;
+                queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = false;
+                queryFeaturesForm.querySelector("input[name='maxdist']").hidden = false;
+                queryFeaturesForm.querySelector("label[for='maxdist']").hidden = false;
+                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = false;
+                queryFeaturesForm.querySelector("label[for='around_topx']").hidden = false;
+            }
+        });
 
     // End events
 };

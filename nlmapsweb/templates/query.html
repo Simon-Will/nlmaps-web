@@ -93,11 +93,28 @@
             <ul id="mrl-edit-help-area"></ul>
             <ul id="mrl-edit-help-alternatives"></ul>
         </div>
-        <form id="mrl-query-form" method="POST" action="/geojson">
-            {{ mrl_query_form.hidden_tag() }}
-            {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
-            <input type="submit" value="Resubmit">
-        </form>
+        <button id="switch-adjust-form">Switch to features form</button>
+        <div id="adjust-form-wrapper">
+            <form id="query-features-form" method="POST" action="/geojson" hidden>
+                {{ query_features_form.hidden_tag() }}
+                <div class="form-grid">
+                    {{ query_features_form.query_type.label }} {{ query_features_form.query_type }}
+                    {{ query_features_form.target_nwr.label }} {{ query_features_form.target_nwr(size=60) }}
+                    {{ query_features_form.center_nwr.label }} {{ query_features_form.center_nwr(size=60) }}
+                    {{ query_features_form.area.label }} {{ query_features_form.area(size=60) }}
+                    {{ query_features_form.maxdist.label }} {{ query_features_form.maxdist(size=60) }}
+                    {{ query_features_form.around_topx.label }} {{ query_features_form.around_topx(size=60) }}
+                    {{ query_features_form.qtype.label }} {{ query_features_form.qtype }}
+                    {{ query_features_form.cardinal_direction.label }} {{ query_features_form.cardinal_direction }}
+                </div>
+                <input type="submit" value="Resubmit">
+            </form>
+            <form id="mrl-query-form" method="POST" action="/geojson">
+                {{ mrl_query_form.hidden_tag() }}
+                {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
+                <input type="submit" value="Resubmit">
+            </form>
+        </div>
     </div>
 </div>
 

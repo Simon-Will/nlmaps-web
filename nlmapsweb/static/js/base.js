@@ -179,7 +179,7 @@ function makeFeaturesElm(features) {
             makeTableRow('Question Class', 'Thing in Area')
         );
         tableBody.appendChild(
-            makeTableRow('Target tags',
+            makeTableRow('Target Tags',
                          nwrFeaturesToTagString(features.target_nwr))
         );
         tableBody.appendChild(makeTableRow('Area', features.area));
@@ -201,22 +201,22 @@ function makeFeaturesElm(features) {
             makeTableRow('Question Class', 'Thing around Reference Point')
         );
         tableBody.appendChild(
-            makeTableRow('Target tags',
+            makeTableRow('Target Tags',
                          nwrFeaturesToTagString(features.target_nwr))
         );
         tableBody.appendChild(
-            makeTableRow('Reference point',
+            makeTableRow('Reference Point',
                          nwrFeaturesToTagString(features.center_nwr))
         );
         if (features.area) {
             tableBody.appendChild(makeTableRow('Area', features.area));
         }
         tableBody.appendChild(
-            makeTableRow('MaxDist', features.maxdist)
+            makeTableRow('Maximum Distance', features.maxdist)
         );
         if (features.around_topx) {
             tableBody.appendChild(
-                makeTableRow('Limit to at most', features.around_topx)
+                makeTableRow('Limit to at Most', features.around_topx)
             );
         }
         tableBody.appendChild(

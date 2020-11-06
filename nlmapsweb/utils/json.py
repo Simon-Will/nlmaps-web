@@ -7,5 +7,6 @@ class SymbolAwareJSONEncoder(json.JSONEncoder):
 
     def default(self, obj):
         if isinstance(obj, Symbol):
-            return 'SYMBOL: ' + str(obj)
+            #return 'SYMBOL[' + str(obj) + ']'
+            return str(obj)
         return super().default(obj)

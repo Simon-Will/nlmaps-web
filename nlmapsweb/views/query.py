@@ -1,8 +1,8 @@
 from flask import current_app, jsonify, render_template, request
 
 from nlmapsweb.app import db
-from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, MrlQueryForm,
-                             NlQueryForm)
+from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, QueryFeaturesForm,
+                             MrlQueryForm, NlQueryForm)
 from nlmapsweb.models import Feedback
 from nlmapsweb.processing.answering import AnswerResult
 from nlmapsweb.processing.diagnosing import DiagnoseResult
@@ -50,8 +50,13 @@ def answer_mrl():
 def query():
     nl_query_form = NlQueryForm()
     mrl_query_form = MrlQueryForm()
-    return render_template('query.html', mrl_query_form=mrl_query_form,
-                           nl_query_form=nl_query_form)
+    query_features_form = QueryFeaturesForm()
+    return render_template(
+        'query.html', mrl_query_form=mrl_query_form,
+        nl_query_form=nl_query_form,
+        query_features_form=query_features_form,
+
+    )
 
 
 @current_app.route('/diagnose', methods=['POST'])

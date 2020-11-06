@@ -50,6 +50,11 @@
     margin-bottom: 1em;
 }
 
+.form-grid {
+    display: grid;
+    grid-template-columns: min-content max-content;
+}
+
 /* https://www.color-hex.com/color-palette/895 */
 /*
 button {
@@ -120,4 +125,13 @@ button {
     border-color: lightblue;
     border-style: solid;
     border-width: medium;
+}
+
+label, input, select {
+    margin-bottom: 0.3em;
+    margin-top: 0.3em;
+}
+
+label {
+    margin-right: 0.5em;
 }
