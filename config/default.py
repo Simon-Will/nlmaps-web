@@ -37,9 +37,23 @@ PARSE_COMMANDS = {
             ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
             ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3beta.noise.plusv2_lin_char_cpu.yaml'
         )
-    ]
+    ],
+    'will_nlmaps_3gamma.noise.plusv2_lin_char': [
+        'ssh', 'last', (
+            'cd /home/students/will/public/ma/joeynmt;'
+            ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
+            ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_lin_char_cpu.yaml'
+        )
+    ],
+#    'will_nlmaps_3gamma.normal.plusv2_lin_char': [
+#        'ssh', 'last', (
+#            'cd /home/students/will/public/ma/joeynmt;'
+#            ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
+#            ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3gamma.normal.plusv2_lin_char_cpu.yaml'
+#        )
+#    ]
 }
-CURRENT_MODEL = 'staniek_nlmaps_lin_char'
+CURRENT_MODEL = 'will_nlmaps_3gamma.noise.plusv2_lin_char'
 
 ANSWER_COMMAND = [
     'ssh', 'cluster',

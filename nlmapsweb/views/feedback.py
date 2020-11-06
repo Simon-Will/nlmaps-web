@@ -2,8 +2,8 @@ from collections import Counter, namedtuple
 from io import BytesIO
 from zipfile import ZipFile
 
-from flask import (current_app, jsonify, redirect, render_template, request,
-                   send_file, url_for)
+from flask import (abort, current_app, jsonify, redirect, render_template,
+                   request, send_file, url_for)
 
 from nlmapsweb.app import db
 from nlmapsweb.models import Feedback, ParseLog, ParseTagging, Tag
@@ -24,7 +24,15 @@ FeedbackPiece = namedtuple(
 
 @current_app.route('/feedback/<id>', methods=['GET', 'POST'])
 def feedback_piece(id):
+    try:
+        id = int(id)
+    except ValueError:
+        abort(404)
+
     piece = Feedback.query.get(id)
+    if not piece:
+        abort(404)
+
     form = FeedbackForm(obj=piece)
     if form.validate_on_submit():
         piece.nl = form.nl.data
@@ -46,7 +54,15 @@ def feedback_piece(id):
 
 @current_app.route('/feedback/<id>/delete', methods=['GET'])
 def delete_feedback_piece(id):
+    try:
+        id = int(id)
+    except ValueError:
+        abort(404)
+
     piece = Feedback.query.get(id)
+    if not piece:
+        abort(404)
+
     if piece:
         db.session.delete(piece)
         db.session.commit()
@@ -105,7 +121,16 @@ def list_feedback():
         tag_plot = plot_tagged_percentages(tag_counts, total=len(feedback))
         tag_plot_b64 = fig_to_base64(tag_plot, 'jpg')
 
-    stats = Counter(piece.type for piece in feedback)
+    absolute_stats = Counter(piece.type for piece in feedback)
+    total = len(feedback)
+    relative_stats = {type: count / total
+                      for type, count in absolute_stats.items()}
+    stats = {
+        'absolute': absolute_stats,
+        'relative': relative_stats,
+        'total': total,
+        'accuracy': absolute_stats.get('correct', 0) / total,
+    }
 
     if request.args.get('types'):
         types = {type.strip() for type in request.args.get('types').split(',')}
@@ -156,6 +181,8 @@ def update_parse_taggings():
         ]
 
         for pt in ParseTagging.query.filter(
+                ParseTagging.feedback_id == feedback_id,
+                ParseTagging.parse_log_id == parse_log_id,
                 ParseTagging.tag_id.in_(tag_ids_to_delete)).all():
             db.session.delete(pt)
 

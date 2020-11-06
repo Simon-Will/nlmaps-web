@@ -5,7 +5,7 @@ from flask import current_app
 
 from nlmapsweb.app import db
 from nlmapsweb.models import ParseLog
-from nlmapsweb.processing.converting import functionalise
+from nlmapsweb.processing.converting import functionalise, mrl_to_features
 from nlmapsweb.processing.result import Result
 
 
@@ -44,6 +44,16 @@ class ParseResult(Result):
         db.session.add(log)
         db.session.commit()
 
+        self.features = None
+        if self.mrl:
+            features = mrl_to_features(mrl, is_escaped=False)
+            if features:
+                self.features = features
+            else:
+                current_app.logger.warning(
+                    'MrlGrammar could not parse mrl {!r}'.format(self.mrl)
+                )
+
     @classmethod
     def from_nl(cls, nl, model=None):
         model = model or current_app.config['CURRENT_MODEL']
@@ -61,4 +71,5 @@ class ParseResult(Result):
 
     def to_dict(self):
         return {'nl': self.nl, 'lin': self.lin, 'mrl': self.mrl,
-                'success': self.success, 'error': self.error}
+                'success': self.success, 'error': self.error,
+                'features': self.features}

@@ -11,29 +11,34 @@
     <input type="submit" value="Compare">
 </form>
 
-{% if stats['unparsed'] %}
-<p>There are {{ stats['unparsed'] }} unparsed queries.
+{% if stats['absolute']['unparsed'] %}
+<p>There are {{ stats['absolute']['unparsed'] }} unparsed queries.
     <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
 </p>
 {% endif %}
 
 <div class="row container-horizontal-flex">
-    <table>
-        <thead>
-            <tr>
-                <th>Type</th>
-                <th>Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for type, count in stats.items() %}
-            <tr>
-                <td>{{ type }}</td>
-                <td>{{ count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <div class="container-vertical-flex">
+        <table>
+            <thead>
+                <tr>
+                    <th>Type</th>
+                    <th>Count</th>
+                    <th>Percentage</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for type in stats['absolute'] %}
+                <tr>
+                    <td>{{ type }}</td>
+                    <td>{{ stats['absolute'][type] }}</td>
+                    <td>{{ '%.2f' | format(stats['relative'][type]) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <p>Accuracy: {{ '%.2f' | format(stats['accuracy']) }}</p>
+    </div>
     {% if tag_plot_b64 %}
     <img alt="Plot of tag percentages" src="data:image/jpeg;charset=utf-8;base64,{{ tag_plot_b64 }}">
     {% endif %}

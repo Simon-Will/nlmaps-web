@@ -7,7 +7,7 @@
     {% if prev_id %}
     <a href="{{ url_for('feedback_piece', id=prev_id) }}">Previous</a>
     {% endif %}
-    {% if prev_id %}
+    {% if next_id %}
     <a href="{{ url_for('feedback_piece', id=next_id) }}">Next</a>
     {% endif %}
 </div>

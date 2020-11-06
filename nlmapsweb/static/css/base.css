@@ -115,3 +115,9 @@ button {
     padding-bottom: 0.5em;
     border-top: solid 1pt #ccc;
 }
+
+.features-info {
+    border-color: lightblue;
+    border-style: solid;
+    border-width: medium;
+}

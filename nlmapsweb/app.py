@@ -5,6 +5,8 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
+from nlmapsweb.utils.json import SymbolAwareJSONEncoder
+
 csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
@@ -18,6 +20,8 @@ def create_app() -> Flask:
     init_migrate(app)
     init_views(app)
     import_models()
+
+    app.json_encoder = SymbolAwareJSONEncoder
     return app
 
 

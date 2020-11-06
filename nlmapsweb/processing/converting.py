@@ -1,8 +1,12 @@
 import traceback
 
 from flask import current_app
+import pyparsing
 
 from mrl import NLmaps
+from nlmaps_tools.parse_mrl import MrlGrammar
+
+MRL_GRAMMAR = MrlGrammar()
 
 
 def functionalise(lin):
@@ -31,3 +35,13 @@ def linearise(mrl):
 
 def delete_spaces(mrl):
     return NLmaps().delete_spaces(mrl)
+
+
+def mrl_to_features(mrl, is_escaped=False):
+    try:
+        parse_result = MRL_GRAMMAR.parseMrl(mrl, is_escaped=is_escaped)
+    except pyparsing.ParseException:
+        features = None
+    else:
+        features = parse_result['features']
+    return features

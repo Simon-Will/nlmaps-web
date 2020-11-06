@@ -169,18 +169,22 @@ window.onload = function() {
             this.nlElm = this.body.querySelector('#mrl-info-nl');
             this.linElm = this.body.querySelector('#mrl-info-lin');
             this.mrlElm = this.body.querySelector('#mrl-info-mrl');
+            this.featuresElm = this.body.querySelector('#mrl-info-features');
             this.judgementElm = this.body.querySelector('#mrl-judgement');
 
             this.nl = null;
             this.lin = null;
             this.mrl = null;
             this.systemMrl = null;
+            this.features = null;
+            this.systemFeatures = null;
         }
 
         reset() {
             this.nlElm.innerHTML = '';
             this.linElm.innerHTML = '';
             this.mrlElm.innerHTML = '';
+            this.featuresElm.innerHTML = '';
             this.element.hidden = true;
             this.hideJudgement();
         }
@@ -218,15 +222,22 @@ window.onload = function() {
                 this.systemMrl = '';
             }
 
+            if (parseResult.features) {
+                this.systemFeatures = parseResult.features;
+            } else {
+                this.systemFeatures = null;
+            }
+
             this.nlElm.innerHTML = htmlEscape(this.nl);
             this.linElm.innerHTML = htmlEscape(this.lin);
 
             this.setVisibility('expanded');
 
             this.processMrl(parseResult.mrl);
+            this.processFeatures(parseResult.features);
         }
 
-        processMrl(mrl) {
+        processMrl(mrl, processFeatures = false) {
             mrlEditBlock.setMrl(mrl);
 
             if (mrl) {
@@ -241,6 +252,48 @@ window.onload = function() {
                 this.showJudgement(true);
 
                 messagesBlock.addMessage('Did not receive MRL.', true);
+            }
+            if (processFeatures) {
+                this.retrieveAndProcessFeatures(mrl);
+            }
+        }
+
+        processFeatures(features) {
+           // TODO: mrlEditBlock.setFeatures(features);
+
+            if (features) {
+                this.features = features;
+                this.featuresElm.innerHTML = '';
+                this.featuresElm.appendChild(makeFeaturesElm(features));
+            } else {
+                this.features = null;
+                this.featuresElm.innerHTML = '';
+
+                messagesBlock.addMessage('Did not receive features.', true);
+            }
+        }
+
+        retrieveAndProcessFeatures(mrl) {
+            if (mrl) {
+                const formData = new FormData();
+                formData.append('mrl', mrl);
+                formData.append('csrf_token', CSRF_TOKEN);
+
+                const thisBlock = this;
+                const xhr = new XMLHttpRequest();
+                xhr.onreadystatechange = function() {
+                    if (xhr.readyState === XMLHttpRequest.DONE) {
+                        if (xhr.status === 200) {
+                            const features = JSON.parse(xhr.responseText);
+                            thisBlock.processFeatures(features);
+                        } else {
+                            messagesBlock.addMessage('Retrieving features failed.',
+                                                     true);
+                        }
+                    }
+                };
+                xhr.open('POST', 'http://localhost:5000/mrl_to_features');
+                xhr.send(formData);
             }
         }
     }
@@ -427,9 +480,11 @@ window.onload = function() {
 
     mrlQueryForm.onsubmit = function() {
         const formData = new FormData(this);
+        const mrl = formData.get('mrl')
         answerBlock.reset();
         mrlEditBlock.reset();
-        mrlInfoBlock.processMrl(formData.get('mrl'));
+
+        mrlInfoBlock.processMrl(mrl, true);
         return false;
     };
 
