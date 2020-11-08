@@ -2,7 +2,7 @@ from wtforms import HiddenField, SelectMultipleField
 
 from nlmapsweb.app import db
 from nlmapsweb.forms.base import BaseForm
-from nlmapsweb.forms.fields.string_list import StringListField
+from nlmapsweb.forms.fields import StringListField
 from nlmapsweb.models.tags import Tag
 from nlmapsweb.models.parse_taggings import ParseTagging
 

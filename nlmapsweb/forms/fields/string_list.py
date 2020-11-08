@@ -3,6 +3,7 @@ from typing import List, Optional
 from wtforms import Field
 from wtforms.widgets import TextInput
 
+
 class StringListField(Field):
     """Field for representing a list of strings
 

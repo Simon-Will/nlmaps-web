@@ -6,7 +6,8 @@ from nlmapsweb.forms import (DiagnoseForm, FeedbackForm, QueryFeaturesForm,
 from nlmapsweb.models import Feedback
 from nlmapsweb.processing.answering import AnswerResult
 from nlmapsweb.processing.diagnosing import DiagnoseResult
-from nlmapsweb.processing.converting import delete_spaces, mrl_to_features
+from nlmapsweb.processing.converting import (delete_spaces, features_to_mrl,
+                                             mrl_to_features)
 from nlmapsweb.processing.parsing import ParseResult
 
 
@@ -18,6 +19,26 @@ def mrl_to_features_view():
         features = mrl_to_features(mrl)
         if features:
             return jsonify(features), 200
+    return 'Bad Request', 400
+
+
+@current_app.route('/features_to_mrl', methods=['POST'])
+def features_to_mrl_view():
+    form = QueryFeaturesForm()
+    print(request.form)
+    if form.validate_on_submit():
+        print(form.data)
+        features = form.get_features()
+        mrl = features_to_mrl(features)
+        if mrl:
+            return mrl, 200
+    if form.validate():
+        print('VALID')
+    else:
+        print('INVALID')
+    print(form.errors)
+    if form.errors:
+        return jsonify(form.errors), 400
     return 'Bad Request', 400
 
 

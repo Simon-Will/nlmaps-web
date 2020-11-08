@@ -4,6 +4,7 @@ from flask import current_app
 import pyparsing
 
 from mrl import NLmaps
+from nlmaps_tools.generate_mrl import generate_from_features
 from nlmaps_tools.parse_mrl import MrlGrammar
 
 MRL_GRAMMAR = MrlGrammar()
@@ -45,3 +46,7 @@ def mrl_to_features(mrl, is_escaped=False):
     else:
         features = parse_result['features']
     return features
+
+
+def features_to_mrl(features, escape=False):
+    return generate_from_features(features, escape=escape)

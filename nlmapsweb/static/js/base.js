@@ -10,6 +10,13 @@ function htmlEscape(str) {
         .replace(/\//g, '&#x2F;');
 }
 
+function htmlToElem(html) {
+    let temp = document.createElement('template');
+    html = html.trim(); // Never return a space text node as a result
+    temp.innerHTML = html;
+    return temp.content.firstChild;
+}
+
 function contains(array, elm) {
     return array.indexOf(elm) >= 0;
 }
@@ -41,20 +48,43 @@ function makeTag(key, val, makeLink = false) {
     return tagElm;
 }
 
+function canonicalizeNwrFeatures(nwrFeatures) {
+    // Convert [['religion', ['or', 'christian', 'muslim']]]
+    // into [['religion', 'christian'], ['religion', 'muslim']]
+    const parts = [];
+    for (let feat of nwrFeatures) {
+        if (contains(['or', 'and'], feat[0]) && Array.isArray(feat[1])) {
+            const part = [feat[0]].concat(canonicalizeNwr([feat.slice(1)]));
+            parts.push(part);
+        } else if (feat.length === 2 && Array.isArray(feat[1])
+                   && feat[1][0] === 'or') {
+            for (let value of feat[1].slice(1)) {
+                parts.push([feat[0], value]);
+            }
+        } else if (feat.length === 2 && feat.every(isString)) {
+            parts.push([feat[0], feat[1]]);
+        } else {
+            console.log('[canonicalizeNwr] Unexpected nwrFeatures feat:', feat);
+            parts.push(JSON.stringify(feat));
+        }
+    }
+    return parts;
+}
+
 function nwrFeaturesToTagString(nwrFeatures) {
     const parts = [];
     for (let feat of nwrFeatures) {
         if (contains(['or', 'and'], feat[0]) && Array.isArray(feat[1])) {
-            let part = feat[0] + '(' + nwrFeaturesToTagString(feat.slice(1)) + ')';
+            const part = feat[0] + '(' + nwrFeaturesToTagString(feat.slice(1)) + ')';
             parts.push(part);
         } else if (feat.length === 2 && Array.isArray(feat[1])
                    && feat[1][0] === 'or') {
-            let part = feat[0] + '=or(' + feat[1].slice(1).join(',') + ')';
+            const part = feat[0] + '=or(' + feat[1].slice(1).join(',') + ')';
             parts.push(part);
         } else if (feat.length === 2 && feat.every(isString)) {
             parts.push(feat[0] + '=' + feat[1]);
         } else {
-            console.log('Unexpected nwrFeatures feat:', feat);
+            console.log('[nwrFeaturesToTagString] Unexpected nwrFeatures feat:', feat);
             parts.push(JSON.stringify(feat));
         }
     }

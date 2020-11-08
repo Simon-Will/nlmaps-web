@@ -99,8 +99,8 @@
                 {{ query_features_form.hidden_tag() }}
                 <div class="form-grid">
                     {{ query_features_form.query_type.label }} {{ query_features_form.query_type }}
-                    {{ query_features_form.target_nwr.label }} {{ query_features_form.target_nwr(size=60) }}
-                    {{ query_features_form.center_nwr.label }} {{ query_features_form.center_nwr(size=60) }}
+                    {{ query_features_form.target_nwr.label }} {{ query_features_form.target_nwr(size=60, hidden=True) }}
+                    {{ query_features_form.center_nwr.label }} {{ query_features_form.center_nwr(size=60, hidden=True) }}
                     {{ query_features_form.area.label }} {{ query_features_form.area(size=60) }}
                     {{ query_features_form.maxdist.label }} {{ query_features_form.maxdist(size=60) }}
                     {{ query_features_form.around_topx.label }} {{ query_features_form.around_topx(size=60) }}

@@ -374,8 +374,10 @@ window.onload = function() {
                 const query_type_select = this.featuresForm.querySelector("select[name='query_type']");
                 query_type_select.value = features.query_type;
 
-                this.featuresForm.querySelector("input[name='target_nwr']").value
-                    = JSON.stringify(features.target_nwr);
+                const targetNwrInput = this.featuresForm.querySelector("input[name='target_nwr']");
+                targetNwrInput.value = JSON.stringify(features.target_nwr);
+                targetNwrSuperField.setNwrFeatures(features.target_nwr);
+
                 this.featuresForm.querySelector("select[name='qtype']").value
                     = JSON.stringify(features.qtype);
                 this.featuresForm.querySelector("select[name='cardinal_direction']").value
@@ -384,6 +386,7 @@ window.onload = function() {
                 if (features.center_nwr) {
                     this.featuresForm.querySelector("input[name='center_nwr']").value
                         = JSON.stringify(features.center_nwr);
+                    centerNwrSuperField.setNwrFeatures(features.center_nwr);
                 }
                 if (features.area) {
                     this.featuresForm.querySelector("input[name='area']").value
@@ -469,6 +472,14 @@ window.onload = function() {
     const adjustMrlButton = document.getElementById('adjust-mrl');
     const switchAdjustFormButton = document.getElementById('switch-adjust-form');
 
+    const targetNwrSuperField = new NwrSuperField('target_nwr');
+    queryFeaturesForm.querySelector("input[name='target_nwr']")
+        .insertAdjacentElement('beforebegin', targetNwrSuperField.root);
+
+    const centerNwrSuperField = new NwrSuperField('center_nwr');
+    queryFeaturesForm.querySelector("input[name='center_nwr']")
+        .insertAdjacentElement('beforebegin', centerNwrSuperField.root);
+
     // End globals
 
     // Begin events
@@ -529,8 +540,42 @@ window.onload = function() {
     };
 
     queryFeaturesForm.onsubmit = function() {
-        // TODO
-        1;
+        const formData = new FormData(this);
+        const keys = Array.from(formData.keys());
+        for (let key of keys) {
+            if (key.startsWith('target_nwr') || key.startsWith('center_nwr')) {
+                formData.delete(key);
+            }
+        }
+        formData.set('target_nwr',
+                     JSON.stringify(targetNwrSuperField.getNwrFeatures()));
+        formData.set('center_nwr',
+                     JSON.stringify(centerNwrSuperField.getNwrFeatures()));
+
+        answerBlock.reset();
+        mrlEditBlock.reset();
+
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const mrl = xhr.responseText;
+                    mrlInfoBlock.processMrl(mrl, true);
+                } else {
+                    let msg = '';
+                    try {
+                        msg =  'Retrieving mrl failed: ' + xhr.responseText;
+                    } catch (SyntaxError) {
+                        msg = 'Retrieving mrl failed.';
+                    }
+                    messagesBlock.addMessage(msg, true);
+                }
+            }
+        };
+        xhr.open('POST', 'http://localhost:5000/features_to_mrl');
+        xhr.send(formData);
+
+        return false;
     };
 
     confirmMrlButton.onclick = function(){
@@ -583,7 +628,7 @@ window.onload = function() {
             if (this.value === 'in_query') {
                 queryFeaturesForm.querySelector("input[name='area']").readonly = false;
 
-                queryFeaturesForm.querySelector("input[name='center_nwr']").hidden = true;
+                centerNwrSuperField.root.hidden = true;
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = true;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
@@ -593,7 +638,7 @@ window.onload = function() {
                 if (!queryFeaturesForm.querySelector("input[name='center_nwr']").value) {
                     queryFeaturesForm.querySelector("input[name='area']").readonly = true;
                 }
-                queryFeaturesForm.querySelector("input[name='center_nwr']").hidden = false;
+                centerNwrSuperField.root.hidden = false;
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = false;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = false;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = false;
@@ -601,6 +646,5 @@ window.onload = function() {
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = false;
             }
         });
-
     // End events
 };
