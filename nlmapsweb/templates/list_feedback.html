@@ -42,6 +42,24 @@
     {% if tag_plot_b64 %}
     <img alt="Plot of tag percentages" src="data:image/jpeg;charset=utf-8;base64,{{ tag_plot_b64 }}">
     {% endif %}
+    {% if tag_count_stats %}
+    <table>
+        <thead>
+            <tr>
+                <th>Tags on Feedback</th>
+                <th>Instance Count</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for tag_count, instance_count in tag_count_stats.items() %}
+            <tr>
+                <td>{{ tag_count }}</td>
+                <td>{{ instance_count }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
 </div>
 
 <div class="row container-vertical-flex">

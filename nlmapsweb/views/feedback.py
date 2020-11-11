@@ -1,4 +1,4 @@
-from collections import Counter, namedtuple
+from collections import Counter, defaultdict, namedtuple
 from io import BytesIO
 from zipfile import ZipFile
 
@@ -82,6 +82,7 @@ def list_feedback():
     feedback = Feedback.query.all()
     tag_forms = None
     tag_plot_b64 = None
+    tag_count_stats = None
 
     model = parsing_model_form.data['model']
     if model:
@@ -121,6 +122,11 @@ def list_feedback():
         tag_plot = plot_tagged_percentages(tag_counts, total=len(feedback))
         tag_plot_b64 = fig_to_base64(tag_plot, 'jpg')
 
+        tag_count_stats = defaultdict(lambda: 0)
+        for tag_form in tag_forms.values():
+            number_of_tags = len(tag_form.tags.data)
+            tag_count_stats[number_of_tags] += 1
+
     absolute_stats = Counter(piece.type for piece in feedback)
     total = len(feedback)
     relative_stats = {type: count / total
@@ -148,7 +154,8 @@ def list_feedback():
     return render_template(
         'list_feedback.html', feedback=feedback, model=model,
         parsing_model_form=parsing_model_form, stats=stats,
-        tag_forms=tag_forms, tag_plot_b64=tag_plot_b64
+        tag_forms=tag_forms, tag_plot_b64=tag_plot_b64,
+        tag_count_stats=tag_count_stats
     )
 
 
