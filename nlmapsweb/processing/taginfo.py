@@ -9,6 +9,7 @@ TAGS = None
 
 REV_TAGS = None
 
+
 def ensure_tags_loaded():
     global TAGS
     global REV_TAGS

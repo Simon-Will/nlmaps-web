@@ -10,7 +10,7 @@ from nlmapsweb.models import Feedback, ParseLog, ParseTagging, Tag
 from nlmapsweb.processing.converting import linearise
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.forms.parse_taggings import ParseTaggingForm
-from nlmapsweb.forms.feedback import FeedbackForm
+from nlmapsweb.forms.feedback import FeedbackExportForm, FeedbackForm
 from nlmapsweb.forms.parsing_model import ParsingModelForm
 from nlmapsweb.utils.plotting import fig_to_base64, plot_tagged_percentages
 
@@ -20,6 +20,32 @@ FeedbackPiece = namedtuple(
     ('id', 'parse_log_id', 'nl', 'correctMrl', 'systemMrl', 'type',
      'opcodes_json')
 )
+
+
+def get_model_bound_feedback(model, feedback):
+    pieces = []
+    for fpiece in feedback:
+        piece = {'id': fpiece.id, 'nl': fpiece.nl,
+                 'correctMrl': fpiece.correctMrl}
+        parse_log = ParseLog.query.filter(
+            ParseLog.model == model, ParseLog.nl == fpiece.nl
+        ).first()
+
+        if parse_log:
+            piece['parse_log_id'] = parse_log.id
+            piece['systemMrl'] = parse_log.mrl
+            piece['opcodes_json'] = get_opcodes(
+                parse_log.mrl, fpiece.correctMrl, as_json=True)
+            piece['type'] = get_feedback_type(parse_log.mrl,
+                                              fpiece.correctMrl)
+        else:
+            piece['parse_log_id'] = None
+            piece['opcodes_json'] = 'null'
+            piece['type'] = 'unparsed'
+            piece['systemMrl'] = None
+
+        pieces.append(FeedbackPiece(**piece))
+    return pieces
 
 
 @current_app.route('/feedback/<id>', methods=['GET', 'POST'])
@@ -86,29 +112,7 @@ def list_feedback():
 
     model = parsing_model_form.data['model']
     if model:
-        pieces = []
-        for fpiece in feedback:
-            piece = {'id': fpiece.id, 'nl': fpiece.nl,
-                     'correctMrl': fpiece.correctMrl}
-            parse_log = ParseLog.query.filter(
-                ParseLog.model == model, ParseLog.nl == fpiece.nl
-            ).first()
-
-            if parse_log:
-                piece['parse_log_id'] = parse_log.id
-                piece['systemMrl'] = parse_log.mrl
-                piece['opcodes_json'] = get_opcodes(
-                    parse_log.mrl, fpiece.correctMrl, as_json=True)
-                piece['type'] = get_feedback_type(parse_log.mrl,
-                                                  fpiece.correctMrl)
-            else:
-                piece['parse_log_id'] = None
-                piece['opcodes_json'] = 'null'
-                piece['type'] = 'unparsed'
-                piece['systemMrl'] = None
-
-            pieces.append(FeedbackPiece(**piece))
-        feedback = pieces
+        feedback = get_model_bound_feedback(model, feedback)
 
         tag_forms = {
             piece.id: ParseTaggingForm(feedback_id=piece.id,
@@ -151,11 +155,16 @@ def list_feedback():
                     if piece.type == 'incorrect'
                     and not tag_forms[piece.id].tags.data]
 
+    feedback_export_form = FeedbackExportForm()
+    if model:
+        feedback_export_form.model.process_data(model)
+
     return render_template(
         'list_feedback.html', feedback=feedback, model=model,
         parsing_model_form=parsing_model_form, stats=stats,
         tag_forms=tag_forms, tag_plot_b64=tag_plot_b64,
-        tag_count_stats=tag_count_stats
+        tag_count_stats=tag_count_stats,
+        feedback_export_form=feedback_export_form
     )
 
 
@@ -208,12 +217,25 @@ def update_parse_taggings():
 def export_feedback():
     feedback = Feedback.query.all()
 
+    form = FeedbackExportForm(request.args)
+    use_correct = form.correct.data
+    use_incorrect = form.incorrect.data
+
+    model = form.model.data
+    if model:
+        feedback = get_model_bound_feedback(model, feedback)
+
     english = []
     system = []
     correct = []
     system_lin = []
     correct_lin = []
     for piece in feedback:
+        is_correct = piece.type == 'correct'
+        if (is_correct and not use_correct
+                or not is_correct and not use_incorrect):
+            continue
+
         if piece.correctMrl:
             english.append(piece.nl)
             correct.append(piece.correctMrl)
@@ -243,4 +265,5 @@ def export_feedback():
 
     return send_file(
         memory_file, attachment_filename='nlmaps_web.zip',
-                     mimetype='application/zip', as_attachment=True)
+        mimetype='application/zip', as_attachment=True
+    )

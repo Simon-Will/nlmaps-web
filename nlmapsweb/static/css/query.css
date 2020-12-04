@@ -70,3 +70,41 @@
 .remove-nwr-super-field-field {
     color: red;
 }
+
+#mrl-edit-help-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+}
+
+.mrl-edit-help {
+    border: solid 1pt #ccc;
+    margin: 0.5em;
+    padding: 0.5em;
+}
+
+.mrl-edit-help-title {
+    font-size: smaller;
+}
+
+.mrl-edit-help-tag-finder-tag-container {
+    display: flex;
+    flex-direction: horizontal;
+    padding: 0;
+    margin: 0.2em;
+    border: solid 1pt #ccc;
+}
+
+.mrl-edit-help-tag-finder-tag-text {
+    padding: 0.1em;
+    list-style: none;
+}
+
+.mrl-edit-help-tag-finder-tag-img {
+    padding: 0.1em;
+}
+
+.mrl-edit-help-tag-finder-tag-img img{
+    max-width: 100%;
+    height: auto;
+    width: auto;
+}

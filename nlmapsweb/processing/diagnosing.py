@@ -3,9 +3,12 @@ import re
 from flask import current_app
 import requests
 
+from nlmapsweb.processing.converting import mrl_to_features
 from nlmapsweb.processing.result import Result
+from nlmapsweb.processing.stop_words import is_stop_word
 from nlmapsweb.processing.taginfo import (find_alternatives, get_key_val_pairs,
                                           tag_is_common)
+from nlmapsweb.processing.tf_idf import get_tf_idf_scores, load_tf_idf_pipeline
 
 
 def get_area_name(mrl):
@@ -24,15 +27,22 @@ def count_areas(name):
 
 class DiagnoseResult(Result):
 
-    def __init__(self, success, nl, mrl, alternatives, area, error=None):
+    def __init__(self, success, nl, mrl, alternatives, area, tf_idf_scores,
+                 error=None):
         super().__init__(success, error)
         self.nl = nl
         self.mrl = mrl
         self.alternatives = alternatives
         self.area = area
+        self.tf_idf_scores = tf_idf_scores
 
     @classmethod
     def from_nl_mrl(cls, nl, mrl):
+        success = True
+        error = None
+        alternatives = None
+        tf_idf_scores = None
+
         try:
             # This could just as well be a dict from the (key, val) tuple to
             # the alternatives list. But in json, we need string keys, so we
@@ -48,8 +58,35 @@ class DiagnoseResult(Result):
                          find_alternatives(val))
                     )
         except:
+            success = False
             error = 'Failed to check key value pairs.'
-            return cls(False, nl, mrl, {}, None, error=error)
+            #return cls(success=False, nl=nl, mrl=mrl, alternatives={},
+            #           area=None, tf_idf_scores=None, error=error)
+
+        tf_idf_pipeline_file = current_app.config.get('TF_IDF_PIPELINE')
+        if tf_idf_pipeline_file:
+            pipeline = load_tf_idf_pipeline(tf_idf_pipeline_file)
+            if pipeline:
+                tf_idf_scores = get_tf_idf_scores(pipeline, nl)
+
+        if tf_idf_scores:
+            features = mrl_to_features(mrl)
+            tokens_to_be_deleted = []
+            if features:
+                if 'area' in features:
+                    tokens_to_be_deleted.extend([
+                        token.lower() for token in features['area'].split()
+                    ])
+                if 'center_nwr' in features:
+                    for tag in features['center_nwr']:
+                        if isinstance(tag, tuple) and tag[0] == 'name':
+                            tokens_to_be_deleted.extend([
+                                token.lower() for token in tag[1].split()
+                            ])
+            tokens = list(tf_idf_scores.keys())
+            for token in tokens:
+                if token in tokens_to_be_deleted or is_stop_word(token):
+                    del tf_idf_scores[token]
 
         area_name = get_area_name(mrl)
         if area_name:
@@ -58,8 +95,10 @@ class DiagnoseResult(Result):
         else:
             area = None
 
-        return cls(True, nl, mrl, alternatives, area)
+        return cls(success=True, nl=nl, mrl=mrl, alternatives=alternatives,
+                   area=area, tf_idf_scores=tf_idf_scores)
 
     def to_dict(self):
         return {'nl': self.nl, 'mrl': self.mrl,
-                'alternatives': self.alternatives, 'area': self.area}
+                'alternatives': self.alternatives, 'area': self.area,
+                'tf_idf_scores': self.tf_idf_scores}

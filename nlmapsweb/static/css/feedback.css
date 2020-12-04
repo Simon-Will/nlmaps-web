@@ -52,3 +52,7 @@
 .highlight-insert {
     background-color: forestgreen;
 }
+
+.feedback-export-form {
+    padding: 1em;
+}

@@ -54,7 +54,7 @@ function canonicalizeNwrFeatures(nwrFeatures) {
     const parts = [];
     for (let feat of nwrFeatures) {
         if (contains(['or', 'and'], feat[0]) && Array.isArray(feat[1])) {
-            const part = [feat[0]].concat(canonicalizeNwr([feat.slice(1)]));
+            const part = [feat[0]].concat(canonicalizeNwrFeatures(feat.slice(1)));
             parts.push(part);
         } else if (feat.length === 2 && Array.isArray(feat[1])
                    && feat[1][0] === 'or') {

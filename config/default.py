@@ -23,7 +23,8 @@ MA_DIR = Path('/home/gorgor/ma')
 
 MOST_COMMON_TAGS = MA_DIR / 'data/most_common_tags/most_common_tags.json'
 
-PARSE_COMMANDS = {
+JOEY_DIR = MA_DIR / 'joeynmt'
+MODELS = {
     'staniek_nlmaps_lin_char': [
         'ssh', 'last', (
             'cd /home/students/will/public/ma/joeynmt;'
@@ -45,20 +46,26 @@ PARSE_COMMANDS = {
             ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_lin_char_cpu.yaml'
         )
     ],
-#    'will_nlmaps_3gamma.normal.plusv2_lin_char': [
-#        'ssh', 'last', (
-#            'cd /home/students/will/public/ma/joeynmt;'
-#            ' /home/students/will/.virtualenvs/ma-last/bin/python3 -m joeynmt translate'
-#            ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3gamma.normal.plusv2_lin_char_cpu.yaml'
-#        )
-#    ]
+    #'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': [
+    #    'ssh', 'cluster', (
+    #        'cd /home/students/will/ma/joeynmt;'
+    #        ' /opt/slurm/bin/srun -J nlmapsweb-auto-job -p compute --mem 2GB'
+    #        ' /home/students/will/anaconda3/envs/ma/bin/python3 -m joeynmt translate'
+    #        ' /home/students/will/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5_cpu.yaml'
+    #    )
+    #],
+    'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': JOEY_DIR / 'configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5.yaml',
 }
-CURRENT_MODEL = 'will_nlmaps_3gamma.noise.plusv2_lin_char'
+
+CURRENT_MODEL = 'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5'
 
 ANSWER_COMMAND = [
     'ssh', 'cluster',
     '/opt/slurm/bin/srun -J overpass-query -p main /home/students/will/get_geojson.sh'
 ]
+
+TF_IDF_PIPELINE = MA_DIR / 'data/tf_idf_pipeline.pickle'
+STOP_WORDS = MA_DIR / 'data/stopwords.txt'
 
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     (Path(os.path.dirname(__file__)) / '../nlmapsweb.db').resolve()

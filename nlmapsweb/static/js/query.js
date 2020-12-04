@@ -120,6 +120,7 @@ window.onload = function() {
             if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 200) {
                     const diagnoseResult = JSON.parse(xhr.responseText);
+                    console.log(diagnoseResult.tf_idf_scores);
                     callback(diagnoseResult);
                 } else {
                     messagesBlock.addMessage('Diagnosing failed.', true);
@@ -129,6 +130,96 @@ window.onload = function() {
         xhr.open('POST', 'http://localhost:5000/diagnose');
         xhr.send(formData);
         return false;
+    }
+
+    function makeMrlEditHelp(title, content = null) {
+        const titleElm = document.createElement('span');
+        titleElm.appendChild(document.createTextNode(title));
+        titleElm.classList.add('mrl-edit-help-title');
+
+        if (content === null) {
+            content = document.createElement('div');
+        }
+
+        const mrlEditHelp = document.createElement('div');
+        mrlEditHelp.classList.add('mrl-edit-help');
+        mrlEditHelp.appendChild(titleElm);
+        mrlEditHelp.appendChild(content);
+
+        return mrlEditHelp;
+    }
+
+    function makeSingleTagHelp(tagInfo) {
+        const help = document.createElement('div');
+        help.classList.add('mrl-edit-help-tag-finder-tag-container');
+
+        const text = document.createElement('ul');
+        text.classList.add('mrl-edit-help-tag-finder-tag-text');
+
+        const name = document.createElement('li');
+        let nameContent = tagInfo.prefLabel;
+        if (tagInfo.isKey) {
+            nameContent += '=*';
+        }
+        const link = document.createElement('a');
+        link.appendChild(document.createTextNode(nameContent));
+        link.href = tagInfo.subject;
+        name.appendChild(link);
+
+        const description = document.createElement('li');
+        description.style = 'font-style: italic;';
+        description.appendChild(document.createTextNode(tagInfo.scopeNote.en));
+
+        const count = document.createElement('li');
+        count.appendChild(document.createTextNode('Count: ' + tagInfo.countAll));
+
+        text.appendChild(name);
+        text.appendChild(description);
+        text.appendChild(count);
+
+        help.appendChild(text);
+
+        if (tagInfo.depiction) {
+            const imgDiv = document.createElement('div');
+            imgDiv.classList.add('mrl-edit-help-tag-finder-tag-img');
+            const img = document.createElement('img');
+            img.setAttribute('src', tagInfo.depiction);
+            img.setAttribute('alt', 'Depiction of ' + nameContent);
+            imgDiv.appendChild(img);
+            help.appendChild(imgDiv);
+        }
+
+        return help;
+    }
+
+    function makeTagFinderHelp(keyword, foundTags) {
+        const content = document.createElement('div');
+        content.classList.add('mrl-edit-help-tag-finder');
+        for (let tag of foundTags.slice(0, 3)) {
+            content.appendChild(makeSingleTagHelp(tag));
+        }
+        const title = 'Tag candidates for “' + keyword + '”';
+        return makeMrlEditHelp(title, content);
+    }
+
+    function appendTagFinderHelp(keyword, parent) {
+        const url = new URL(TAGFINDER_URL);
+        url.searchParams.set('query', keyword);
+
+        const xhr = new XMLHttpRequest();
+        xhr.onreadystatechange = function() {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 200) {
+                    const foundTags = JSON.parse(xhr.responseText);
+                    if (foundTags) {
+                        const editHelp = makeTagFinderHelp(keyword, foundTags);
+                        parent.appendChild(editHelp);
+                    }
+                }
+            }
+        };
+        xhr.open('GET', url.toString());
+        xhr.send();
     }
 
     class MessagesBlock extends Block {
@@ -190,6 +281,8 @@ window.onload = function() {
         }
 
         hideJudgement() {
+            // TODO: For some reason, the judgementElm is still visible after
+            // this step.
             this.judgementElm.hidden = true;
             this.judgementElm.querySelector('#adjust-mrl').hidden = false;
             this.judgementElm.querySelector('#confirm-mrl').hidden = false;
@@ -307,6 +400,7 @@ window.onload = function() {
                 .querySelector('#mrl-edit-help-alternatives');
             this.area = this.body
                 .querySelector('#mrl-edit-help-area');
+            this.mrlEditHelpContainer = this.body.querySelector('#mrl-edit-help-container');
         }
 
         reset() {
@@ -315,6 +409,11 @@ window.onload = function() {
             this.setFeatures(null);
             this.alternatives.innerHTML = '';
             this.area.innerHTML = '';
+            this.mrlEditHelpContainer
+                .querySelectorAll('.mrl-edit-help-tag-finder')
+                .forEach(function(tagFinderHelp) {
+                    tagFinderHelp.parentNode.remove();
+                });
         }
 
         show() {
@@ -343,8 +442,9 @@ window.onload = function() {
                             li.appendChild(tags[i]);
                             li.appendChild(document.createTextNode(', '));
                         }
-                        // TODO: Fix: arg1 not an object
-                        li.appendChild(tags[tags.length - 1]);
+                        if (tags.length > 0) {
+                            li.appendChild(tags[tags.length - 1]);
+                        }
 
                         thisMrlEditBlock.alternatives.appendChild(li);
                     });
@@ -361,6 +461,17 @@ window.onload = function() {
                         }
                     } else {
                         thisMrlEditBlock.area.innerHTML = 'Problem with area query.';
+                    }
+
+                    if (diagnoseResult.tf_idf_scores) {
+                        for (let token in diagnoseResult.tf_idf_scores) {
+                            const score = diagnoseResult.tf_idf_scores[token];
+                            console.log(token, score);
+                            if (score > 0.3) {
+                                appendTagFinderHelp(
+                                    token, thisMrlEditBlock.mrlEditHelpContainer);
+                            }
+                        }
                     }
                 });
             } else {
@@ -457,6 +568,7 @@ window.onload = function() {
 
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
           .getAttribute('content');
+    const TAGFINDER_URL = 'https://tagfinder.herokuapp.com/api/search';
 
     const infoBlock = new Block(document.getElementById('info-block'));
     const nlQueryBlock = new Block(document.getElementById('nl-query-block'));
