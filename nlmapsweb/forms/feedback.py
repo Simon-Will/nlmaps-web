@@ -10,7 +10,7 @@ class FeedbackExportForm(BaseForm):
         super().__init__(*args, **kwargs)
         self.model.choices = [
             (model, model)
-            for model in current_app.config['PARSE_COMMANDS'].keys()
+            for model in current_app.config['MODELS'].keys()
         ]
 
     model = SelectField('Reference Model', choices=[])
