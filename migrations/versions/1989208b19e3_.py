@@ -22,7 +22,8 @@ def upgrade():
     sa.Column('id', sa.Integer(), autoincrement=True, nullable=False),
     sa.Column('created', sa.DateTime(timezone=True), nullable=False),
     sa.Column('name', sa.Unicode(length=100), nullable=False),
-    sa.PrimaryKeyConstraint('id')
+    sa.PrimaryKeyConstraint('id'),
+    sa.UniqueConstraint('name')
     )
     op.create_table('feedback_tag_association',
     sa.Column('feedback_id', sa.Integer(), nullable=True),

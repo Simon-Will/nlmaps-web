@@ -7,8 +7,15 @@ from flask import current_app
 from nlmapsweb.app import db
 from nlmapsweb.models import ParseLog
 from nlmapsweb.processing.converting import functionalise, mrl_to_features
-from nlmapsweb.processing.joeynmt_wrapper import joey_parse
 from nlmapsweb.processing.result import Result
+
+joey_parse = None
+
+
+def load_joeynmt():
+    global joey_parse
+    if not joey_parse:
+        from nlmapsweb.processing.joeynmt_wrapper import joey_parse
 
 
 def parse_to_lin_by_cmd(nl_query, cmd):
@@ -33,6 +40,7 @@ def parse_to_lin(nl_query, model=None):
         result = parse_to_lin_by_cmd(nl_query, model_action)
     elif os.path.isfile(model_action):
         # It is a config path, i.e. enables local joeynmt execution.
+        load_joeynmt()
         result = joey_parse(nl_query, model_action)
     elif model_action is None:
         current_app.logger.warning('Could not find {} in MODELS'.format(model))

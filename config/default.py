@@ -46,15 +46,15 @@ MODELS = {
             ' /home/students/will/public/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_lin_char_cpu.yaml'
         )
     ],
-    #'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': [
-    #    'ssh', 'cluster', (
-    #        'cd /home/students/will/ma/joeynmt;'
-    #        ' /opt/slurm/bin/srun -J nlmapsweb-auto-job -p compute --mem 2GB'
-    #        ' /home/students/will/anaconda3/envs/ma/bin/python3 -m joeynmt translate'
-    #        ' /home/students/will/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5_cpu.yaml'
-    #    )
-    #],
-    'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': JOEY_DIR / 'configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5.yaml',
+    'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': [
+        'ssh', 'cluster', (
+            'cd /home/students/will/ma/joeynmt;'
+            ' /opt/slurm/bin/srun -J nlmapsweb-auto-job -p compute --mem 2GB'
+            ' /home/students/will/anaconda3/envs/ma/bin/python3 -m joeynmt translate'
+            ' /home/students/will/ma/joeynmt/configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5_cpu.yaml'
+        )
+    ],
+    #'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': JOEY_DIR / 'configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5.yaml',
 }
 
 CURRENT_MODEL = 'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5'

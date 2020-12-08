@@ -21,12 +21,11 @@ class JoeyModel:
         self.test_args = test_args
 
     @classmethod
-    def from_config_file(cls, config_file):
+    def from_config_file(cls, config_file, joey_dir):
         config = load_config(config_file)
         model_dir = pathlib.Path(config['training']['model_dir'])
         if not model_dir.is_absolute():
-            joey_dir = pathlib.Path(current_app.config['JOEY_DIR'])
-            model_dir = joey_dir / model_dir
+            model_dir = pathlib.Path(joey_dir) / model_dir
 
 
         src_vocab_file = config['data'].get('src_vocab',
@@ -108,7 +107,8 @@ def joey_parse(nl_query, config_file):
     if config_file in MODELS:
         model = MODELS[config_file]
     else:
-        model = JoeyModel.from_config_file(config_file)
+        joey_dir = current_app.config['JOEY_DIR']
+        model = JoeyModel.from_config_file(config_file, joey_dir)
         MODELS[config_file] = model
 
     return model.translate_single(nl_query)

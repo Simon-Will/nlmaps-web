@@ -1,6 +1,7 @@
 import os
 
 from flask import Flask
+from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -10,6 +11,7 @@ from nlmapsweb.utils.json import SymbolAwareJSONEncoder
 csrf = CSRFProtect()
 db = SQLAlchemy()
 migrate = Migrate()
+login_manager = LoginManager()
 
 
 def create_app() -> Flask:
@@ -18,6 +20,7 @@ def create_app() -> Flask:
     init_csrf(app)
     init_sqlalchemy(app)
     init_migrate(app)
+    init_login(app)
     init_views(app)
     import_models()
 
@@ -54,6 +57,18 @@ def init_migrate(app: Flask) -> None:
     app.logger.info("Start initializing Flask-Migrate.")
     migrate.init_app(app=app, db=db)
     app.logger.info("Flask-Migrate initialized.")
+
+
+def init_login(app: Flask) -> None:
+    app.logger.info("Start initializing Flask-Login.")
+    login_manager.init_app(app=app)
+    from nlmapsweb.models.users import User
+
+    @login_manager.user_loader
+    def user_loader(id):
+        return User.query.get(int(id))
+
+    app.logger.info("Flask-Login initialized.")
 
 
 def init_views(app: Flask) -> None:
