@@ -1,6 +1,4 @@
-from sqlalchemy import Column, Unicode
-from sqlalchemy.orm import relationship
-
+from nlmapsweb.app import db
 from nlmapsweb.models.base import BaseModel
 
 
@@ -8,10 +6,10 @@ class Tag(BaseModel):
 
     __tablename__ = 'tags'
 
-    name = Column(
-        Unicode(100),
+    name = db.Column(
+        db.Unicode(100),
         nullable=False,
         unique=True,
     )
 
-    parse_taggings = relationship('ParseTagging', back_populates='tags')
+    parse_taggings = db.relationship('ParseTagging', back_populates='tags')

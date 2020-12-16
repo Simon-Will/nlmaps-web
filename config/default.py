@@ -24,7 +24,7 @@ MA_DIR = Path('/home/gorgor/ma')
 MOST_COMMON_TAGS = MA_DIR / 'data/most_common_tags/most_common_tags.json'
 
 JOEY_DIR = MA_DIR / 'joeynmt'
-MODELS = {
+OLD_MODELS = {
     'staniek_nlmaps_lin_char': [
         'ssh', 'last', (
             'cd /home/students/will/public/ma/joeynmt;'
@@ -55,6 +55,13 @@ MODELS = {
         )
     ],
     #'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': JOEY_DIR / 'configs/will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5.yaml',
+}
+
+JOEY_SERVER_URL = 'http://localhost:5050/'
+
+MODELS = {
+    'staniek_nlmaps_lin_char': 'staniek_nlmaps_lin_char_upper2.yaml'
+    'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5': 'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5.yaml'
 }
 
 CURRENT_MODEL = 'will_nlmaps_3gamma.noise.plusv2_online_incorrect_bs10_ratio0.5'

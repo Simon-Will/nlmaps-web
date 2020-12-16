@@ -1,7 +1,7 @@
 from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
-from sqlalchemy import Boolean, Column, Unicode
 
+from nlmapsweb.app import db
 from nlmapsweb.models.base import BaseModel
 
 
@@ -9,10 +9,12 @@ class User(BaseModel, UserMixin):
 
     __tablename__ = 'users'
 
-    name = Column(Unicode(100), nullable=False, unique=True)
-    active = Column(Boolean, nullable=False, default=True)
-    admin = Column(Boolean, nullable=False, default=False)
-    password_hash = Column(Unicode(128), nullable=True)
+    name = db.Column(db.Unicode(100), nullable=False, unique=True)
+    active = db.Column(db.Boolean, nullable=False, default=True)
+    admin = db.Column(db.Boolean, nullable=False, default=False)
+    password_hash = db.Column(db.Unicode(128), nullable=True)
+
+    feedback_states = db.relationship('User', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)

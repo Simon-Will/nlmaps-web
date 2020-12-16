@@ -9,7 +9,7 @@ class ParsingModelForm(BaseForm):
         super().__init__(*args, **kwargs)
         self.model.choices = [
             (model, model)
-            for model in current_app.config['MODELS'].keys()
+            for model in current_app.config['MODELS']
         ]
 
     model = SelectField('Model', choices=[])
