@@ -8,6 +8,7 @@ from nlmaps_tools.parse_mrl import Symbol
 
 from nlmapsweb.forms.base import BaseForm
 from nlmapsweb.forms.fields import JSONStringField
+from nlmapsweb.utils.helper import sort_nwr
 
 
 class NlQueryForm(BaseForm):
@@ -99,12 +100,12 @@ class QueryFeaturesForm(BaseForm):
     def get_features(self):
         features = {
             'query_type': self.query_type.data,
-            'target_nwr': self.target_nwr.data,
+            'target_nwr': sort_nwr(self.target_nwr.data),
             'qtype': self.qtype.data,
         }
 
         if self.center_nwr.data:
-            features['center_nwr'] = self.center_nwr.data
+            features['center_nwr'] = sort_nwr(self.center_nwr.data)
         if self.area.data:
             features['area'] = self.area.data
         if self.maxdist.data:

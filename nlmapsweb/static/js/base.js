@@ -50,7 +50,7 @@ function makeTag(key, val, makeLink = false) {
 
 function canonicalizeNwrFeatures(nwrFeatures) {
     // Convert [['religion', ['or', 'christian', 'muslim']]]
-    // into [['religion', 'christian'], ['religion', 'muslim']]
+    // into [['or', ['religion', 'christian'], ['religion', 'muslim']]]
     const parts = [];
     for (let feat of nwrFeatures) {
         if (contains(['or', 'and'], feat[0]) && Array.isArray(feat[1])) {
@@ -58,9 +58,11 @@ function canonicalizeNwrFeatures(nwrFeatures) {
             parts.push(part);
         } else if (feat.length === 2 && Array.isArray(feat[1])
                    && feat[1][0] === 'or') {
+            const or_part = ['or'];
             for (let value of feat[1].slice(1)) {
-                parts.push([feat[0], value]);
+                or_part.push([feat[0], value]);
             }
+            parts.push(or_part);
         } else if (feat.length === 2 && feat.every(isString)) {
             parts.push([feat[0], feat[1]]);
         } else {

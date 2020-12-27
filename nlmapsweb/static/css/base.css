@@ -135,3 +135,7 @@ label, input, select {
 label {
     margin-right: 0.5em;
 }
+
+.model-name {
+    font-family: monospace, monospace;
+}

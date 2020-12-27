@@ -1,7 +1,7 @@
 import os
 
 from flask import Flask
-from flask_login import LoginManager
+from flask_login import AnonymousUserMixin, LoginManager
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
@@ -23,6 +23,7 @@ def create_app() -> Flask:
     init_login(app)
     init_views(app)
     import_models()
+    init_cli()
 
     app.json_encoder = SymbolAwareJSONEncoder
     return app
@@ -68,6 +69,13 @@ def init_login(app: Flask) -> None:
     def user_loader(id):
         return User.query.get(int(id))
 
+    class AnonymousUser(AnonymousUserMixin):
+        @property
+        def admin(self):
+            return False
+
+    login_manager.anonymous_user = AnonymousUser
+
     app.logger.info("Flask-Login initialized.")
 
 
@@ -80,6 +88,15 @@ def init_views(app: Flask) -> None:
         imported = [v for v in views.__dict__ if not v.startswith('_')]
 
         app.logger.info('Views initialized.')
+
+
+def init_cli(app: Flask) -> None:
+    from nlmapsweb.commands import specs
+    for spec in specs:
+        group = app.cli.group()(spec["group"])
+        for command in spec["commands"]:
+            group.command()(command)
+    app.logger.info("Flask cli commands registered.")
 
 
 def import_models() -> None:

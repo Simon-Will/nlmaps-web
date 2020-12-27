@@ -3,88 +3,26 @@
 {% set page = 'feedback' %}
 
 {% block content %}
-<form class="row feedback-export-form form-grid" method="GET" action="{{ url_for('export_feedback') }}" style="border: solid 1pt #ccc;">
-    {{ feedback_export_form.hidden_tag() }}
-    {{ feedback_export_form.model.label }} {{ feedback_export_form.model() }}
-    {{ feedback_export_form.correct.label }} {{ feedback_export_form.correct() }}
-    {{ feedback_export_form.incorrect.label }} {{ feedback_export_form.incorrect() }}
-    <input type="submit" value="Export feedback as dataset">
-</form>
-<form class="row" method="GET" action="{{ url_for('list_feedback') }}">
-    {{ parsing_model_form.model() }}
+<form class="row form-grid" method="GET" action="{{ url_for('list_feedback') }}">
+    {% if parsing_model_form.user %}
+    {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
+    {% endif %}
+    {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
     <input type="submit" value="Compare">
 </form>
-
-{% if stats['absolute']['unparsed'] %}
-<p>There are {{ stats['absolute']['unparsed'] }} unparsed queries.
-    <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
-</p>
-{% endif %}
-
-<div class="row container-horizontal-flex">
-    <div class="container-vertical-flex">
-        <table>
-            <thead>
-                <tr>
-                    <th>Type</th>
-                    <th>Count</th>
-                    <th>Percentage</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for type in stats['absolute'] %}
-                <tr>
-                    <td>{{ type }}</td>
-                    <td>{{ stats['absolute'][type] }}</td>
-                    <td>{{ '%.2f' | format(stats['relative'][type]) }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-        <p>Accuracy: {{ '%.2f' | format(stats['accuracy']) }}</p>
-    </div>
-    {% if tag_plot_b64 %}
-    <img alt="Plot of tag percentages" src="data:image/jpeg;charset=utf-8;base64,{{ tag_plot_b64 }}">
-    {% endif %}
-    {% if tag_count_stats %}
-    <table>
-        <thead>
-            <tr>
-                <th>Tags on Feedback</th>
-                <th>Instance Count</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for tag_count, instance_count in tag_count_stats.items() %}
-            <tr>
-                <td>{{ tag_count }}</td>
-                <td>{{ instance_count }}</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    {% endif %}
-</div>
-
 <div class="row container-vertical-flex">
+    {% if model %}
+    <p>Feedback with respect to parse by model <span class="model-name">{{ model }}</span></p>
+    {% else %}
+    <p>Feedback with respect to original parse</p>
+    {% endif %}
+
     {% for piece in feedback %}
-    <div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.opcodes_json }}">
+    <div class="row feedback-piece feedback-type-{{ piece.get_type(model=model) }}" data-opcodes="{{ piece.get_opcodes(model=model) }}">
+        <p class="feedback-id">{{ piece.id }}</p>
         <p class="feedback-nl">{{ piece.nl }}</p>
-        <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
-        <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
-        {% if tag_forms %}
-        {% with tag_form = tag_forms[piece.id] %}
-        {% if tag_form %}
-        <form method="POST" action="{{ url_for('update_parse_taggings') }}" class="feedback-tags-form">
-            {{ tag_form.hidden_tag() }}
-            {{ tag_form.tags(size=tag_form.tags_size) }}
-            {{ tag_form.new_tags.label }} {{ tag_form.new_tags() }}
-            <input type="submit"  value="Submit">
-        </form>
-        {% endif %}
-        {% endwith %}
-        {% endif %}
-        <a href="{{ url_for('feedback_piece', id=piece.id) }}">Detail Edit</a>
+        <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
+        <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
     </div>
     {% endfor %}
 </div>

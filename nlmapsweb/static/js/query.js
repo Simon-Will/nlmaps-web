@@ -257,12 +257,14 @@ window.onload = function() {
     class MrlInfoBlock extends Block {
         constructor(element) {
             super(element);
+            this.modelElm = this.body.querySelector('#mrl-info-model');
             this.nlElm = this.body.querySelector('#mrl-info-nl');
             this.linElm = this.body.querySelector('#mrl-info-lin');
             this.mrlElm = this.body.querySelector('#mrl-info-mrl');
             this.featuresElm = this.body.querySelector('#mrl-info-features');
             this.judgementElm = this.body.querySelector('#mrl-judgement');
 
+            this.model = null;
             this.nl = null;
             this.lin = null;
             this.mrl = null;
@@ -272,6 +274,7 @@ window.onload = function() {
         }
 
         reset() {
+            this.modelElm.innerHTML = '';
             this.nlElm.innerHTML = '';
             this.linElm.innerHTML = '';
             this.mrlElm.innerHTML = '';
@@ -301,6 +304,7 @@ window.onload = function() {
         }
 
         processParseResult(parseResult) {
+            this.model = parseResult.model;
             this.nl = parseResult.nl;
 
             if (parseResult.lin) {
@@ -321,6 +325,7 @@ window.onload = function() {
                 this.systemFeatures = null;
             }
 
+            this.modelElm.innerHTML = htmlEscape(this.model);
             this.nlElm.innerHTML = htmlEscape(this.nl);
             this.linElm.innerHTML = htmlEscape(this.lin);
 
@@ -695,6 +700,7 @@ window.onload = function() {
         formData.append('nl', mrlInfoBlock.nl);
         formData.append('systemMrl', mrlInfoBlock.systemMrl);
         formData.append('correctMrl', mrlInfoBlock.mrl);
+        formData.append('model', mrlInfoBlock.model);
         formData.append('csrf_token', CSRF_TOKEN);
 
         mrlInfoBlock.hideJudgement();
@@ -712,7 +718,7 @@ window.onload = function() {
             }
         };
 
-        xhr.open('POST', 'http://localhost:5000/feedback');
+        xhr.open('POST', 'http://localhost:5000/feedback/create');
         xhr.send(formData);
 
         return false;

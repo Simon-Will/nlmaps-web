@@ -10,13 +10,11 @@ from nlmapsweb.processing.result import Result
 def parse_to_lin(nl_query, model=None):
     current_app.logger.info('Parsing query "{}".'.format(nl_query))
     model = model or current_app.config['CURRENT_MODEL']
-    config_file = current_app.config['MODELS'].get(model)
-    if not config_file:
-        current_app.logger.warning('Model not found: {}'.format(model))
 
-    url = current_app.config['JOEY_SERVER_URL']
-    payload = {'model': config_file, 'nl': nl_query}
+    url = current_app.config['JOEY_SERVER_URL'] + 'translate'
+    payload = {'model': model, 'nl': nl_query}
 
+    current_app.logger.info('POST {} to {}'.format(payload, url))
     response = requests.post(url, json=payload)
     if response.status_code == 200:
         result = response.json()['lin']
@@ -34,6 +32,7 @@ class ParseResult(Result):
         self.nl = nl
         self.lin = lin
         self.mrl = mrl
+        self.model = model
 
         log = ParseLog(nl=nl, lin=lin, mrl=mrl, model=model)
         db.session.add(log)
@@ -66,5 +65,5 @@ class ParseResult(Result):
 
     def to_dict(self):
         return {'nl': self.nl, 'lin': self.lin, 'mrl': self.mrl,
-                'success': self.success, 'error': self.error,
-                'features': self.features}
+                'model': self.model, 'success': self.success,
+                'error': self.error, 'features': self.features}

@@ -64,7 +64,7 @@ def answer_mrl():
 
         return jsonify(result.to_dict()), status
 
-    return 'Bad Request!', 400
+    return 'Bad Request', 400
 
 
 @current_app.route('/', methods=['GET'])
@@ -92,26 +92,3 @@ def diagnose():
         return jsonify(result.to_dict()), status
 
     return 'Bad Request', 401
-
-
-@current_app.route('/feedback', methods=['POST'])
-def feedback():
-    form = FeedbackForm()
-    if form.validate_on_submit():
-        data = form.get_data(exclude=['csrf_token'])
-
-        # TODO: Do this in form.
-        if data['nl']:
-            data['nl'] = data['nl'].strip()
-        if data['systemMrl']:
-            data['systemMrl'] = delete_spaces(data['systemMrl'])
-        if data['correctMrl']:
-            data['correctMrl'] = delete_spaces(data['correctMrl'])
-
-        current_app.logger.info('Received feedback: {}', data)
-        fb = Feedback(**data)
-        db.session.add(fb)
-        db.session.commit()
-        return 'OK', 200
-
-    return 'Bad Request!', 400

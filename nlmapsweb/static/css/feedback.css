@@ -25,20 +25,28 @@
     border-color: lightgray;;
 }
 
+.feedback-id {
+    float: right;
+}
+
+.feedback-id::before {
+    content: "#";
+}
+
 .feedback-nl {
     font-size: smaller;
 }
 
 .feedback-nl::before {
-    content: "NL: "
+    content: "NL: ";
 }
 
 .feedback-sys::before {
-    content: "Sys: "
+    content: "Sys: ";
 }
 
 .feedback-corr::before {
-    content: "Cor: "
+    content: "Cor: ";
 }
 
 .highlight-replace {

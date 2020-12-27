@@ -22,4 +22,4 @@ class FeedbackForm(BaseForm):
     nl = StringField('NL Query', validators=[DataRequired()])
     systemMrl = StringField('System MRL Query')
     correctMrl = StringField('Correct MRL Query')
-
+    model = StringField('Model', validators=[DataRequired()])
