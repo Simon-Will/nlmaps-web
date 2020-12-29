@@ -1,8 +1,9 @@
 import click
-from flask import current_app as app
+import sys
 
-from tutron.app import db
-from tutron.models import User
+from nlmapsweb.app import db
+from nlmapsweb.models import User
+from nlmapsweb.utils.helper import random_string_with_digits
 
 
 def user():
@@ -10,7 +11,7 @@ def user():
     pass
 
 
-def show_all():
+def list():
     """List all users"""
     users = db.session.query(User).all()
     if users:
@@ -46,17 +47,15 @@ def add(username):
     if user:
         print(f"User {str(username)} already exists.", file=sys.stderr)
     else:
-        email = input("Email []: ")
-        first_name = input("First Name []: ")
-        last_name = input("Last Name []: ")
         password_suggestion = random_string_with_digits(8)
         password = input(f"Password [{password_suggestion}]: ")
+        admin = input("Make admin? (y/n) [n]: ") == 'y'
         if not password:
             password = password_suggestion
 
         user = User(
             name=username,
-            admin=False,
+            admin=admin,
             active=True,
         )
         user.set_password(password)
@@ -83,5 +82,5 @@ def rm(username):
 
 spec = {
     'group': user,
-    'commands': [show_all, add, rm, set_new_password]
+    'commands': [list, add, rm, set_new_password]
 }

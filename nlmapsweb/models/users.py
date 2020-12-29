@@ -14,7 +14,7 @@ class User(BaseModel, UserMixin):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     password_hash = db.Column(db.Unicode(128), nullable=True)
 
-    feedback_states = db.relationship('FeedbackState', back_populates='user')
+    #feedback_states = db.relationship('FeedbackState', back_populates='user')
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -30,4 +30,4 @@ class User(BaseModel, UserMixin):
 
     def __repr__(self):
         return ('User(id={u.id}, name={u.name}, active={u.active},'
-                'admin={u.admin})').format(u=user)
+                ' admin={u.admin})').format(u=self)

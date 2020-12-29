@@ -23,7 +23,7 @@ def create_app() -> Flask:
     init_login(app)
     init_views(app)
     import_models()
-    init_cli()
+    init_cli(app)
 
     app.json_encoder = SymbolAwareJSONEncoder
     return app

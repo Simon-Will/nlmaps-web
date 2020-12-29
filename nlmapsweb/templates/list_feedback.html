@@ -10,6 +10,14 @@
     {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
     <input type="submit" value="Compare">
 </form>
+
+{% if unparsed_queries %}
+<div class="row">
+    <p>There are {{ unparsed_queries }} unparsed queries.</p>
+    <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
+</div>
+{% endif %}
+
 <div class="row container-vertical-flex">
     {% if model %}
     <p>Feedback with respect to parse by model <span class="model-name">{{ model }}</span></p>
@@ -23,6 +31,7 @@
         <p class="feedback-nl">{{ piece.nl }}</p>
         <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
         <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
+        <p>{{ piece.model }}</p>
     </div>
     {% endfor %}
 </div>

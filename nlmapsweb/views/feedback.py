@@ -25,6 +25,7 @@ class FeedbackPiece:
         self.id = id
         self.parent_id = parent_id
         self.model = model
+        self.original_model = original_model
 
         self.correct_lin, self.correct_mrl = get_lin_and_mrl(
             correct_lin, correct_mrl)
@@ -99,9 +100,13 @@ def list_feedback():
     filters = {}
     if current_user.admin:
         parsing_model_form = AdminParsingModelForm(request.args)
-        user_id = parsing_model_form.user.data
-        if user_id and user_id < 0:
+        try:
+            user_id = int(parsing_model_form.user.data)
+        except (TypeError, ValueError):
             user_id = None
+        else:
+            if user_id < 0:
+                user_id = None
     else:
         parsing_model_form = ParsingModelForm(request.args)
         user_id = current_user.id
@@ -114,8 +119,16 @@ def list_feedback():
     response = requests.post(url, json=filters)
     feedback = [FeedbackPiece(**piece_data) for piece_data in response.json()]
 
-    return render_template('list_feedback.html',
-        parsing_model_form=parsing_model_form, model=model, feedback=feedback
+    if model:
+        unparsed_queries = sum(piece.model_mrl is None for piece in feedback)
+    else:
+        unparsed_queries = None
+
+
+    return render_template(
+        'list_feedback.html',
+        parsing_model_form=parsing_model_form, model=model, feedback=feedback,
+        unparsed_queries=unparsed_queries
     )
 
 @current_app.route('/update_parse_taggings', methods=['POST'])

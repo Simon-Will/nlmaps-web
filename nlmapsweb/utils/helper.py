@@ -1,5 +1,7 @@
 from collections import defaultdict
 import datetime as dt
+import random
+import string
 
 
 def get_utc_now():
@@ -42,3 +44,11 @@ def sort_nwr(nwr_features):
             raise ValueError('Unexpected nwr_features feat: {}'.format(feat))
 
     return sorted(parts)
+
+
+def random_string_with_digits(length: int = 8) -> str:
+    """
+    Generate a random string of letters and digits
+    """
+    characters = string.ascii_letters + string.digits
+    return ''.join(random.choice(characters) for _ in range(length))
