@@ -11,7 +11,7 @@ import datetime
 from alembic import op
 import sqlalchemy as sa
 
-from mrl import NLmaps
+from nlmaps_tools.mrl import NLmaps
 
 # revision identifiers, used by Alembic.
 revision = '1e0a84af436d'
