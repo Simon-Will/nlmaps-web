@@ -3,7 +3,6 @@ from flask import current_app, jsonify, render_template, request
 from nlmapsweb.app import db
 from nlmapsweb.forms import (DiagnoseForm, QueryFeaturesForm, MrlQueryForm,
                              NlQueryForm)
-from nlmapsweb.models import Feedback
 from nlmapsweb.processing.answering import AnswerResult
 from nlmapsweb.processing.diagnosing import DiagnoseResult
 from nlmapsweb.processing.converting import (delete_spaces, features_to_mrl,

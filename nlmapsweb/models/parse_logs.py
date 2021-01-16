@@ -25,6 +25,3 @@ class ParseLog(BaseModel):
         db.Unicode(500),
         nullable=True,
     )
-
-    parse_taggings = db.relationship('ParseTagging',
-                                     back_populates='parse_log')
