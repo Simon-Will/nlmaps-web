@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-set -eo pipefail
+set -e
 
 err() {
     echo "$@" >&2
@@ -67,7 +67,9 @@ ensure_secret_key() {
 
 migrate() {
     log 'Running migrations'
+    pushd "$NLMAPSWEB_REPO"
     flask db upgrade
+    popd
 }
 
 start_app() {
