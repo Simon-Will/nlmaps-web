@@ -3,36 +3,99 @@
 {% set page = 'feedback' %}
 
 {% block content %}
-<form class="row form-grid" method="GET" action="{{ url_for('list_feedback') }}">
-    {% if parsing_model_form.user %}
-    {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
-    {% endif %}
-    {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
-    <input type="submit" value="Compare">
-</form>
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Select Feedback</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="GET" action="{{ url_for('list_feedback') }}">
+            {% if parsing_model_form.user %}
+            {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
+            {% endif %}
+            {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
+            <input type="submit" value="Show Feedback">
+        </form>
+    </div>
+</div>
 
-{% if unparsed_queries %}
-<div class="row">
-    <p>There are {{ unparsed_queries }} unparsed queries.</p>
-    <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
+{% if current_user.admin %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Start Training</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="POST" action="{{ url_for('train') }}">
+            {{ parsing_model_form.hidden_tag() }}
+            {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
+            <input type="submit" value="Train">
+        </form>
+    </div>
 </div>
 {% endif %}
 
-<div class="row container-vertical-flex">
-    {% if model %}
-    <p>Feedback with respect to parse by model <span class="model-name">{{ model }}</span></p>
-    {% else %}
-    <p>Feedback with respect to original parse</p>
-    {% endif %}
-
-    {% for piece in feedback %}
-    <div class="row feedback-piece feedback-type-{{ piece.get_type(model=model) }}" data-opcodes="{{ piece.get_opcodes(model=model) }}">
-        <p class="feedback-id">{{ piece.id }}</p>
-        <p class="feedback-nl">{{ piece.nl }}</p>
-        <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
-        <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
-        <p>{{ piece.model }}</p>
+{% if unparsed_queries %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Unparsed Queries</span>
     </div>
-    {% endfor %}
+    <div class="block-body">
+        <p>There are {{ unparsed_queries }} unparsed queries.</p>
+        <button id="parse-unparsed" data-model="{{ model }}">Parse now.</button>
+    </div>
 </div>
+{% endif %}
+
+{% if model %}
+<p>Sys parses by model: <span class="model-name">{{ model }}</span></p>
+{% else %}
+<p>Sys parses from feedback creation time</p>
+{% endif %}
+
+{% for piece in feedback %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">{{ piece.nl }}</span>
+    </div>
+    <div class="block-body">
+        <div class="container-vertical-flex feedback-list">
+            <div class="feedback-piece feedback-type-{{ piece.get_type(model=model) }}" data-opcodes="{{ piece.get_opcodes(model=model) }}">
+                <p class="feedback-id"><a href="{{ url_for('feedback_piece', id=piece.id) }}">{{ piece.id }}</a></p>
+                <p class="feedback-nl">{{ piece.nl }}</p>
+                <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
+                <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
+            </div>
+            {% for child in piece.children %}
+            <div class="feedback-piece feedback-type-{{ child.get_type(model=model) }}" data-opcodes="{{ child.get_opcodes(model=model) }}">
+                <p class="feedback-id"><a href="{{ url_for('feedback_piece', id=child.id) }}">{{ child.id }}</a></p>
+                <p class="feedback-nl">{{ child.nl }}</p>
+                <p class="feedback-sys mrl">{{ child.model_mrl if model else child.original_mrl }}</p>
+                <p class="feedback-corr mrl">{{ child.correct_mrl }}</p>
+            </div>
+            {% endfor %}
+        </div>
+        <div class="add-child-div" hidden>
+            <p>Change details in your query to create a similar piece of
+                feedback. For example, you can change what you’re looking
+                for, choose another reference point or just switch up the
+                formulation.</p>
+            <p>Try to keep the part that may have been difficult for the
+                model. E.g.: If you were asking for a place to play “ping
+                pong” and it didn’t understand that you want to play table
+                tennis, just change the formulation of the question or other
+                details, but leave the “ping pong” part in.</p>
+            <form class="form-grid add-child-form" action="{{ url_for('create_feedback') }}" method="POST">
+                {{ feedback_create_form.csrf_token() }}
+                {{ feedback_create_form.parent_id(value=piece.id) }}
+                <label for="correctMrl">NL Query</label>{{ feedback_create_form.nl(size=100, value=piece.nl) }}
+                <label for="correctMrl">MRL Query</label>{{ feedback_create_form.correctMrl(size=100, value=piece.correct_mrl) }}
+                <input type="submit" value="Create Feedback">
+            </form>
+        </div>
+        {% if piece.children|length < 2 %}
+        <button style="max-width: 10em;" class="add-child-button" data-piece-id="{{ piece.id }}">Add Child</button>
+        {% endif %}
+    </div>
+</div>
+{% endfor %}
+
 {% endblock %}

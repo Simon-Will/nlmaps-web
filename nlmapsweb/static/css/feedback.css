@@ -1,6 +1,13 @@
+.feedback-list {
+    padding-top: 0.2em;
+    padding-bottom: 0.2em;
+}
+
 .feedback-piece {
     padding-left: 0.5em;
     padding-right: 0.5em;
+    margin-bottom: 0.2em;
+    margin-top: 0.2em;
     border-width: medium;
     border-style: solid;
 }
@@ -10,19 +17,19 @@
 }
 
 .feedback-type-incorrect {
-    border-color: red;;
+    border-color: red;
 }
 
 .feedback-type-system-error {
-    border-color: orange;;
+    border-color: orange;
 }
 
 .feedback-type-unknown {
-    border-color: lightblue;;
+    border-color: lightblue;
 }
 
 .feedback-type-unparsed {
-    border-color: lightgray;;
+    border-color: lightgray;
 }
 
 .feedback-id {
@@ -63,4 +70,8 @@
 
 .feedback-export-form {
     padding: 1em;
+}
+
+.add-child-div {
+    font-size: smaller;
 }

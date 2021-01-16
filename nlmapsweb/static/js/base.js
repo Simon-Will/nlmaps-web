@@ -25,13 +25,71 @@ function isString(obj) {
     return typeof obj === 'string' || obj instanceof String;
 }
 
+function ajaxBase(url, method, onsuccess, onerror = null, params = null,
+                  formData = null) {
+    if (url.startsWith('/')) {
+        url = window.location.origin + url;
+    }
+
+    if (params) {
+        url = new URL(url);
+        Object.keys(params).forEach(function(key) {
+            url.searchParams.set(key, params[key]);
+        });
+        url = url.toString();
+    }
+
+    const xhr = new XMLHttpRequest();
+    xhr.onreadystatechange = function() {
+        if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 200) {
+                onsuccess(xhr);
+            } else if (onerror) {
+                onerror(xhr);
+            }
+        }
+    };
+    xhr.open(method, url);
+    if (method === 'POST' && formData !== null) {
+        xhr.send(formData);
+    } else {
+        xhr.send();
+    }
+    return xhr;
+}
+
+function ajaxGet(url, onsuccess, onerror = null, params = null) {
+    return ajaxBase(url, 'GET', onsuccess, onerror, params);
+}
+
+function ajaxPost(url, onsuccess, onerror = null, params = null,
+                  formData = null) {
+    return ajaxBase(url, 'POST', onsuccess, onerror, params, formData);
+}
+
 function flashMessage(parentElm, text = 'Updated!', cssClass = 'bg-success', milliseconds = 2000) {
-    const updatedElm = document.createElement('p');
-    updatedElm.innerHTML = text;
-    updatedElm.classList.add(cssClass);
-    parentElm.appendChild(updatedElm);
-    window.setTimeout(function() {console.log('Time up'); updatedElm.remove();},
-                      milliseconds);
+    const container = document.createElement('div');
+    container.classList.add('flashed-message');
+    container.classList.add(cssClass);
+
+    const message = document.createElement('span');
+    message.classList.add('flashed-message-content');
+    message.innerHTML = text;
+    container.appendChild(message);
+
+    const removeButton = document.createElement('button');
+    removeButton.classList.add('flashed-message-remove-button');
+    removeButton.innerHTML = '✖';
+    removeButton.onclick = function() {
+        container.remove();
+        return false;
+    };
+    container.appendChild(removeButton);
+
+    parentElm.appendChild(container);
+    if (milliseconds) {
+        window.setTimeout(function() {container.remove();}, milliseconds);
+    }
 }
 
 function makeTag(key, val, makeLink = false) {
@@ -46,6 +104,21 @@ function makeTag(key, val, makeLink = false) {
         tagElm = content;
     }
     return tagElm;
+}
+
+function getUsageClass(count) {
+    if (count) {
+        if (count > 10000) {
+            return {slug: 'abundant', name: 'Abundant'};
+        } else if (count > 1000) {
+            return {slug: 'common', name: 'Common'};
+        } else if (count > 100) {
+            return {slug: 'rare', name: 'Rare'};
+        } else if (count > 0){
+            return {slug: 'virtually-unused', name: 'Virtually Unused'};
+        }
+    }
+    return {slug: 'unused', name: 'Unused'};
 }
 
 function canonicalizeNwrFeatures(nwrFeatures) {
@@ -267,3 +340,28 @@ function makeFeaturesElm(features) {
     elm.classList.add('features-info');
     return elm;
 }
+
+function checkFeedbackStates() {
+    ajaxGet('/feedback/check', function(xhr) {
+        const check_data = JSON.parse(xhr.responseText);
+        const flashDiv = document.getElementById('flash-container');
+        if (check_data.learned.length !== 0) {
+            let content = 'Model learned to correctly parse feedbacks';
+            for (const info of check_data.learned) {
+                content += ' #' + info.id;
+            }
+            content += '.';
+            flashMessage(flashDiv, content, 'bg-success', null);
+        }
+        if (check_data.unlearned.length !== 0) {
+            let content = 'Model unlearned to correctly parse feedbacks';
+            for (const info of check_data.unlearned) {
+                content += ' #' + info.id;
+            }
+            content += '.';
+            flashMessage(flashDiv, content, 'bg-warning', null);
+        }
+    });
+}
+
+window.addEventListener('load', checkFeedbackStates);

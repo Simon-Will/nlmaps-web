@@ -108,3 +108,29 @@
     height: auto;
     width: auto;
 }
+
+.taginfo {
+    padding: 0;
+    margin: 0.2em;
+    border: solid 1pt #ccc;
+}
+
+.tag-usage-abundant {
+    color: green;
+}
+
+.tag-usage-common {
+    color: green;
+}
+
+.tag-usage-rare {
+    color: orange;
+}
+
+.tag-usage-virtually-unused {
+    color: red;
+}
+
+.tag-usage-unused {
+    color: red;
+}

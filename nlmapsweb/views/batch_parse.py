@@ -22,7 +22,6 @@ def batch_parse():
             if not feedback_info['model_lin']:
                 nls.append(feedback_info['nl'])
         result = parse_to_lin(nls, model=model)
-        print(result)
         return jsonify(result)
 
     return 'Bad Request', 400

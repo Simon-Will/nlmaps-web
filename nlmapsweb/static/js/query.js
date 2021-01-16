@@ -1,5 +1,4 @@
-window.onload = function() {
-
+window.addEventListener('load', function() {
     // Begin map stuff
     const mapView = new ol.View({
         center: ol.proj.fromLonLat([8.69079, 49.40768]),  // Heidelberg
@@ -87,24 +86,19 @@ window.onload = function() {
 
         messagesBlock.addMessage('Retrieving result …');
 
-        const geojsonURL = new URL('http://localhost:5000/answer_mrl');
-        geojsonURL.searchParams.set('mrl', mrl);
-
-        const xhr = new XMLHttpRequest();
-        RESULT_RETRIEVAL_XHR = xhr;
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
+        RESULT_RETRIEVAL_XHR = ajaxGet(
+            '/answer_mrl',
+            function(xhr) {
                 RESULT_RETRIEVAL_XHR = null;
-                if (xhr.status === 200) {
-                    const answerResult = JSON.parse(xhr.responseText);
-                    callback(answerResult);
-                } else {
-                    messagesBlock.addMessage('Retrieving result failed.', true);
-                }
-            }
-        };
-        xhr.open('GET', geojsonURL.toString());
-        xhr.send();
+                const answerResult = JSON.parse(xhr.responseText);
+                callback(answerResult);
+            },
+            function(xhr) {
+                RESULT_RETRIEVAL_XHR = null;
+                messagesBlock.addMessage('Retrieving result failed.', true);
+            },
+            {mrl: mrl}
+        );
     }
 
     function diagnoseProblems(nl, mrl, callback) {
@@ -115,20 +109,20 @@ window.onload = function() {
         formData.append('mrl', mrl);
         formData.append('csrf_token', CSRF_TOKEN);
 
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    const diagnoseResult = JSON.parse(xhr.responseText);
-                    console.log(diagnoseResult.tf_idf_scores);
-                    callback(diagnoseResult);
-                } else {
-                    messagesBlock.addMessage('Diagnosing failed.', true);
-                }
-            }
-        };
-        xhr.open('POST', 'http://localhost:5000/diagnose');
-        xhr.send(formData);
+        ajaxPost(
+            '/diagnose',
+            function(xhr) {
+                const diagnoseResult = JSON.parse(xhr.responseText);
+                console.log(diagnoseResult.tf_idf_scores);
+                callback(diagnoseResult);
+            },
+            function(xhr) {
+                messagesBlock.addMessage('Diagnosing failed.', true);
+            },
+            null,
+            formData
+        );
+
         return false;
     }
 
@@ -203,23 +197,18 @@ window.onload = function() {
     }
 
     function appendTagFinderHelp(keyword, parent) {
-        const url = new URL(TAGFINDER_URL);
-        url.searchParams.set('query', keyword);
-
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    const foundTags = JSON.parse(xhr.responseText);
-                    if (foundTags) {
-                        const editHelp = makeTagFinderHelp(keyword, foundTags);
-                        parent.appendChild(editHelp);
-                    }
+        ajaxGet(
+            TAGFINDER_URL,
+            function(xhr) {
+                const foundTags = JSON.parse(xhr.responseText);
+                if (foundTags) {
+                    const editHelp = makeTagFinderHelp(keyword, foundTags);
+                    parent.appendChild(editHelp);
                 }
-            }
-        };
-        xhr.open('GET', url.toString());
-        xhr.send();
+            },
+            null,
+            {query: keyword}
+        );
     }
 
     class MessagesBlock extends Block {
@@ -378,20 +367,19 @@ window.onload = function() {
                 formData.append('csrf_token', CSRF_TOKEN);
 
                 const thisMrlInfoBlock = this;
-                const xhr = new XMLHttpRequest();
-                xhr.onreadystatechange = function() {
-                    if (xhr.readyState === XMLHttpRequest.DONE) {
-                        if (xhr.status === 200) {
-                            const features = JSON.parse(xhr.responseText);
-                            thisMrlInfoBlock.processFeatures(features);
-                        } else {
-                            messagesBlock.addMessage('Retrieving features failed.',
-                                                     true);
-                        }
-                    }
-                };
-                xhr.open('POST', 'http://localhost:5000/mrl_to_features');
-                xhr.send(formData);
+                ajaxPost(
+                    '/mrl_to_features',
+                    function(xhr) {
+                        const features = JSON.parse(xhr.responseText);
+                        thisMrlInfoBlock.processFeatures(features);
+                    },
+                    function(xhr) {
+                        messagesBlock.addMessage('Retrieving features failed.',
+                                                 true);
+                    },
+                    null,
+                    formData
+                );
             }
         }
     }
@@ -431,27 +419,45 @@ window.onload = function() {
 
                 const thisMrlEditBlock = this;
                 diagnoseProblems(mrlInfoBlock.nl, mrl, function(diagnoseResult) {
-                    diagnoseResult.alternatives.forEach(function(tuple) {
+                    console.log(diagnoseResult);
+                    diagnoseResult.taginfo.forEach(function(tuple) {
                         const key = tuple[0][0];
                         const val = tuple[0][1];
-                        const common = tuple[1];
-                        const alts = tuple[2];
+                        const count = tuple[1];
+                        const common = tuple[2];
+                        const alts = tuple[3];
 
-                        const li = document.createElement('li');
-                        const common_text = common ? '[Common] ' : '[Uncommon or non-existent] ';
-                        li.appendChild(document.createTextNode(common_text));
-                        li.appendChild(makeTag(key, val));
-                        li.appendChild(document.createTextNode(': '));
+                        const taginfo = document.createElement('div');
+                        taginfo.classList.add('taginfo');
+                        taginfo.classList.add('container-vertical-flex');
+
+                        const usageClass = getUsageClass(count);
+                        const usageElm = document.createElement('span');
+                        usageElm.appendChild(document.createTextNode('Count: '));
+                        const numberElm = document.createElement('span');
+                        numberElm.classList.add('tag-usage-' + usageClass.slug);
+                        numberElm.appendChild(
+                            document.createTextNode(count + ' (' + usageClass.name + ')'));
+                        usageElm.appendChild(numberElm);
+
+                        taginfo.appendChild(makeTag(key, val));
+                        taginfo.appendChild(usageElm);
+
                         const tags = alts.map(keyval => makeTag(keyval[0], keyval[1], true));
-                        for (let i = 0; i < tags.length - 1; ++i) {
-                            li.appendChild(tags[i]);
-                            li.appendChild(document.createTextNode(', '));
-                        }
                         if (tags.length > 0) {
-                            li.appendChild(tags[tags.length - 1]);
+                            const alternativesElm = document.createElement('span');
+                            alternativesElm.appendChild(document.createTextNode('Alternatives: '));
+                            for (let i = 0; i < tags.length - 1; ++i) {
+                                alternativesElm.appendChild(tags[i]);
+                                alternativesElm.appendChild(document.createTextNode(', '));
+                            }
+                            if (tags.length > 0) {
+                                alternativesElm.appendChild(tags[tags.length - 1]);
+                            }
+                            taginfo.appendChild(alternativesElm);
                         }
 
-                        thisMrlEditBlock.alternatives.appendChild(li);
+                        thisMrlEditBlock.alternatives.appendChild(taginfo);
                     });
 
                     if (diagnoseResult.area) {
@@ -622,27 +628,31 @@ window.onload = function() {
 
         const formData = new FormData(this);
 
-        const xhr = new XMLHttpRequest();
-        PARSING_XHR = xhr;
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
+        PARSING_XHR = ajaxPost(
+            this.action,
+            function(xhr) {
                 PARSING_XHR = null;
                 let parseResult = JSON.parse(xhr.responseText);
-                if (xhr.status === 200) {
-                    messagesBlock.addMessage('Parsed query.');
-                } else {
-                    if (parseResult.error) {
-                        messagesBlock.addMessage(parseResult.error, true);
-                    } else {
-                        messagesBlock.addMessage('Parsing failed.', true);
-                    }
-                }
-                mrlInfoBlock.processParseResult(parseResult);
-            }
-        };
 
-        xhr.open('POST', this.action);
-        xhr.send(formData);
+                messagesBlock.addMessage('Parsed query.');
+
+                mrlInfoBlock.processParseResult(parseResult);
+            },
+            function(xhr) {
+                PARSING_XHR = null;
+                let parseResult = JSON.parse(xhr.responseText);
+
+                if (parseResult.error) {
+                    messagesBlock.addMessage(parseResult.error, true);
+                } else {
+                    messagesBlock.addMessage('Parsing failed.', true);
+                }
+
+                mrlInfoBlock.processParseResult(parseResult);
+            },
+            null,
+            formData
+        );
         return false;
     };
 
@@ -672,26 +682,26 @@ window.onload = function() {
         answerBlock.reset();
         mrlEditBlock.reset();
 
-        const xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-                if (xhr.status === 200) {
-                    const mrl = xhr.responseText;
-                    mrlInfoBlock.processMrl(mrl, true);
-                } else {
-                    let msg = '';
-                    try {
-                        msg =  'Retrieving mrl failed: ' + xhr.responseText;
-                    } catch (SyntaxError) {
-                        msg = 'Retrieving mrl failed.';
-                    }
-                    messagesBlock.addMessage(msg, true);
+        ajaxPost(
+            '/features_to_mrl',
+            function(xhr) {
+                const mrl = xhr.responseText;
+                mrlInfoBlock.processMrl(mrl, true);
+            },
+            function(xhr) {
+                let msg = 'Retrieving mrl failed.';
+                /*
+                try {
+                    msg =  'Retrieving mrl failed: ' + xhr.responseText;
+                } catch (SyntaxError) {
+                    msg = 'Retrieving mrl failed.';
                 }
-            }
-        };
-        xhr.open('POST', 'http://localhost:5000/features_to_mrl');
-        xhr.send(formData);
-
+                */
+                messagesBlock.addMessage(msg, true);
+            },
+            null,
+            formData
+        );
         return false;
     };
 
@@ -706,21 +716,19 @@ window.onload = function() {
         mrlInfoBlock.hideJudgement();
         mrlEditBlock.reset();
 
-        let xhr = new XMLHttpRequest();
-        xhr.onreadystatechange = function() {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
+        ajaxPost(
+            '/feedback/create',
+            function(xhr) {
                 let parseStatus = document.getElementById('query-status');
-                if (xhr.status === 200) {
-                    messagesBlock.addMessage('Feedback received. Thanks!');
-                } else {
-                    messagesBlock.addMessage('Feedback not received.', true);
-                }
-            }
-        };
-
-        xhr.open('POST', 'http://localhost:5000/feedback/create');
-        xhr.send(formData);
-
+                messagesBlock.addMessage('Feedback received. Thanks!');
+            },
+            function(xhr) {
+                let parseStatus = document.getElementById('query-status');
+                messagesBlock.addMessage('Feedback not received.', true);
+            },
+            null,
+            formData
+        );
         return false;
     };
 
@@ -765,4 +773,4 @@ window.onload = function() {
             }
         });
     // End events
-};
+});

@@ -1,0 +1,3 @@
+include nlmapsweb/data/most_common_tags.json
+include nlmapsweb/data/tf_idf_pipeline.pickle
+include nlmapsweb/data/stopwords.txt

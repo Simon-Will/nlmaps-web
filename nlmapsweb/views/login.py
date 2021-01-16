@@ -1,4 +1,4 @@
-from flask_login import current_user, login_user
+from flask_login import current_user, login_required, login_user, logout_user
 from flask import current_app, redirect, render_template, request, url_for
 
 from nlmapsweb.forms import LoginForm
@@ -20,3 +20,10 @@ def login():
         return redirect(url_for('query'))
 
     return render_template('login.html', form=form)
+
+
+@current_app.route('/logout', methods=['GET'])
+@login_required
+def logout():
+    logout_user()
+    return redirect(url_for('query'))

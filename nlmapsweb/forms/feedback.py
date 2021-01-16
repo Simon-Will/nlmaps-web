@@ -1,5 +1,5 @@
 from flask import current_app
-from wtforms import BooleanField, SelectField, StringField
+from wtforms import BooleanField, HiddenField, SelectField, StringField
 from wtforms.validators import DataRequired
 
 from nlmapsweb.forms.base import BaseForm
@@ -18,8 +18,14 @@ class FeedbackExportForm(BaseForm):
     incorrect = BooleanField('Incorrect Instances', default=True)
 
 
-class FeedbackForm(BaseForm):
+class FeedbackCreateForm(BaseForm):
     nl = StringField('NL Query', validators=[DataRequired()])
     systemMrl = StringField('System MRL Query')
     correctMrl = StringField('Correct MRL Query')
-    model = StringField('Model', validators=[DataRequired()])
+    model = StringField('Model')
+    parent_id = HiddenField()
+
+
+class FeedbackEditForm(BaseForm):
+    nl = StringField('NL Query', validators=[DataRequired()])
+    correct_mrl = StringField('Correct MRL Query')

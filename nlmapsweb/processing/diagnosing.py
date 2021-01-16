@@ -1,3 +1,4 @@
+from pathlib import Path
 import re
 
 from flask import current_app
@@ -7,7 +8,7 @@ from nlmapsweb.processing.converting import mrl_to_features
 from nlmapsweb.processing.result import Result
 from nlmapsweb.processing.stop_words import is_stop_word
 from nlmapsweb.processing.taginfo import (find_alternatives, get_key_val_pairs,
-                                          tag_is_common)
+                                          taginfo_lookup, tag_is_common)
 from nlmapsweb.processing.tf_idf import get_tf_idf_scores, load_tf_idf_pipeline
 
 
@@ -27,12 +28,12 @@ def count_areas(name):
 
 class DiagnoseResult(Result):
 
-    def __init__(self, success, nl, mrl, alternatives, area, tf_idf_scores,
+    def __init__(self, success, nl, mrl, taginfo, area, tf_idf_scores,
                  error=None):
         super().__init__(success, error)
         self.nl = nl
         self.mrl = mrl
-        self.alternatives = alternatives
+        self.taginfo = taginfo
         self.area = area
         self.tf_idf_scores = tf_idf_scores
 
@@ -40,30 +41,36 @@ class DiagnoseResult(Result):
     def from_nl_mrl(cls, nl, mrl):
         success = True
         error = None
-        alternatives = None
+        taginfo = None
         tf_idf_scores = None
 
         try:
             # This could just as well be a dict from the (key, val) tuple to
             # the alternatives list. But in json, we need string keys, so we
             # use a list instead of a dict.
-            alternatives = []
-            key_val_pairs = get_key_val_pairs(mrl)
+            taginfo = []
+            # Tag info for names doesn’t make sense.
+            # Names are often unique.
+            key_val_pairs = [(key, val) for key, val in get_key_val_pairs(mrl)
+                             if key != 'name']
+            counts = taginfo_lookup(key_val_pairs) or {}
             for key, val in key_val_pairs:
-                # Tag info for names doesn’t make sense.
-                # They are often unique.
-                if key != 'name':
-                    alternatives.append(
-                        ((key, val), tag_is_common(key, val),
-                         find_alternatives(val))
-                    )
+                taginfo.append([
+                    (key, val),
+                    counts.get((key, val), 0),
+                    tag_is_common(key, val),
+                    find_alternatives(val)
+                ])
         except:
             success = False
             error = 'Failed to check key value pairs.'
-            #return cls(success=False, nl=nl, mrl=mrl, alternatives={},
+            #return cls(success=False, nl=nl, mrl=mrl, taginfo={},
             #           area=None, tf_idf_scores=None, error=error)
 
-        tf_idf_pipeline_file = current_app.config.get('TF_IDF_PIPELINE')
+
+        tf_idf_pipeline_file = (
+            Path(__file__) / '../../data/tf_idf_pipeline.pickle'
+        ).resolve()
         if tf_idf_pipeline_file:
             pipeline = load_tf_idf_pipeline(tf_idf_pipeline_file)
             if pipeline:
@@ -95,10 +102,10 @@ class DiagnoseResult(Result):
         else:
             area = None
 
-        return cls(success=True, nl=nl, mrl=mrl, alternatives=alternatives,
+        return cls(success=True, nl=nl, mrl=mrl, taginfo=taginfo,
                    area=area, tf_idf_scores=tf_idf_scores)
 
     def to_dict(self):
         return {'nl': self.nl, 'mrl': self.mrl,
-                'alternatives': self.alternatives, 'area': self.area,
+                'taginfo': self.taginfo, 'area': self.area,
                 'tf_idf_scores': self.tf_idf_scores}

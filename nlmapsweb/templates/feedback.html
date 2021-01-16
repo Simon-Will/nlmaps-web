@@ -3,6 +3,7 @@
 {% set page = 'feedback' %}
 
 {% block content %}
+<!--
 <div class="row">
     {% if prev_id %}
     <a href="{{ url_for('feedback_piece', id=prev_id) }}">Previous</a>
@@ -11,10 +12,16 @@
     <a href="{{ url_for('feedback_piece', id=next_id) }}">Next</a>
     {% endif %}
 </div>
-<div class="row feedback-piece feedback-type-{{ piece.type }}" data-opcodes="{{ piece.opcodes_json }}">
+-->
+<div class="row">
+<p>Feedback with respect to parse by model <span class="model-name">{{ piece.model }}</span></p>
+</div>
+
+<div class="row feedback-piece feedback-type-{{ piece.get_type() }}" data-opcodes="{{ piece.get_opcodes() }}">
+    <p class="feedback-id">{{ piece.id }}</p>
     <p class="feedback-nl">{{ piece.nl }}</p>
-    <p class="feedback-sys mrl">{{ piece.systemMrl }}</p>
-    <p class="feedback-corr mrl">{{ piece.correctMrl }}</p>
+    <p class="feedback-sys mrl">{{ piece.model_mrl }}</p>
+    <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
 </div>
 <div class="row container-horizontal-flex" style="justify-content: flex-end;">
     <a href="{{ url_for('delete_feedback_piece', id=piece.id) }}">Delete</a>
@@ -22,8 +29,7 @@
 <form class="row container-vertical-flex" method="post">
     {{ form.hidden_tag() }}
     {{ form.nl.label }} {{ form.nl() }}
-    {{ form.systemMrl.label }} {{ form.systemMrl() }}
-    {{ form.correctMrl.label }} {{ form.correctMrl() }}
+    {{ form.correct_mrl.label }} {{ form.correct_mrl() }}
     <input type="submit"  value="Submit">
 </form>
 {% endblock %}

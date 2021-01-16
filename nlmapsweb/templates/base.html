@@ -51,10 +51,14 @@
             <nav id="main-nav">
                 <a class="nav-element" href="{{ url_for('query') }}">Query</a>
                 <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
+                {% if current_user.admin %}
+                <a class="nav-element" href="{{ url_for('train') }}">Train Status</a>
+                {% endif %}
                 {% if current_user.is_anonymous %}
                 <a class="nav-element" href="{{ url_for('login') }}">Log In</a>
                 {% else %}
-                <span>User: {{ current_user.name }}</span>
+                <a class="nav-element" href="{{ url_for('logout') }}">Log Out</a>
+                <span>👤 {{ current_user.name }}</span>
                 {% endif %}
             </nav>
         </div>
@@ -62,6 +66,7 @@
 
         {#- Main Wrapper #}
         <div id="wrapper">
+            <div id="flash-container"></div>
             {% block main %}
             {% block content %}{% endblock %}
             {% endblock %}

@@ -80,4 +80,5 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
 )
 SQLALCHEMY_ECHO = False
 
-OVERPASS_URL='http://overpass-api.de/api/interpreter'
+OVERPASS_URL = 'http://overpass-api.de/api/interpreter'
+TAGINFO_URL = 'https://taginfo.openstreetmap.org/'

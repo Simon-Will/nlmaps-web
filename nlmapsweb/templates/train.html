@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% set page = 'train' %}
+
+{% block content %}
+<div class="row block" id="train-block">
+    <div class="block-header">
+        <span class="block-title">Training Status</span>
+    </div>
+    <div class="block-body">
+        <div id="train-spinner" class="lds-ring" style="display: none;"><div></div><div></div><div></div><div></div></div>
+        <span id="train-finished" hidden>✔</span>
+        <p id="train-message"></p>
+        {% if error %}
+        <p class="bg-danger">{{ error }}</p>
+        {% endif %}
+    </div>
+</div>
+
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Start Training</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="POST" action="{{ url_for('train') }}">
+            {{ form.hidden_tag() }}
+            {{ form.model.label }}{{ form.model() }}
+            <input type="submit" value="Train">
+        </form>
+    </div>
+</div>
+{% endblock %}

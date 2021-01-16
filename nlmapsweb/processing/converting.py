@@ -3,7 +3,7 @@ import traceback
 from flask import current_app
 import pyparsing
 
-from mrl import NLmaps
+from nlmaps_tools.mrl import NLmaps
 from nlmaps_tools.generate_mrl import generate_from_features
 from nlmaps_tools.parse_mrl import MrlGrammar
 

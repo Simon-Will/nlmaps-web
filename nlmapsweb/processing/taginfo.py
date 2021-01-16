@@ -2,8 +2,10 @@ from collections import defaultdict
 import difflib
 import json
 import re
+from pathlib import Path
 
 from flask import current_app
+import requests
 
 TAGS = None
 
@@ -19,7 +21,8 @@ def ensure_tags_loaded():
 
 def read_tags():
     tags = defaultdict(set)
-    with open(current_app.config['MOST_COMMON_TAGS']) as f:
+    filename = (Path(__file__) / '../../data/most_common_tags.json').resolve()
+    with open(filename) as f:
         content = json.load(f)
         for entry in content['data']:
             tags[entry['key']].add(entry['value'])
@@ -67,3 +70,27 @@ def get_key_val_pairs(mrl):
                              mrl):
         key_val_pairs.append((match.group('key'), match.group('val')))
     return key_val_pairs
+
+
+def taginfo_lookup(key_val_pairs):
+    url_base = current_app.config['TAGINFO_URL']
+    url = url_base + 'api/4/tags/list'
+    current_app.logger.info('Looking up {} at url {}'.format(url, url))
+
+    tags_string = ','.join(
+        '{}={}'.format(key, val) for key, val in key_val_pairs)
+    current_app.logger.info('Looking up {} at url {}'.format(tags_string, url))
+
+    response = requests.get(url, params={'tags': tags_string})
+
+    if response.ok:
+        current_app.logger.info('Lookup successful.')
+        data = response.json()['data']
+        count_by_key_val = {}
+        for info in data:
+            count_by_key_val[(info['key'], info['value'])] = info['count_all']
+        return count_by_key_val
+
+    current_app.logger.error('Lookup failed with status code {}.'
+                             .format(response.status_code))
+    return None

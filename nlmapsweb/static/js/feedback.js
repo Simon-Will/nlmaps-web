@@ -1,4 +1,4 @@
-window.onload = function() {
+window.addEventListener('load', function() {
     const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
           .getAttribute('content');
 
@@ -113,4 +113,65 @@ window.onload = function() {
             xhr.send(formData);
         };
     }
-};
+
+    document.querySelectorAll('.add-child-button').forEach(function(button) {
+        button.onclick = function() {
+            const id = button.getAttribute('data-piece-id');
+            button.previousElementSibling.hidden = false;
+            button.hidden = true;
+        };
+    });
+    document.querySelectorAll('.add-child-form').forEach(function(form) {
+        form.onsubmit = function() {
+            const formData = new FormData(this);
+            ajaxPost(
+                this.action,
+                function(xhr) {
+                    const fb = JSON.parse(xhr.responseText);
+
+                    const feedbackPieceDiv = document.createElement('div');
+                    feedbackPieceDiv.classList.add('feedback-piece');
+                    feedbackPieceDiv.classList.add('feedback-type-unknown');
+
+                    const idPar = document.createElement('p');
+                    idPar.classList.add('feedback-id');
+                    const idParLink = document.createElement('a');
+                    idParLink.setAttribute('href', '/feedback/' + fb.id);
+                    idParLink.innerHTML = fb.id;
+                    idPar.appendChild(idParLink);
+                    feedbackPieceDiv.appendChild(idPar);
+
+                    const nlPar = document.createElement('p');
+                    nlPar.classList.add('feedback-nl');
+                    nlPar.innerHTML = fb.nl;
+                    feedbackPieceDiv.appendChild(nlPar);
+
+                    const sysPar = document.createElement('p');
+                    sysPar.classList.add('feedback-sys');
+                    sysPar.classList.add('mrl');
+                    sysPar.innerHTML = 'None';
+                    feedbackPieceDiv.appendChild(sysPar);
+
+                    const corrPar = document.createElement('p');
+                    corrPar.classList.add('feedback-corr');
+                    corrPar.classList.add('mrl');
+                    corrPar.innerHTML = fb.nl;
+                    feedbackPieceDiv.appendChild(corrPar);
+
+                    const feedbackList = form.closest('.block-body')
+                          .querySelector('.feedback-list');
+                    feedbackList.appendChild(feedbackPieceDiv);
+                    if (feedbackList.children.length >= 3) {
+                        form.parentElement.hidden = true;
+                    }
+                },
+                function(xhr) {
+                    flashMessage('Adding feedback failed', 'bg-danger');
+                },
+                null,
+                formData
+            );
+            return false;
+        };
+    });
+});

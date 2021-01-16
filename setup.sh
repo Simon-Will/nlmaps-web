@@ -1,5 +1,5 @@
-export FLASK_APP=application:app
-export FLASK_DEBUG=true
+export FLASK_APP=nlmapsweb.fullapp
+export FLASK_ENV=development
 
 THIS_DIR=$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)
 

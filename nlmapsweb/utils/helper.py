@@ -4,8 +4,11 @@ import random
 import string
 
 
-def get_utc_now():
-    return dt.datetime.now(dt.timezone.utc)
+def get_utc_now(aware=True):
+    if aware:
+        return dt.datetime.now(dt.timezone.utc)
+    else:
+        return dt.datetime.utcnow()
 
 
 def sort_nwr(nwr_features):
