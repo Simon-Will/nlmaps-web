@@ -1,6 +1,10 @@
+from collections import defaultdict
+from io import BytesIO
+from zipfile import ZipFile
+
 from flask_login import current_user, login_required
 from flask import (abort, current_app, jsonify, redirect, render_template,
-                   request, url_for)
+                   request, send_file, url_for)
 import requests
 
 from nlmapsweb.app import db
@@ -94,11 +98,17 @@ def create_feedback():
                 pass
 
         current_app.logger.info(
-            'Received feedback: {}. Converted to feedback: {}'.format(data, feedback))
+            'Received feedback: {}. Converted to feedback: {}'
+            .format(data, feedback)
+        )
 
         url = current_app.config['JOEY_SERVER_URL'] + 'save_feedback'
         response = requests.post(url, json=feedback)
-        return jsonify(response.json()), response.status_code
+
+        response_dict = response.json()
+        response_dict['correct_mrl'] = correct_mrl
+        print('RESPONSE:', response_dict)
+        return jsonify(response_dict), response.status_code
 
     return 'Bad Request', 400
 
@@ -106,7 +116,66 @@ def create_feedback():
 @current_app.route('/export_feedback', methods=['GET'])
 @login_required
 def export_feedback():
-    pass
+    if current_user.admin:
+        parsing_model_form = AdminParsingModelForm(request.args)
+        try:
+            user_id = int(parsing_model_form.user.data)
+        except (TypeError, ValueError):
+            user_id = None
+        else:
+            if user_id < 0:
+                user_id = None
+    else:
+        parsing_model_form = ParsingModelForm(request.args)
+        user_id = current_user.id
+
+    filters = {'model': current_app.config['CURRENT_MODEL']}
+    if user_id is not None:
+        filters['user_id'] = user_id
+
+    url = current_app.config['JOEY_SERVER_URL'] + 'query_feedback'
+
+    response = requests.post(url, json=filters)
+    feedback = [FeedbackPiece(**data) for data in response.json()]
+
+    independent_feedback = []
+    parent_to_children = defaultdict(list)
+    for piece in feedback:
+        if piece.parent_id:
+            parent_to_children[piece.parent_id].append(piece)
+        else:
+            independent_feedback.append(piece)
+
+    nl = []
+    lin = []
+    mrl = []
+
+    def append_piece(piece):
+        nl.append(piece.nl)
+        lin.append(piece.correct_lin)
+        mrl.append(piece.correct_mrl)
+
+    for parent in independent_feedback:
+        append_piece(parent)
+        for child in parent_to_children[parent.id]:
+            append_piece(child)
+
+    # Append empty string so that joining will yield a trailing newline.
+    nl.append('')
+    lin.append('')
+    mrl.append('')
+
+    memory_file = BytesIO()
+    with ZipFile(memory_file, 'w') as zf:
+        zf.writestr('nlmaps_web/nlmaps.web.en', '\n'.join(nl))
+        zf.writestr('nlmaps_web/nlmaps.web.lin', '\n'.join(lin))
+        zf.writestr('nlmaps_web/nlmaps.web.mrl', '\n'.join(mrl))
+    memory_file.seek(0)
+
+    return send_file(
+        memory_file, attachment_filename='nlmaps_web.zip',
+        mimetype='application/zip', as_attachment=True
+    )
 
 
 @current_app.route('/feedback/<id>', methods=['GET', 'POST'])
@@ -188,7 +257,6 @@ def delete_feedback_piece(id):
 @current_app.route('/feedback/list', methods=['GET'])
 @login_required
 def list_feedback():
-    filters = {}
     if current_user.admin:
         parsing_model_form = AdminParsingModelForm(request.args)
         try:

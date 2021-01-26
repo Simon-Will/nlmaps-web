@@ -18,6 +18,20 @@
     </div>
 </div>
 
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Export Feedback</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="GET" action="{{ url_for('export_feedback') }}">
+            {% if parsing_model_form.user %}
+            {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
+            {% endif %}
+            <input type="submit" value="Export Feedback">
+        </form>
+    </div>
+</div>
+
 {% if current_user.admin %}
 <div class="row block">
     <div class="block-header">

@@ -22,3 +22,4 @@ SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     (Path(os.path.dirname(__file__)) / '../../nlmapsweb.db').resolve()
 )
 SQLALCHEMY_ECHO = False
+SQLALCHEMY_TRACK_MODIFICATIONS = False

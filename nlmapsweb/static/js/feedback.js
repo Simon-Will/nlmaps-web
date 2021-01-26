@@ -153,7 +153,7 @@ window.addEventListener('load', function() {
                     const corrPar = document.createElement('p');
                     corrPar.classList.add('feedback-corr');
                     corrPar.classList.add('mrl');
-                    corrPar.innerHTML = fb.nl;
+                    corrPar.innerHTML = fb.correct_mrl;
                     feedbackPieceDiv.appendChild(corrPar);
 
                     const feedbackList = form.closest('.block-body')

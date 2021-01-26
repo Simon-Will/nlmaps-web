@@ -14,7 +14,7 @@ def login():
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(name=form.name.data).first()
-        if User is None or not user.check_password_hash(form.password.data):
+        if user is None or not user.check_password_hash(form.password.data):
             return redirect(url_for('login'))
         login_user(user, remember=True)
         return redirect(url_for('query'))

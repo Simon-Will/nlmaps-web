@@ -29,7 +29,7 @@ logging.config.dictConfig({
     },
     'root': {
         'level': 'INFO',
-        'handlers': ['logfile']
+        'handlers': ['logfile', 'stdout']
     }
 })
 
