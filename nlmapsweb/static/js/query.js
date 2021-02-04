@@ -351,7 +351,11 @@ window.addEventListener('load', function() {
             if (features) {
                 this.features = features;
                 this.featuresElm.innerHTML = '';
-                this.featuresElm.appendChild(makeFeaturesElm(features));
+                if (features.query_type === 'dist') {
+                    this.featuresElm.innerHTML = 'Feature View not yet supported for dist query.';
+                } else {
+                    this.featuresElm.appendChild(makeFeaturesElm(features));
+                }
             } else {
                 this.features = null;
                 this.featuresElm.innerHTML = '';
