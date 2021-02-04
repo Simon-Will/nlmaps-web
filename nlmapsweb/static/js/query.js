@@ -268,6 +268,8 @@ window.addEventListener('load', function() {
             this.linElm.innerHTML = '';
             this.mrlElm.innerHTML = '';
             this.featuresElm.innerHTML = '';
+            const tagWarning = document.getElementById('bad-tag-warning');
+            if (tagWarning) {tagWarning.remove();}
             this.element.hidden = true;
             this.hideJudgement();
         }
@@ -444,7 +446,8 @@ window.addEventListener('load', function() {
                             document.createTextNode(count + ' (' + usageClass.name + ')'));
                         usageElm.appendChild(numberElm);
 
-                        taginfo.appendChild(makeTag(key, val));
+                        const tag = makeTag(key, val);
+                        taginfo.appendChild(tag);
                         taginfo.appendChild(usageElm);
 
                         const tags = alts.map(keyval => makeTag(keyval[0], keyval[1], true));
@@ -462,6 +465,22 @@ window.addEventListener('load', function() {
                         }
 
                         thisMrlEditBlock.alternatives.appendChild(taginfo);
+
+                        if (count <= 1000) {
+                            const warning = document.createElement('p');
+                            warning.id = 'bad-tag-warning';
+                            warning.classList.add('tag-usage-' + usageClass.slug);
+                            warning.appendChild(document.createTextNode('Tag '));
+                            warning.appendChild(tag);
+                            warning.appendChild(document.createTextNode(
+                                ' is ' + usageClass.name.toLowerCase()
+                                    + '. Please adjust the parse if you can.'
+                            ));
+                            const featuresElm = document.getElementById(
+                                'mrl-info-features');
+                            featuresElm.parentNode.insertBefore(
+                                warning, featuresElm.nextSibling);
+                        }
                     });
 
                     if (diagnoseResult.area) {
