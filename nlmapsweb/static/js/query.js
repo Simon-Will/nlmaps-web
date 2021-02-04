@@ -471,7 +471,7 @@ window.addEventListener('load', function() {
                             warning.id = 'bad-tag-warning';
                             warning.classList.add('tag-usage-' + usageClass.slug);
                             warning.appendChild(document.createTextNode('Tag '));
-                            warning.appendChild(tag);
+                            warning.appendChild(tag.cloneNode(true));
                             warning.appendChild(document.createTextNode(
                                 ' is ' + usageClass.name.toLowerCase()
                                     + '. Please adjust the parse if you can.'
