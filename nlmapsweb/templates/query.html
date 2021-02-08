@@ -14,7 +14,7 @@
     <div class="block-header">
         <span class="block-title">NLMaps Introduction</span>
     </div>
-    <div class="block-body">
+    <div class="block-body" hidden>
         <p>Issue geographical queries in plain English! Here are some examples:</p>
         <ul>
             <li>Is there any café in walking distance of Heiliggeistkirche in Heidelberg?</li>
@@ -100,28 +100,35 @@
                 <div id="mrl-edit-help-alternatives"></div>
             </div>
         </div>
-        <button id="switch-adjust-form">Switch to features form</button>
         <div id="adjust-form-wrapper">
-            <form id="query-features-form" method="POST" action="/geojson" hidden>
+            <form id="query-features-form" class="bordered" method="POST" action="/geojson">
                 {{ query_features_form.hidden_tag() }}
-                <div class="form-grid">
-                    {{ query_features_form.query_type.label }} {{ query_features_form.query_type }}
-                    {{ query_features_form.target_nwr.label }} {{ query_features_form.target_nwr(size=60, hidden=True) }}
-                    {{ query_features_form.center_nwr.label }} {{ query_features_form.center_nwr(size=60, hidden=True) }}
-                    {{ query_features_form.area.label }} {{ query_features_form.area(size=60) }}
-                    {{ query_features_form.maxdist.label }} {{ query_features_form.maxdist(size=60) }}
-                    {{ query_features_form.around_topx.label }} {{ query_features_form.around_topx(size=60) }}
-                    {{ query_features_form.qtype.label }} {{ query_features_form.qtype }}
-                    {{ query_features_form.cardinal_direction.label }} {{ query_features_form.cardinal_direction }}
+                {{ query_features_form.query_type.label }} {{ query_features_form.query_type }}
+                <div class="container-horizontal-flex">
+                    <fieldset class="bordered form-grid query-features-fieldset">
+                        {{ query_features_form.target_nwr.label }} {{ query_features_form.target_nwr(size=40, hidden=True) }}
+                        {{ query_features_form.center_nwr.label }} {{ query_features_form.center_nwr(size=40, hidden=True) }}
+                        {{ query_features_form.area.label }} {{ query_features_form.area(size=40) }}
+                        {{ query_features_form.maxdist.label }} {{ query_features_form.maxdist(size=40) }}
+                        {{ query_features_form.around_topx.label }} {{ query_features_form.around_topx(size=40) }}
+                        {{ query_features_form.qtype.label }} {{ query_features_form.qtype }}
+                        {{ query_features_form.cardinal_direction.label }} {{ query_features_form.cardinal_direction }}
+                    </fieldset>
+                    <fieldset id="second-features-fieldset" class="bordered form-grid query-features-fieldset">
+                        {{ query_features_form.target_nwr_2.label }} {{ query_features_form.target_nwr_2(size=40, hidden=True) }}
+                        {{ query_features_form.area_2.label }} {{ query_features_form.area_2(size=40) }}
+                        {{ query_features_form.cardinal_direction_2.label }} {{ query_features_form.cardinal_direction_2 }}
+                    </fieldset>
                 </div>
                 <input type="submit" value="Resubmit">
             </form>
-            <form id="mrl-query-form" method="POST" action="/geojson">
+            <form id="mrl-query-form" class="bordered" method="POST" action="/geojson" hidden>
                 {{ mrl_query_form.hidden_tag() }}
                 {{ mrl_query_form.mrl.label }} {{ mrl_query_form.mrl(size=100) }}
                 <input type="submit" value="Resubmit">
             </form>
         </div>
+        <button id="switch-adjust-form">Switch to MRL form</button>
     </div>
 </div>
 

@@ -193,9 +193,6 @@ class Block {
             this.visibility = this.detectVisibility();
             this.setVisibility(this.visibility);
         }
-
-        // Deprecated
-        this.element = element;
     }
 
     detectVisibility() {
@@ -274,12 +271,11 @@ function makeTableRow(key, value) {
 
 function makeFeaturesElm(features) {
     let elm = null;
+    const table = document.createElement('table');
+    const tableBody = document.createElement('tbody');
+    table.appendChild(tableBody);
 
     if (features.query_type === 'in_query') {
-        const table = document.createElement('table');
-        const tableBody = document.createElement('tbody');
-        table.appendChild(tableBody);
-
         tableBody.appendChild(
             makeTableRow('Question Class', 'Thing in Area')
         );
@@ -287,7 +283,9 @@ function makeFeaturesElm(features) {
             makeTableRow('Target Tags',
                          nwrFeaturesToTagString(features.target_nwr))
         );
-        tableBody.appendChild(makeTableRow('Area', features.area));
+        if (features.area) {
+            tableBody.appendChild(makeTableRow('Area', features.area));
+        }
         tableBody.appendChild(
             makeTableRow('QType', openParenAfterFunctor(features.qtype))
         );
@@ -297,14 +295,14 @@ function makeFeaturesElm(features) {
             );
         }
         elm = table;
-    } else if (features.query_type === 'around_query') {
-        const table = document.createElement('table');
-        const tableBody = document.createElement('tbody');
-        table.appendChild(tableBody);
+    } else if (contains(['around_query', 'dist_closest'], features.query_type)) {
+        const questionClass = 'Thing around Reference Point';
+        if (features.query_type === 'dist_closest') {
+            questionClass = 'Distance to Closest Thing';
+            features = features.sub[0];
+        }
+        tableBody.appendChild(makeTableRow('Question Class', questionClass));
 
-        tableBody.appendChild(
-            makeTableRow('Question Class', 'Thing around Reference Point')
-        );
         tableBody.appendChild(
             makeTableRow('Target Tags',
                          nwrFeaturesToTagString(features.target_nwr))
@@ -333,8 +331,43 @@ function makeFeaturesElm(features) {
             );
         }
         elm = table;
+    } else if (features.query_type === 'dist_between') {
+        tableBody.appendChild(
+            makeTableRow('Question Class', 'Distance Between Two Things')
+        );
+
+        const features1 = features.sub[0];
+        tableBody.appendChild(
+            makeTableRow('Target Tags 1',
+                         nwrFeaturesToTagString(features1.target_nwr))
+        );
+        if (features1.area) {
+            tableBody.appendChild(makeTableRow('Area 1', features1.area));
+        }
+        if (features1.cardinal_direction) {
+            tableBody.appendChild(
+                makeTableRow('Cardinal Direction 1', features1.cardinal_direction)
+            );
+        }
+
+        const features2 = features.sub[1];
+        tableBody.appendChild(
+            makeTableRow('Target Tags 2',
+                         nwrFeaturesToTagString(features2.target_nwr))
+        );
+        if (features2.area) {
+            tableBody.appendChild(makeTableRow('Area 2', features2.area));
+        }
+        if (features2.cardinal_direction) {
+            tableBody.appendChild(
+                makeTableRow('Cardinal Direction 2', features2.cardinal_direction)
+            );
+        }
+
+        elm = table;
     } else {
-        elm = document.createTextNode(JSON.stringify(features));
+        elm = document.createElement('div');
+        elm.appendChild(document.createTextNode(JSON.stringify(features)));
     }
 
     elm.classList.add('features-info');

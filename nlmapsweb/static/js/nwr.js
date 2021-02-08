@@ -1,5 +1,5 @@
 class NwrSuperField {
-    constructor(id, name = '', inputSize = 60) {
+    constructor(id, name = '', inputSize = 40) {
         this.id = id;
         this.name = name || id;
         this.inputSize = inputSize;

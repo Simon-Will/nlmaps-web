@@ -60,7 +60,10 @@ def is_json(form, field):
 class QueryFeaturesForm(BaseForm):
     query_type = SelectField(
         'Query Class', default='around_query',
-        choices=[('in_query', 'Thing in Area'), ('around_query', 'Thing around Reference Point')],
+        choices=[('in_query', 'Thing in Area'),
+                 ('around_query', 'Thing around Reference Point'),
+                 ('dist_closest', 'Distance to Closest Thing'),
+                 ('dist_between', 'Distance between Two Things')],
         validators=[DataRequired()]
     )
 
@@ -97,22 +100,89 @@ class QueryFeaturesForm(BaseForm):
         validators=[Optional()]
     )
 
+    target_nwr_2 = JSONStringField(
+        'Target Tags 2',
+    )
+    area_2 = StringField('Area 2')
+
+    cardinal_direction_2 = SelectField(
+        'Cardinal Direction 2', choices=['', 'east', 'north', 'south', 'west'],
+        validators=[Optional()]
+    )
+
+    for_ = HiddenField()
+    unit = HiddenField()
+
+    # for_ and unit are not currently in use.
+
+    #for_ = SelectField(
+    #    'Distance Method', choices=[
+    #        ('', 'Linear Distance'),
+    #        ('walk', 'Distance by Foot'),
+    #        ('bicycle', 'Distance by Bike'),
+    #        ('car', 'Distance by Car'),
+    #    ],
+    #    validators=[DataRequired()]
+    #)
+
+    #unit = SelectField(
+    #    'Distance Unit', choices=[
+    #        ('', 'Don’t care'),
+    #        ('km', 'Metric'),
+    #        ('mi', 'Imperial'),
+    #    ],
+    #)
+
     def get_features(self):
         features = {
-            'query_type': self.query_type.data,
             'target_nwr': sort_nwr(self.target_nwr.data),
             'qtype': self.qtype.data,
         }
+        dist_features = {}
+        if self.query_type.data in ('dist_closest', 'dist_between'):
+            dist_features['query_type'] = 'dist'
+        else:
+            features['query_type'] = self.query_type.data
+            if self.maxdist.data:
+                features['maxdist'] = Symbol(self.maxdist.data)
+            if self.around_topx.data:
+                features['around_topx'] = Symbol(str(self.around_topx.data))
 
         if self.center_nwr.data:
+            features['query_type'] = 'around_query'
             features['center_nwr'] = sort_nwr(self.center_nwr.data)
+        else:
+            features['query_type'] = 'in_query'
+
         if self.area.data:
             features['area'] = self.area.data
-        if self.maxdist.data:
-            features['maxdist'] = Symbol(self.maxdist.data)
-        if self.around_topx.data:
-            features['around_topx'] = Symbol(str(self.around_topx.data))
         if self.cardinal_direction.data:
             features['cardinal_direction'] = self.cardinal_direction.data
 
+        if dist_features:
+            if self.for_.data:
+                dist_features['for'] = self.for_.data
+            if self.unit.data:
+                dist_features['unit'] = Symbol(self.unit.data)
+
+            dist_features['sub'] = [features]
+
+            if dist_features['query_type'] == 'dist_between':
+                features_2 = {'qtype': (Symbol('latlong'),),
+                              'query_type': 'in_query'}
+                if self.target_nwr_2.data:
+                    features_2['target_nwr'] = sort_nwr(self.target_nwr_2.data)
+                if self.area_2.data:
+                    features_2['area'] = self.area_2.data
+                if self.cardinal_direction_2.data:
+                    features_2['cardinal_direction'] = (self.cardinal_direction_2
+                                                        .data)
+                dist_features['sub'].append(features_2)
+            else:
+                features['maxdist'] = Symbol('DIST_INTOWN')
+                features['around_topx'] = Symbol('1')
+
+            features = dist_features
+
+        print('Getting features: {}'.format(features))
         return features

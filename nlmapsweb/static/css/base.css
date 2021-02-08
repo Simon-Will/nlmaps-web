@@ -42,7 +42,7 @@ h1 {
 .container-horizontal-flex {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    align-items: flex-start;
     margin-top: 1em;
     margin-bottom: 1em;
 }
@@ -160,4 +160,9 @@ label {
 
 .flashed-message-remove-button {
     align-self: flex-start;
+}
+
+.bordered {
+    border: solid 1pt #ccc;
+    padding: 0.5em;
 }

@@ -270,25 +270,30 @@ window.addEventListener('load', function() {
             this.featuresElm.innerHTML = '';
             const tagWarning = document.getElementById('bad-tag-warning');
             if (tagWarning) {tagWarning.remove();}
-            this.element.hidden = true;
+            this.setVisibility('hidden');
             this.hideJudgement();
         }
 
         hideJudgement() {
-            // TODO: For some reason, the judgementElm is still visible after
-            // this step.
+            // judgementElm has "display: flex" which overrides hidden
+            // So we need to manually set "display: none"
             this.judgementElm.hidden = true;
+            this.judgementElm.style.display = 'none';
             this.judgementElm.querySelector('#adjust-mrl').hidden = false;
             this.judgementElm.querySelector('#confirm-mrl').hidden = false;
         }
 
         showJudgement(onlyAdjust = false) {
+            // judgementElm should have "display: flex", but it was probably
+            // removed during hideJudgment. Give it back.
             if (onlyAdjust) {
                 this.judgementElm.hidden = false;
+                this.judgementElm.style.display = 'flex';
                 this.judgementElm.querySelector('#adjust-mrl').hidden = false;
                 this.judgementElm.querySelector('#confirm-mrl').hidden = true;
             } else {
                 this.judgementElm.hidden = false;
+                this.judgementElm.style.display = 'flex';
                 this.judgementElm.querySelector('#adjust-mrl').hidden = false;
                 this.judgementElm.querySelector('#confirm-mrl').hidden = false;
             }
@@ -353,11 +358,7 @@ window.addEventListener('load', function() {
             if (features) {
                 this.features = features;
                 this.featuresElm.innerHTML = '';
-                if (features.query_type === 'dist') {
-                    this.featuresElm.innerHTML = 'Feature View not yet supported for dist query.';
-                } else {
-                    this.featuresElm.appendChild(makeFeaturesElm(features));
-                }
+                this.featuresElm.appendChild(makeFeaturesElm(features));
             } else {
                 this.features = null;
                 this.featuresElm.innerHTML = '';
@@ -515,16 +516,47 @@ window.addEventListener('load', function() {
         }
 
         setFeatures(features) {
-            if (features && contains(['around_query', 'in_query'], features.query_type)) {
+            if (features) {
+                console.log(features);
                 const query_type_select = this.featuresForm.querySelector("select[name='query_type']");
                 query_type_select.value = features.query_type;
+
+                if (contains(['dist_between', 'dist_closest'], features.query_type)) {
+                    if (features.for) {
+                        this.featuresForm.querySelector("input[name='for_']").value
+                            = features.for;
+                    }
+                    if (features.sub.length > 1) {
+                        const sub2 = features.sub[1];
+
+                        const targetNwr2Input = this.featuresForm.querySelector("input[name='target_nwr_2']");
+                        targetNwr2Input.value = JSON.stringify(sub2.target_nwr);
+                        targetNwr2SuperField.setNwrFeatures(sub2.target_nwr);
+
+                        if (sub2.area) {
+                            this.featuresForm.querySelector("input[name='area_2']").value
+                                = sub2.area;
+                        }
+                        if (sub2.cardinal_direction) {
+                            this.featuresForm.querySelector("select[name='cardinal_direction_2']").value
+                                = sub2.cardinal_direction;
+                        }
+
+                    }
+                    features = features.sub[0];
+                }
 
                 const targetNwrInput = this.featuresForm.querySelector("input[name='target_nwr']");
                 targetNwrInput.value = JSON.stringify(features.target_nwr);
                 targetNwrSuperField.setNwrFeatures(features.target_nwr);
 
-                this.featuresForm.querySelector("select[name='qtype']").value
-                    = JSON.stringify(features.qtype);
+                const qTypeInput = this.featuresForm.querySelector("select[name='qtype']");
+                if (contains(['in_query', 'around_query'], query_type_select.value)) {
+                    qTypeInput.value = JSON.stringify(features.qtype);
+                } else {
+                    qTypeInput.value = JSON.stringify(['latlong']);
+                }
+
                 this.featuresForm.querySelector("select[name='cardinal_direction']").value
                     = features.cardinal_direction;
 
@@ -626,6 +658,10 @@ window.addEventListener('load', function() {
     queryFeaturesForm.querySelector("input[name='center_nwr']")
         .insertAdjacentElement('beforebegin', centerNwrSuperField.root);
 
+    const targetNwr2SuperField = new NwrSuperField('target_nwr_2');
+    queryFeaturesForm.querySelector("input[name='target_nwr_2']")
+        .insertAdjacentElement('beforebegin', targetNwr2SuperField.root);
+
     // End globals
 
     // Begin events
@@ -701,6 +737,10 @@ window.addEventListener('load', function() {
                      JSON.stringify(targetNwrSuperField.getNwrFeatures()));
         formData.set('center_nwr',
                      JSON.stringify(centerNwrSuperField.getNwrFeatures()));
+        const targetNwr2 = targetNwr2SuperField.getNwrFeatures();
+        if (targetNwr2.length > 0) {
+            formData.set('target_nwr_2', JSON.stringify(targetNwr2));
+        }
 
         answerBlock.reset();
         mrlEditBlock.reset();
@@ -770,10 +810,24 @@ window.addEventListener('load', function() {
             queryFeaturesForm.hidden = false;
             mrlQueryForm.hidden = true;
         }
+        return false;
     };
 
     queryFeaturesForm.querySelector("select[name='query_type']")
         .addEventListener('change', function() {
+            function showSecondFeaturesFieldset(show) {
+                const secondFeaturesFieldset = document.getElementById('second-features-fieldset');
+                if (show) {
+                    secondFeaturesFieldset.hidden = false;
+                    secondFeaturesFieldset.style.display = '';
+                    secondFeaturesFieldset.disabled = false;
+                } else {
+                    secondFeaturesFieldset.hidden = true;
+                    secondFeaturesFieldset.style.display = 'none';
+                    secondFeaturesFieldset.disabled = true;
+                }
+            }
+
             if (this.value === 'in_query') {
                 queryFeaturesForm.querySelector("input[name='area']").readonly = false;
 
@@ -783,6 +837,10 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
                 queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
+
+                queryFeaturesForm.querySelector("select[name='qtype']").hidden = false;
+                queryFeaturesForm.querySelector("label[for='qtype']").hidden = false;
+                showSecondFeaturesFieldset(false);
             } else if (this.value === 'around_query') {
                 if (!queryFeaturesForm.querySelector("input[name='center_nwr']").value) {
                     queryFeaturesForm.querySelector("input[name='area']").readonly = true;
@@ -793,6 +851,37 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = false;
                 queryFeaturesForm.querySelector("input[name='around_topx']").hidden = false;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = false;
+
+                queryFeaturesForm.querySelector("select[name='qtype']").hidden = false;
+                queryFeaturesForm.querySelector("label[for='qtype']").hidden = false;
+                showSecondFeaturesFieldset(false);
+            } else if (this.value === 'dist_closest') {
+                if (!queryFeaturesForm.querySelector("input[name='center_nwr']").value) {
+                    queryFeaturesForm.querySelector("input[name='area']").readonly = true;
+                }
+                centerNwrSuperField.root.hidden = false;
+                queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = false;
+                queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
+
+                queryFeaturesForm.querySelector("select[name='qtype']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='qtype']").hidden = true;
+                showSecondFeaturesFieldset(false);
+            } else if (this.value === 'dist_between') {
+                queryFeaturesForm.querySelector("input[name='area']").readonly = false;
+
+                centerNwrSuperField.root.hidden = true;
+                queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = true;
+                queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
+                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
+
+                queryFeaturesForm.querySelector("select[name='qtype']").hidden = true;
+                queryFeaturesForm.querySelector("label[for='qtype']").hidden = true;
+                showSecondFeaturesFieldset(true);
             }
         });
     // End events

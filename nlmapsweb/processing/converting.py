@@ -45,8 +45,19 @@ def mrl_to_features(mrl, is_escaped=False):
         features = None
     else:
         features = parse_result['features']
+        # TODO: Put this into nlmaps-tools.
+        if features['query_type'] == 'dist':
+            if len(features['sub']) == 1:
+                features['query_type'] = 'dist_closest'
+            else:
+                features['query_type'] = 'dist_between'
+
     return features
 
 
 def features_to_mrl(features, escape=False):
+    # TODO: Put this into nlmaps-tools.
+    if features['query_type'] in ['dist_closest', 'dist_between']:
+        features['query_type'] = 'dist'
+
     return generate_from_features(features, escape=escape)
