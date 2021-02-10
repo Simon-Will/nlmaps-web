@@ -1,9 +1,7 @@
-from multiprocessing.pool import ThreadPool
-
 from flask import current_app, jsonify
-import requests
 
 from nlmapsweb.forms.parsing_model import ParsingModelForm
+import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.parsing import parse_to_lin
 
 
@@ -14,9 +12,7 @@ def batch_parse():
         model = form.model.data
         filters = {'model': model}
 
-        url = current_app.config['JOEY_SERVER_URL'] + 'query_feedback'
-
-        response = requests.post(url, json=filters)
+        response = mt_server.post('query_feedback', json=filters)
         nls = []
         for feedback_info in response.json():
             if not feedback_info['model_lin']:

@@ -5,12 +5,12 @@ from zipfile import ZipFile
 from flask_login import current_user, login_required
 from flask import (abort, current_app, jsonify, redirect, render_template,
                    request, send_file, url_for)
-import requests
 
 from nlmapsweb.app import db
 from nlmapsweb.forms import (AdminParsingModelForm, FeedbackCreateForm,
                              FeedbackEditForm, ParsingModelForm)
 from nlmapsweb.models import FeedbackState
+import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.processing.converting import delete_spaces, functionalise, linearise
 
@@ -102,8 +102,7 @@ def create_feedback():
             .format(data, feedback)
         )
 
-        url = current_app.config['JOEY_SERVER_URL'] + 'save_feedback'
-        response = requests.post(url, json=feedback)
+        response = mt_server.post('save_feedback', json=feedback)
 
         response_dict = response.json()
         response_dict['correct_mrl'] = correct_mrl
@@ -133,9 +132,7 @@ def export_feedback():
     if user_id is not None:
         filters['user_id'] = user_id
 
-    url = current_app.config['JOEY_SERVER_URL'] + 'query_feedback'
-
-    response = requests.post(url, json=filters)
+    response = mt_server.post('query_feedback', json=filters)
     feedback = [FeedbackPiece(**data) for data in response.json()]
 
     independent_feedback = []
@@ -198,8 +195,7 @@ def feedback_piece(id):
                                       if form.correct_mrl.data else '')
             payload['nl'] = form.nl.data
 
-            url = current_app.config['JOEY_SERVER_URL'] + 'edit_feedback'
-            response = requests.post(url, json=payload)
+            response = mt_server.post('edit_feedback', json=payload)
             if not response.ok:
                 abort(response.status_code)
             info = response.json()
@@ -209,8 +205,7 @@ def feedback_piece(id):
         payload = {'id': id}
         if not current_user.admin:
             payload['querier_id'] = current_user.id
-        url = current_app.config['JOEY_SERVER_URL'] + 'get_feedback'
-        response = requests.post(url, json=payload)
+        response = mt_server.post('get_feedback', json=payload)
         if not response.ok:
             abort(response.status_code)
         info = response.json()
@@ -235,8 +230,7 @@ def delete_feedback_piece(id):
     if not current_user.admin:
         payload['editor_id'] = current_user.id
 
-    url = current_app.config['JOEY_SERVER_URL'] + 'delete_feedback'
-    response = requests.post(url, json=payload)
+    response = mt_server.post('delete_feedback', json=payload)
 
     if response.ok:
         current_app.logger.info('Deleted feedback with id {}'.format(id))
@@ -280,9 +274,7 @@ def list_feedback():
     if user_id is not None:
         filters['user_id'] = user_id
 
-    url = current_app.config['JOEY_SERVER_URL'] + 'query_feedback'
-
-    response = requests.post(url, json=filters)
+    response = mt_server.post('query_feedback', json=filters)
     feedback_by_id = {piece_data['id']: FeedbackPiece(**piece_data)
                       for piece_data in response.json()}
 
@@ -320,8 +312,7 @@ def check_feedback_states():
     form = ParsingModelForm(request.args)
     model = form.model.data or current_app.config['CURRENT_MODEL']
     filters = {'model': model, 'user_id': current_user.id}
-    url = current_app.config['JOEY_SERVER_URL'] + 'query_feedback'
-    response = requests.post(url, json=filters)
+    response = mt_server.post('query_feedback', json=filters)
     if not response.ok:
         return jsonify({'error': 'Error in parsing server'}), 500
 

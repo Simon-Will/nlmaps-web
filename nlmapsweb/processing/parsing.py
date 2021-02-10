@@ -1,8 +1,8 @@
 from flask import current_app
-import requests
 
 from nlmapsweb.app import db
 from nlmapsweb.models import ParseLog
+import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.converting import functionalise, mrl_to_features
 from nlmapsweb.processing.result import Result
 
@@ -11,11 +11,8 @@ def parse_to_lin(nl_query, model=None):
     current_app.logger.info('Parsing query "{}".'.format(nl_query))
     model = model or current_app.config['CURRENT_MODEL']
 
-    url = current_app.config['JOEY_SERVER_URL'] + 'translate'
     payload = {'model': model, 'nl': nl_query}
-
-    current_app.logger.info('POST {} to {}'.format(payload, url))
-    response = requests.post(url, json=payload)
+    response = mt_server.post('translate', json=payload)
     if response.status_code == 200:
         result = response.json()['lin']
         current_app.logger.info('Received parsing result "{}".'.format(result))

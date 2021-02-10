@@ -1,15 +1,14 @@
 from flask_login import current_user, login_required
 from flask import (current_app, jsonify, redirect, render_template, request,
                    url_for)
-import requests
 
 from nlmapsweb.forms import ParsingModelForm
+import nlmapsweb.mt_server as mt_server
 from nlmapsweb.utils.auth import admin_required
 
 
 def _check_train_status():
-    url = current_app.config['JOEY_SERVER_URL'] + 'train_status'
-    response = requests.get(url)
+    response = mt_server.get('train_status')
     if not response.ok:
         return jsonify({'error': 'Error in parsing server'}), 500
     return response.json()
@@ -24,8 +23,7 @@ def train():
     form = ParsingModelForm()
     if form.validate_on_submit():
         model = form.model.data
-        url = current_app.config['JOEY_SERVER_URL'] + 'train'
-        response = requests.post(url, json={'model': model})
+        response = mt_server.post('train', json={'model': model})
         if response.ok:
             return redirect(url_for('train'))
         else:
