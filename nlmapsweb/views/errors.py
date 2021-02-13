@@ -13,6 +13,7 @@ def error_response(html_template, message):
     else:
         return render_template(html_template)
 
+
 @current_app.errorhandler(403)
 def page_forbidden(e):
     username = (current_user.name if current_user.is_authenticated

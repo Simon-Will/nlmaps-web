@@ -53,7 +53,7 @@
     <div class="block-body">
         <form id="nl-query-form" method="POST" action="/parse" class="row">
             {{ nl_query_form.hidden_tag() }}
-            {{ nl_query_form.nl.label }} {{ nl_query_form.nl(size=100) }}
+            {{ nl_query_form.nl.label }} {{ nl_query_form.nl(size=100, autofocus=True) }}
             <input type="submit" value="Submit">
         </form>
     </div>
