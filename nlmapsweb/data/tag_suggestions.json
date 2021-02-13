@@ -1,0 +1,404 @@
+{
+    "recreation": {
+        "landuse=recreation_ground OR leisure=recreation_ground": "Recreation ground"
+    },
+    "station": {
+        "building=train_station OR railway=station": "Railway station"
+    },
+    "sculpture": {
+        "artwork_type=statue OR memorial=statue": "Statue"
+    },
+    "statue": {
+        "artwork_type=statue OR memorial=statue": "Statue"
+    },
+    "recycling": {
+        "amenity=recycling": "Recycling station, not further specified",
+        "recycling:clothes": "Recycling container for clothes, use as standalone",
+        "recycling:glass=yes OR recycling:glass_bottles": "Recycling container for glass bottles, use as standalone"
+    },
+    "drink": {
+        "amenity=drinking_water OR drinking_water=yes": "Drinking water"
+    },
+    "food": {
+        "shop=convenience OR shop=deli OR shop=supermarket": "Store felling food, food shop",
+        "amenity=restaurant OR amenity=fast_food": "Place serving food for eating. Use this if not specifically asking for a store."
+    },
+    "atm": {
+        "amenity=atm OR atm=yes": "ATM, cash machine, cash point"
+    },
+    "nursing": {
+        "amenity=nursing_home OR social_facility=nursing_home": "Nursing home"
+    },
+    "ice": {
+        "amenity=ice_cream OR cuisine=ice_cream": "Ice cream place"
+    },
+    "icecream": {
+        "amenity=ice_cream OR cuisine=ice_cream": "Ice cream place"
+    },
+    "alcohol": {
+        "shop=alcohol OR shop=wine": "Shop selling alcohol",
+        "shop=wine": "Shop specializing in wine"
+    },
+    "farm": {
+        "building=farm OR building=farm_auxiliary": "Farm building",
+        "landuse=farmyard OR place=farm": "The whole of a farm"
+    },
+    "farms": {
+        "building=farm OR building=farm_auxiliary": "Farm building",
+        "landuse=farmyard OR place=farm": "The whole of a farm"
+    },
+    "forest": {
+        "landuse=forest OR natural=wood": "A forest"
+    },
+    "forests": {
+        "landuse=forest OR natural=wood": "A forest"
+    },
+    "wood": {
+        "landuse=forest OR natural=wood": "A forest"
+    },
+    "woods": {
+        "landuse=forest OR natural=wood": "A forest"
+    },
+    "woodland": {
+        "landuse=forest OR natural=wood": "A forest"
+    },
+    "organic": {
+        "organic=only OR organic=yes": "Place with organic products",
+        "organic=only": "Place with exclusively organic products"
+    },
+    "lactose_free": {
+        "diet:lactose_free=only OR diet:lactose_free=yes": "Place serving lactose-free food",
+        "diet:lactose_free=only": "Place serving exclusively lactose-free food",
+        "amenity=restaurant": "Add this for lactose-free restaurants",
+        "amenity=fast_food": "Add this for lactose-free fast food restaurants"
+    },
+    "kosher": {
+        "diet:kosher=only OR diet:kosher=yes": "Place serving kosher food",
+        "diet:kosher=only": "Place serving exclusively kosher food",
+        "amenity=restaurant": "Add this for kosher restaurants",
+        "amenity=fast_food": "Add this for kosher fast food restaurants"
+    },
+    "gluten_free": {
+        "diet:gluten_free=only OR diet:gluten_free=yes": "Place serving gluten-free food",
+        "diet:gluten_free=only": "Place serving exclusively gluten-free food",
+        "amenity=restaurant": "Add this for gluten-free restaurants",
+        "amenity=fast_food": "Add this for gluten-free fast food restaurants"
+    },
+    "vegan": {
+        "diet:vegan=only OR diet:vegan=yes": "Place serving vegan food",
+        "diet:vegan=only": "Place serving exclusively vegan food",
+        "amenity=restaurant": "Add this for vegan restaurants",
+        "amenity=fast_food": "Add this for vegan fast food restaurants"
+    },
+    "vegetarian": {
+        "diet:vegetarian=only OR diet:vegetarian=yes": "Place serving vegetarian food",
+        "diet:vegetarian=only": "Place serving exclusively vegetarian food",
+        "amenity=restaurant": "Add this for vegetarian restaurants",
+        "amenity=fast_food": "Add this for vegetarian fast food restaurants"
+    },
+    "regional": {
+        "cuisine=regional AND amenity=restaurant": "Regional restaurant",
+        "cuisine=regional AND amenity=fast_food": "Regional fast food restaurant",
+        "cuisine=regional": "Place serving regional food"
+    },
+    "italian": {
+        "cuisine=italian AND amenity=restaurant": "Italian restaurant",
+        "cuisine=italian AND amenity=fast_food": "Italian fast food restaurant",
+        "cuisine=italian": "Place serving italian food"
+    },
+    "chinese": {
+        "cuisine=chinese AND amenity=restaurant": "Chinese restaurant",
+        "cuisine=chinese AND amenity=fast_food": "Chinese fast food restaurant",
+        "cuisine=chinese": "Place serving chinese food"
+    },
+    "mexican": {
+        "cuisine=mexican AND amenity=restaurant": "Mexican restaurant",
+        "cuisine=mexican AND amenity=fast_food": "Mexican fast food restaurant",
+        "cuisine=mexican": "Place serving mexican food"
+    },
+    "japanese": {
+        "cuisine=japanese AND amenity=restaurant": "Japanese restaurant",
+        "cuisine=japanese AND amenity=fast_food": "Japanese fast food restaurant",
+        "cuisine=japanese": "Place serving japanese food"
+    },
+    "american": {
+        "cuisine=american AND amenity=restaurant": "American restaurant",
+        "cuisine=american AND amenity=fast_food": "American fast food restaurant",
+        "cuisine=american": "Place serving american food"
+    },
+    "indian": {
+        "cuisine=indian AND amenity=restaurant": "Indian restaurant",
+        "cuisine=indian AND amenity=fast_food": "Indian fast food restaurant",
+        "cuisine=indian": "Place serving indian food"
+    },
+    "asian": {
+        "cuisine=asian AND amenity=restaurant": "Asian restaurant",
+        "cuisine=asian AND amenity=fast_food": "Asian fast food restaurant",
+        "cuisine=asian": "Place serving asian food"
+    },
+    "french": {
+        "cuisine=french AND amenity=restaurant": "French restaurant",
+        "cuisine=french AND amenity=fast_food": "French fast food restaurant",
+        "cuisine=french": "Place serving french food"
+    },
+    "german": {
+        "cuisine=german AND amenity=restaurant": "German restaurant",
+        "cuisine=german AND amenity=fast_food": "German fast food restaurant",
+        "cuisine=german": "Place serving german food"
+    },
+    "thai": {
+        "cuisine=thai AND amenity=restaurant": "Thai restaurant",
+        "cuisine=thai AND amenity=fast_food": "Thai fast food restaurant",
+        "cuisine=thai": "Place serving thai food"
+    },
+    "greek": {
+        "cuisine=greek AND amenity=restaurant": "Greek restaurant",
+        "cuisine=greek AND amenity=fast_food": "Greek fast food restaurant",
+        "cuisine=greek": "Place serving greek food"
+    },
+    "international": {
+        "cuisine=international AND amenity=restaurant": "International restaurant",
+        "cuisine=international AND amenity=fast_food": "International fast food restaurant",
+        "cuisine=international": "Place serving international food"
+    },
+    "vietnamese": {
+        "cuisine=vietnamese AND amenity=restaurant": "Vietnamese restaurant",
+        "cuisine=vietnamese AND amenity=fast_food": "Vietnamese fast food restaurant",
+        "cuisine=vietnamese": "Place serving vietnamese food"
+    },
+    "turkish": {
+        "cuisine=turkish AND amenity=restaurant": "Turkish restaurant",
+        "cuisine=turkish AND amenity=fast_food": "Turkish fast food restaurant",
+        "cuisine=turkish": "Place serving turkish food"
+    },
+    "spanish": {
+        "cuisine=spanish AND amenity=restaurant": "Spanish restaurant",
+        "cuisine=spanish AND amenity=fast_food": "Spanish fast food restaurant",
+        "cuisine=spanish": "Place serving spanish food"
+    },
+    "local": {
+        "cuisine=local AND amenity=restaurant": "Local restaurant",
+        "cuisine=local AND amenity=fast_food": "Local fast food restaurant",
+        "cuisine=local": "Place serving local food"
+    },
+    "korean": {
+        "cuisine=korean AND amenity=restaurant": "Korean restaurant",
+        "cuisine=korean AND amenity=fast_food": "Korean fast food restaurant",
+        "cuisine=korean": "Place serving korean food"
+    },
+    "mediterranean": {
+        "cuisine=mediterranean AND amenity=restaurant": "Mediterranean restaurant",
+        "cuisine=mediterranean AND amenity=fast_food": "Mediterranean fast food restaurant",
+        "cuisine=mediterranean": "Place serving mediterranean food"
+    },
+    "lebanese": {
+        "cuisine=lebanese AND amenity=restaurant": "Lebanese restaurant",
+        "cuisine=lebanese AND amenity=fast_food": "Lebanese fast food restaurant",
+        "cuisine=lebanese": "Place serving lebanese food"
+    },
+    "indonesian": {
+        "cuisine=indonesian AND amenity=restaurant": "Indonesian restaurant",
+        "cuisine=indonesian AND amenity=fast_food": "Indonesian fast food restaurant",
+        "cuisine=indonesian": "Place serving indonesian food"
+    },
+    "georgian": {
+        "cuisine=georgian AND amenity=restaurant": "Georgian restaurant",
+        "cuisine=georgian AND amenity=fast_food": "Georgian fast food restaurant",
+        "cuisine=georgian": "Place serving georgian food"
+    },
+    "arab": {
+        "cuisine=arab AND amenity=restaurant": "Arab restaurant",
+        "cuisine=arab AND amenity=fast_food": "Arab fast food restaurant",
+        "cuisine=arab": "Place serving arab food"
+    },
+    "portuguese": {
+        "cuisine=portuguese AND amenity=restaurant": "Portuguese restaurant",
+        "cuisine=portuguese AND amenity=fast_food": "Portuguese fast food restaurant",
+        "cuisine=portuguese": "Place serving portuguese food"
+    },
+    "russian": {
+        "cuisine=russian AND amenity=restaurant": "Russian restaurant",
+        "cuisine=russian AND amenity=fast_food": "Russian fast food restaurant",
+        "cuisine=russian": "Place serving russian food"
+    },
+    "filipino": {
+        "cuisine=filipino AND amenity=restaurant": "Filipino restaurant",
+        "cuisine=filipino AND amenity=fast_food": "Filipino fast food restaurant",
+        "cuisine=filipino": "Place serving filipino food"
+    },
+    "polish": {
+        "cuisine=polish AND amenity=restaurant": "Polish restaurant",
+        "cuisine=polish AND amenity=fast_food": "Polish fast food restaurant",
+        "cuisine=polish": "Place serving polish food"
+    },
+    "african": {
+        "cuisine=african AND amenity=restaurant": "African restaurant",
+        "cuisine=african AND amenity=fast_food": "African fast food restaurant",
+        "cuisine=african": "Place serving african food"
+    },
+    "malaysian": {
+        "cuisine=malaysian AND amenity=restaurant": "Malaysian restaurant",
+        "cuisine=malaysian AND amenity=fast_food": "Malaysian fast food restaurant",
+        "cuisine=malaysian": "Place serving malaysian food"
+    },
+    "peruvian": {
+        "cuisine=peruvian AND amenity=restaurant": "Peruvian restaurant",
+        "cuisine=peruvian AND amenity=fast_food": "Peruvian fast food restaurant",
+        "cuisine=peruvian": "Place serving peruvian food"
+    },
+    "caribbean": {
+        "cuisine=caribbean AND amenity=restaurant": "Caribbean restaurant",
+        "cuisine=caribbean AND amenity=fast_food": "Caribbean fast food restaurant",
+        "cuisine=caribbean": "Place serving caribbean food"
+    },
+    "bavarian": {
+        "cuisine=bavarian AND amenity=restaurant": "Bavarian restaurant",
+        "cuisine=bavarian AND amenity=fast_food": "Bavarian fast food restaurant",
+        "cuisine=bavarian": "Place serving bavarian food"
+    },
+    "pizza": {
+        "cuisine=pizza AND amenity=restaurant": "Pizza restaurant",
+        "cuisine=pizza AND amenity=fast_food": "Pizza fast food restaurant",
+        "cuisine=pizza": "Place serving pizza"
+    },
+    "burger": {
+        "cuisine=burger AND amenity=restaurant": "Burger restaurant",
+        "cuisine=burger AND amenity=fast_food": "Burger fast food restaurant",
+        "cuisine=burger": "Place serving burgers"
+    },
+    "sandwich": {
+        "cuisine=sandwich AND amenity=restaurant": "Sandwich restaurant",
+        "cuisine=sandwich AND amenity=fast_food": "Sandwich fast food restaurant",
+        "cuisine=sandwich": "Place serving sandwiches"
+    },
+    "sandwiches": {
+        "cuisine=sandwich AND amenity=restaurant": "Sandwich restaurant",
+        "cuisine=sandwich AND amenity=fast_food": "Sandwich fast food restaurant",
+        "cuisine=sandwich": "Place serving sandwiches"
+    },
+    "chicken": {
+        "cuisine=chicken AND amenity=restaurant": "Chicken restaurant",
+        "cuisine=chicken AND amenity=fast_food": "Chicken fast food restaurant",
+        "cuisine=chicken": "Place serving chicken"
+    },
+    "kebab": {
+        "cuisine=kebab AND amenity=restaurant": "Kebab restaurant",
+        "cuisine=kebab AND amenity=fast_food": "Kebab fast food restaurant",
+        "cuisine=kebab": "Place serving kebab"
+    },
+    "sushi": {
+        "cuisine=sushi AND amenity=restaurant": "Sushi restaurant",
+        "cuisine=sushi AND amenity=fast_food": "Sushi fast food restaurant",
+        "cuisine=sushi": "Place serving sushi"
+    },
+    "seafood": {
+        "cuisine=seafood AND amenity=restaurant": "Seafood restaurant",
+        "cuisine=seafood AND amenity=fast_food": "Seafood fast food restaurant",
+        "cuisine=seafood": "Place serving seafood"
+    },
+    "noodle": {
+        "cuisine=noodle AND amenity=restaurant": "Noodle restaurant",
+        "cuisine=noodle AND amenity=fast_food": "Noodle fast food restaurant",
+        "cuisine=noodle": "Place serving noodles"
+    },
+    "noodles": {
+        "cuisine=noodle AND amenity=restaurant": "Noodle restaurant",
+        "cuisine=noodle AND amenity=fast_food": "Noodle fast food restaurant",
+        "cuisine=noodle": "Place serving noodles"
+    },
+    "barbecue": {
+        "cuisine=barbecue AND amenity=restaurant": "Barbecue restaurant",
+        "cuisine=barbecue AND amenity=fast_food": "Barbecue fast food restaurant",
+        "cuisine=barbecue": "Place serving barbecue"
+    },
+    "fish": {
+        "cuisine=fish AND amenity=restaurant": "Fish restaurant",
+        "cuisine=fish AND amenity=fast_food": "Fish fast food restaurant",
+        "cuisine=fish": "Place serving fish"
+    },
+    "ramen": {
+        "cuisine=ramen AND amenity=restaurant": "Ramen restaurant",
+        "cuisine=ramen AND amenity=fast_food": "Ramen fast food restaurant",
+        "cuisine=ramen": "Place serving ramen"
+    },
+    "donut": {
+        "cuisine=donut AND amenity=restaurant": "Donut restaurant",
+        "cuisine=donut AND amenity=fast_food": "Donut fast food restaurant",
+        "cuisine=donut": "Place serving donuts"
+    },
+    "donuts": {
+        "cuisine=donut AND amenity=restaurant": "Donut restaurant",
+        "cuisine=donut AND amenity=fast_food": "Donut fast food restaurant",
+        "cuisine=donut": "Place serving donuts"
+    },
+    "breakfast": {
+        "cuisine=breakfast AND amenity=restaurant": "Breakfast restaurant",
+        "cuisine=breakfast AND amenity=fast_food": "Breakfast fast food restaurant",
+        "cuisine=breakfast": "Place serving breakfast"
+    },
+    "friture": {
+        "cuisine=friture AND amenity=restaurant": "Friture restaurant",
+        "cuisine=friture AND amenity=fast_food": "Friture fast food restaurant",
+        "cuisine=friture": "Place serving friture"
+    },
+    "crepe": {
+        "cuisine=crepe AND amenity=restaurant": "Crepe restaurant",
+        "cuisine=crepe AND amenity=fast_food": "Crepe fast food restaurant",
+        "cuisine=crepe": "Place serving crepes"
+    },
+    "crepes": {
+        "cuisine=crepe AND amenity=restaurant": "Crepe restaurant",
+        "cuisine=crepe AND amenity=fast_food": "Crepe fast food restaurant",
+        "cuisine=crepe": "Place serving crepes"
+    },
+    "juice": {
+        "cuisine=juice AND amenity=restaurant": "Juice restaurant",
+        "cuisine=juice AND amenity=fast_food": "Juice fast food restaurant",
+        "cuisine=juice": "Place serving juice"
+    },
+    "juices": {
+        "cuisine=juice AND amenity=restaurant": "Juice restaurant",
+        "cuisine=juice AND amenity=fast_food": "Juice fast food restaurant",
+        "cuisine=juice": "Place serving juice"
+    },
+    "tapas": {
+        "cuisine=tapas AND amenity=restaurant": "Tapas restaurant",
+        "cuisine=tapas AND amenity=fast_food": "Tapas fast food restaurant",
+        "cuisine=tapas": "Place serving tapas"
+    },
+    "wings": {
+        "cuisine=wings AND amenity=restaurant": "Wings restaurant",
+        "cuisine=wings AND amenity=fast_food": "Wings fast food restaurant",
+        "cuisine=wings": "Place serving wings"
+    },
+    "cake": {
+        "cuisine=cake AND amenity=restaurant": "Cake restaurant",
+        "cuisine=cake AND amenity=fast_food": "Cake fast food restaurant",
+        "cuisine=cake": "Place serving cakes"
+    },
+    "cakes": {
+        "cuisine=cake AND amenity=restaurant": "Cake restaurant",
+        "cuisine=cake AND amenity=fast_food": "Cake fast food restaurant",
+        "cuisine=cake": "Place serving cakes"
+    },
+    "bagel": {
+        "cuisine=bagel AND amenity=restaurant": "Bagel restaurant",
+        "cuisine=bagel AND amenity=fast_food": "Bagel fast food restaurant",
+        "cuisine=bagel": "Place serving bagels"
+    },
+    "bagels": {
+        "cuisine=bagel AND amenity=restaurant": "Bagel restaurant",
+        "cuisine=bagel AND amenity=fast_food": "Bagel fast food restaurant",
+        "cuisine=bagel": "Place serving bagels"
+    },
+    "pasta": {
+        "cuisine=pasta AND amenity=restaurant": "Pasta restaurant",
+        "cuisine=pasta AND amenity=fast_food": "Pasta fast food restaurant",
+        "cuisine=pasta": "Place serving pasta"
+    },
+    "grill": {
+        "cuisine=grill AND amenity=restaurant": "Grill restaurant",
+        "cuisine=grill AND amenity=fast_food": "Grill fast food restaurant",
+        "cuisine=grill": "Place serving grilled food"
+    }
+}
