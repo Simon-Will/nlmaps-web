@@ -31,11 +31,6 @@ def features_to_mrl_view():
         mrl = features_to_mrl(features)
         if mrl:
             return mrl, 200
-    if form.validate():
-        print('VALID')
-    else:
-        print('INVALID')
-    print(form.errors)
     if form.errors:
         return jsonify(form.errors), 400
     return 'Bad Request', 400

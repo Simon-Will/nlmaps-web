@@ -126,6 +126,47 @@ window.addEventListener('load', function() {
         return false;
     }
 
+    function makeUseButton(tag) {
+        const button = document.createElement('button');
+        button.innerHTML = 'Use as …';
+        button.onclick = function() {
+            const p1 = document.createElement('p');
+            p1.appendChild(
+                document.createTextNode(
+                    targetNwrSuperField.getNwrFeatures().toString()
+                )
+            );
+            const p2 = document.createElement('p');
+            p2.appendChild(
+                document.createTextNode(
+                    centerNwrSuperField.getNwrFeatures().toString()
+                )
+            );
+            const p3 = document.createElement('p');
+            p3.appendChild(
+                document.createTextNode(
+                    targetNwr2SuperField.getNwrFeatures().toString()
+                )
+            );
+            const modal = makeModal([p1, p2, p3]);
+            mrlEditBlock.body.appendChild(modal);
+            return false;
+        };
+        return button;
+    }
+
+    function makeCopyButton(tag, helpElm) {
+        const button = document.createElement('button');
+        button.innerHTML = 'Copy Tag';
+        button.onclick = function() {
+            const tempDiv = document.createElement('div');
+            insertAfter(tempDiv, helpElm);
+            copyTextToClipboard(tag, tempDiv);
+            window.setTimeout(function() {tempDiv.remove();}, 3000);
+        };
+        return button;
+    }
+
     function makeMrlEditHelp(title, content = null) {
         const titleElm = document.createElement('span');
         titleElm.appendChild(document.createTextNode(title));
@@ -167,9 +208,12 @@ window.addEventListener('load', function() {
         const count = document.createElement('li');
         count.appendChild(document.createTextNode('Count: ' + tagInfo.countAll));
 
+        const copyButton = makeCopyButton(nameContent, help);
+
         text.appendChild(name);
         text.appendChild(description);
         text.appendChild(count);
+        text.appendChild(copyButton);
 
         help.appendChild(text);
 
@@ -192,7 +236,7 @@ window.addEventListener('load', function() {
         for (let tag of foundTags.slice(0, 3)) {
             content.appendChild(makeSingleTagHelp(tag));
         }
-        const title = 'Tag candidates for “' + keyword + '”';
+        const title = 'Tag candidates for “' + htmlEscape(keyword) + '”';
         return makeMrlEditHelp(title, content);
     }
 
@@ -209,6 +253,54 @@ window.addEventListener('load', function() {
             null,
             {query: keyword}
         );
+    }
+
+    function makeSingleCustomSuggestion(tagString, description) {
+        const suggestion = document.createElement('ul');
+        suggestion.classList.add('mrl-edit-help-custom-suggestion');
+
+        const tagElm = document.createElement('li');
+
+        const orStrings = tagString.split(' AND ');
+        for (let i in orStrings) {
+            const tagsAsStrings = orStrings[i].split(' OR ');
+            for (let j in tagsAsStrings) {
+                const tag = tagsAsStrings[j].split('=', 2);
+                tagElm.appendChild(makeTag(tag[0], tag[1], true));
+                if (j != tagsAsStrings.length - 1) {
+                    tagElm.appendChild(document.createTextNode(' OR '));
+                }
+            }
+            if (i != orStrings.length - 1) {
+                tagElm.appendChild(document.createTextNode(' AND '));
+            }
+        }
+        suggestion.appendChild(tagElm);
+
+        const descriptionElm = document.createElement('li');
+        descriptionElm.appendChild(document.createTextNode(description));
+        descriptionElm.style = 'font-style: italic;';
+        suggestion.appendChild(descriptionElm);
+
+        return suggestion;
+    }
+
+    function makeCustomSuggestionsHelp(keyword, suggestions) {
+        const content = document.createElement('div');
+        content.classList.add('container-vertical-flex');
+
+        for (let tagString in suggestions) {
+            const description = suggestions[tagString];
+            content.appendChild(
+                makeSingleCustomSuggestion(tagString, description)
+            );
+        }
+
+        const title = 'NLMaps Web help for “' + htmlEscape(keyword) + '”';
+        const help = makeMrlEditHelp(title, content);
+        help.classList.add('mrl-edit-help-custom-suggestions');
+
+        return help;
     }
 
     class MessagesBlock extends Block {
@@ -414,6 +506,11 @@ window.addEventListener('load', function() {
                 .forEach(function(tagFinderHelp) {
                     tagFinderHelp.parentNode.remove();
                 });
+            this.mrlEditHelpContainer
+                .querySelectorAll('.mrl-edit-help-custom-suggestions')
+                .forEach(function(help) {
+                    help.remove();
+                });
         }
 
         show() {
@@ -479,8 +576,7 @@ window.addEventListener('load', function() {
                             ));
                             const featuresElm = document.getElementById(
                                 'mrl-info-features');
-                            featuresElm.parentNode.insertBefore(
-                                warning, featuresElm.nextSibling);
+                            insertAfter(warning, featuresElm);
                         }
                     });
 
@@ -506,6 +602,16 @@ window.addEventListener('load', function() {
                                 appendTagFinderHelp(
                                     token, thisMrlEditBlock.mrlEditHelpContainer);
                             }
+                        }
+                    }
+
+                    if (diagnoseResult.custom_suggestions) {
+                        for (let token in diagnoseResult.custom_suggestions) {
+                            const suggestions = diagnoseResult.custom_suggestions[token];
+                            console.log(token, suggestions);
+                            thisMrlEditBlock.mrlEditHelpContainer.appendChild(
+                                makeCustomSuggestionsHelp(token, suggestions)
+                            );
                         }
                     }
                 });
@@ -707,7 +813,9 @@ window.addEventListener('load', function() {
                     messagesBlock.addMessage('Parsing failed.', true);
                 }
 
-                mrlInfoBlock.processParseResult(parseResult);
+                if (parseResult.model && parseResult.nl) {
+                    mrlInfoBlock.processParseResult(parseResult);
+                }
             },
             null,
             formData

@@ -25,8 +25,12 @@ function isString(obj) {
     return typeof obj === 'string' || obj instanceof String;
 }
 
+function insertAfter(newNode, referenceNode) {
+    referenceNode.parentNode.insertBefore(newNode, referenceNode.nextSibling);
+}
+
 function ajaxBase(url, method, onsuccess, onerror = null, params = null,
-                  formData = null) {
+                  formData = null, accept = 'application/json') {
     if (url.startsWith('/')) {
         url = window.location.origin + url;
     }
@@ -50,6 +54,7 @@ function ajaxBase(url, method, onsuccess, onerror = null, params = null,
         }
     };
     xhr.open(method, url);
+    xhr.setRequestHeader('Accept', accept);
     if (method === 'POST' && formData !== null) {
         xhr.send(formData);
     } else {
@@ -89,6 +94,86 @@ function flashMessage(parentElm, text = 'Updated!', cssClass = 'bg-success', mil
     parentElm.appendChild(container);
     if (milliseconds) {
         window.setTimeout(function() {container.remove();}, milliseconds);
+    }
+}
+
+function makeModal(contentElements = null) {
+    const modal = document.createElement('div');
+    modal.classList.add('modal');
+
+    const modalContent = document.createElement('div');
+    modalContent.classList.add('modal-content');
+
+    if (contentElements) {
+        for (let elm of contentElements) {
+            modalContent.appendChild(elm);
+        }
+    }
+
+    modal.appendChild(modalContent);
+    modal.onclick = function(event) {
+        if (event.target === modal) {
+            modal.remove();
+        }
+    };
+
+    return modal;
+}
+
+// These two clipboard functions are taken from
+// https://stackoverflow.com/a/30810322 and modified moderately.
+function fallbackCopyTextToClipboard(text, flash) {
+    var textArea = document.createElement("textarea");
+    textArea.value = text;
+
+    // Avoid scrolling to bottom
+    textArea.style.top = "0";
+    textArea.style.left = "0";
+    textArea.style.position = "fixed";
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    let success = false;
+    try {
+        success = document.execCommand('copy');
+        console.log('Fallback: Copied.');
+    } catch (err) {
+        success = false;
+        console.error('Fallback: Unable to copy.', err);
+    }
+
+    document.body.removeChild(textArea);
+    return success;
+}
+
+function copyTextToClipboard(text, flashParent = null) {
+
+    function flashSuccess(success) {
+        if (flashParent) {
+            let message = '';
+            if (text.length > 70) {
+                message = success ? 'Copied.' : 'Failed to copy.';
+            } else {
+                message = success ? 'Copied “' + text + '”.'
+                    : 'Failed to copy “' + text + '”.';
+            }
+            const cssClass = success ? 'bg-success' : 'bg-danger';
+            flashMessage(flashParent, message, cssClass, 1000);
+        }
+    }
+
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(function() {
+            flashSuccess(true);
+        }, function(err) {
+            console.error('Navigator.clipboard: Unable to copy.', err);
+            flashSuccess(false);
+        });
+    } else {
+        success = fallbackCopyTextToClipboard(text);
+        flashSuccess(success);
     }
 }
 
@@ -296,7 +381,7 @@ function makeFeaturesElm(features) {
         }
         elm = table;
     } else if (contains(['around_query', 'dist_closest'], features.query_type)) {
-        const questionClass = 'Thing around Reference Point';
+        let questionClass = 'Thing around Reference Point';
         if (features.query_type === 'dist_closest') {
             questionClass = 'Distance to Closest Thing';
             features = features.sub[0];
@@ -398,3 +483,11 @@ function checkFeedbackStates() {
 }
 
 window.addEventListener('load', checkFeedbackStates);
+
+window.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') {
+        document.querySelectorAll('.modal').forEach(function(elm) {
+            elm.remove();
+        });
+    }
+});

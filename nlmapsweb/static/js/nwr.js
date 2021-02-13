@@ -133,9 +133,9 @@ class NwrSuperField {
         for (let group of this.root.querySelectorAll('.nwr-super-field-group')) {
             const groupNwr = [];
             for (let input of group.querySelectorAll('input')) {
-                let val = input.value;
+                const val = input.value;
                 if (val && val.includes('=')) {
-                    let tag = val.split('=', 2);
+                    const tag = val.split('=', 2);
                     groupNwr.push(tag);
                 }
             }

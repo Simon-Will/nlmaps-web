@@ -5,6 +5,7 @@ from flask import current_app
 import requests
 
 from nlmapsweb.processing.converting import mrl_to_features
+from nlmapsweb.processing.custom_tag_suggestions import get_suggestions
 from nlmapsweb.processing.result import Result
 from nlmapsweb.processing.stop_words import is_stop_word
 from nlmapsweb.processing.taginfo import (find_alternatives, get_key_val_pairs,
@@ -29,13 +30,14 @@ def count_areas(name):
 class DiagnoseResult(Result):
 
     def __init__(self, success, nl, mrl, taginfo, area, tf_idf_scores,
-                 error=None):
+                 custom_suggestions, error=None):
         super().__init__(success, error)
         self.nl = nl
         self.mrl = mrl
         self.taginfo = taginfo
         self.area = area
         self.tf_idf_scores = tf_idf_scores
+        self.custom_suggestions = custom_suggestions
 
     @classmethod
     def from_nl_mrl(cls, nl, mrl):
@@ -43,6 +45,7 @@ class DiagnoseResult(Result):
         error = None
         taginfo = None
         tf_idf_scores = None
+        custom_suggestions = None
 
         try:
             # This could just as well be a dict from the (key, val) tuple to
@@ -84,8 +87,12 @@ class DiagnoseResult(Result):
                     tokens_to_be_deleted.extend([
                         token.lower() for token in features['area'].split()
                     ])
-                if 'center_nwr' in features:
-                    for tag in features['center_nwr']:
+                if 'area_2' in features:
+                    tokens_to_be_deleted.extend([
+                        token.lower() for token in features['area_2'].split()
+                    ])
+                for feature_name in ['center_nwr', 'target_nwr', 'target_nwr_2']:
+                    for tag in features.get(feature_name, []):
                         if isinstance(tag, tuple) and tag[0] == 'name':
                             tokens_to_be_deleted.extend([
                                 token.lower() for token in tag[1].split()
@@ -95,6 +102,12 @@ class DiagnoseResult(Result):
                 if token in tokens_to_be_deleted or is_stop_word(token):
                     del tf_idf_scores[token]
 
+            tokens = tf_idf_scores.keys()
+        else:
+            tokens = nl.split(' ')
+
+        custom_suggestions = get_suggestions(tokens)
+
         area_name = get_area_name(mrl)
         if area_name:
             area_count = count_areas(area_name)
@@ -103,9 +116,12 @@ class DiagnoseResult(Result):
             area = None
 
         return cls(success=True, nl=nl, mrl=mrl, taginfo=taginfo,
-                   area=area, tf_idf_scores=tf_idf_scores)
+                   area=area, tf_idf_scores=tf_idf_scores,
+                   custom_suggestions=custom_suggestions)
 
     def to_dict(self):
-        return {'nl': self.nl, 'mrl': self.mrl,
-                'taginfo': self.taginfo, 'area': self.area,
-                'tf_idf_scores': self.tf_idf_scores}
+        return {
+            'nl': self.nl, 'mrl': self.mrl, 'taginfo': self.taginfo,
+            'area': self.area, 'tf_idf_scores': self.tf_idf_scores,
+            'custom_suggestions': self.custom_suggestions
+        }

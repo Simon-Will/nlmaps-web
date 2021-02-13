@@ -32,7 +32,7 @@ def train():
                 error = 'Training already running.'
             else:
                 error = 'Error in parsing server.'
-            status = 500
+                status = 500
     else:
         model = current_app.config['CURRENT_MODEL']
         form.model.process_data(model)

@@ -112,6 +112,17 @@
     width: auto;
 }
 
+.mrl-edit-help-custom-suggestions {
+    border: solid 2pt #fc0;
+}
+
+.mrl-edit-help-custom-suggestion {
+    padding: 0.1em;
+    margin: 0.2em;
+    border: solid 1pt #ccc;
+    list-style: none;
+}
+
 .taginfo {
     padding: 0;
     margin: 0.2em;
