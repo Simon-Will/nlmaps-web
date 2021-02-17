@@ -4,10 +4,20 @@ import traceback
 
 from flask import current_app
 
+from nlmaps_tools.answer_mrl import load_features, answer
+
 from nlmapsweb.processing.result import Result
 
 def answer_query(mrl_query):
     current_app.logger.info('Interpreting query "{}".'.format(mrl_query))
+
+    features = load_features(mrl_query)
+    if features and features['query_type'] == 'in_query':
+        result = answer(features)
+        current_app.logger.info('Received py answering result {}'.format(result))
+        return result
+
+
     answer_cmd = current_app.config['ANSWER_COMMAND']
     try:
         proc = subprocess.run(answer_cmd, capture_output=True, input=mrl_query,
@@ -45,16 +55,36 @@ def get_geojson_features(mrl_query):
 
 class AnswerResult(Result):
 
-    def __init__(self, success, mrl, answer, features, error=None):
+    def __init__(self, success, mrl, answer, features, error=None, py_result=None):
         super().__init__(success, error)
         self.mrl = mrl
         self.answer = answer
         self.features = features
         self.geojson = {'type': 'FeatureCollection', 'features': features}
 
+        if py_result:
+            if 'geojson' in py_result:
+                self.geojson = py_result.pop('geojson')
+                self.features = self.geojson['features']  # Do we need this?
+            else:
+                self.geojson = {'type': 'FeatureCollection', 'features': []}
+
+            self.answer = json.dumps(py_result)
+
     @classmethod
     def from_mrl(cls, mrl):
         result = answer_query(mrl)
+
+        if isinstance(result, dict):
+            if result.get('type') == 'error':
+                success = False
+                error = result['error']
+            else:
+                success = True
+                error = None
+            return cls(success=success, mrl=None, answer=None, features=None,
+                       error=error, py_result=result)
+
         if result is False:
             error = f'Failed to parse MRL query {mrl!r}'
             current_app.logger.warning(error)
