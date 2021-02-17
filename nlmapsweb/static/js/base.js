@@ -403,9 +403,15 @@ function makeFeaturesElm(features) {
             makeTableRow('Maximum Distance', features.maxdist)
         );
         if (features.around_topx) {
-            tableBody.appendChild(
-                makeTableRow('Limit to at Most', features.around_topx)
-            );
+            if (features.around_topx === '1') {
+                tableBody.appendChild(
+                    makeTableRow('Limit to', 'Closest')
+                );
+            } else {
+                tableBody.appendChild(
+                    makeTableRow('Limit to at Most', features.around_topx)
+                );
+            }
         }
         tableBody.appendChild(
             makeTableRow('QType', openParenAfterFunctor(features.qtype))

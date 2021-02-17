@@ -1,0 +1,33 @@
+<p>It will sometimes happen that NLMaps Web produces an MRL that does not
+correctly represent what you originally asked, especially if it has not seen the
+tag you’re looking for before of if you worded your query in a novel way. If
+that happens, please give feedback to NLMaps Web by correcting the MRL.</p>
+
+<p>When you’re correcting an MRL, NLMaps Web will suggest some tags for you to
+consider. These suggestions are based on keywords from the question you asked
+and may not always be the tags you should use in the end. If in doubt, conduct
+your own research on the<a href="https://wiki.openstreetmap.org/wiki/Main_Page">OpenStreetMap Wiki</a>.</p>
+
+<div class="task">
+    <ol>
+        <li>Enter the query below, which should query playgrounds.</li>
+        <li>NLMaps Web will suggest a wrong tag. Click “Adjust” and use the Tag
+        Finder’s suggestion to find the correct tag.</li>
+        <li>Copy the correct tag and insert it instead of the wrong tag as the
+        Target Tag in the MRL features form.</li>
+        <li>Submit the form by pressing “Resubmit” and check that the MRL is now
+        correct. Press “That’s correct!”</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">Where in Stratford-upon-Avon can my kids go to
+        play?</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">query(area(keyval('name','Stratford-upon-Avon')),nwr(keyval('leisure','playground')),qtype(latlong))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

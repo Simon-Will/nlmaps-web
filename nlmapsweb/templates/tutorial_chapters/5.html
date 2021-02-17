@@ -1,0 +1,74 @@
+<h3>Closest Object Only</h3>
+
+<p>In the previous example, we found all hotels within a certain distance of Taj
+Mahal, but what if we only want to know about the closest one? It’s possible to specify that by limiting the results to the closest object with the “Limit to” field.</p>
+
+<h3>Multiple Tags</h3>
+
+<p>Not every query can be answered by just looking for one specific tag. With
+some queries, we are looking for objects that have two specific tags at the same
+time. A typical example is a restaurant serving a specific cuisine, like in the following example. (Note
+that the two tags are just separated by a comma when both should apply.)</p>
+
+<div class="example">
+    <p class="nl-prefixed">Chinese restaurants in Rome</p>
+    <p id="mrl-info-features">
+        <table class="features-info">
+            <tbody>
+                <tr><td>Question Class</td><td>Thing in Area</td></tr>
+                <tr><td>Target Tags</td><td>amenity=restaurant,cuisine=chinese</td></tr>
+                <tr><td>Area</td><td>Rome</td></tr>
+                <tr><td>QType</td><td>latlong</td></tr>
+            </tbody>
+        </table>
+    </p>
+</div>
+
+<p>With other queries, we are looking for objects that have either of two
+possible tags. This can be due to our query not caring about subtle differences
+or due to idiosyncrasies in the OpenStreetMap data. When you’re looking for an
+ATM to draw cash, you probably want to include dedicated ATMs as well as banks
+that happen to have an ATM. (Here, the tags are connected by an “or” operator.)</p>
+
+<div class="example">
+    <p class="nl-prefixed">Closest ATM to Spanish Steps in Rome</p>
+    <p id="mrl-info-features">
+        <table class="features-info">
+            <tbody>
+                <tr><td>Question Class</td><td>Thing around Reference Point</td></tr>
+                <tr><td>Target Tags</td><td>or(amenity=atm,atm=yes)</td></tr>
+                <tr><td>Reference Point</td><td>name=Spanish Steps</td></tr>
+                <tr><td>Area</td><td>Rome</td></tr>
+                <tr><td>Limit to</td><td>Closest</td></tr>
+                <tr><td>QType</td><td>latlong</td></tr>
+            </tbody>
+        </table>
+    </p>
+</div>
+
+<p>In these multi-tag cases, it can be hard to know what tag combination you’re
+really looking for. That’s why there is dedicated help for the most common ones
+available. You can recognize it by its golden border. Please respect the tag
+combination that is given in these tips if you’re not 100% sure what you’re
+doing.</p>
+
+<img src="/static/media/custom_suggestions.png" alt="Custom suggestions for ‘food’">
+
+<div class="task">
+    <ol>
+        <li>Ask the question below.</li>
+        <li>Correct errors and send feedback. You will have to adjust several
+        things in this case!</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">Name the synagogue that is closest to the Országház in Budapest!</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">query(around(center(area(keyval('name','Budapest')),nwr(keyval('name','Országház'))),search(nwr(keyval('amenity','place_of_worship'),keyval('religion','jewish'))),maxdist(DIST_INTOWN),topx(1)),qtype(findkey('name')))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

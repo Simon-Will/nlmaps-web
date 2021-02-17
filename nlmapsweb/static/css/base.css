@@ -185,3 +185,11 @@ label {
     padding: 1em;
     background: #fff;
 }
+
+.nl-prefixed::before {
+    content: "NL: ";
+}
+
+.mrl-prefixed::before {
+    content: "MRL: ";
+}

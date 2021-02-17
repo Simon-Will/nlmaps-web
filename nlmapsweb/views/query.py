@@ -8,6 +8,7 @@ from nlmapsweb.processing.diagnosing import DiagnoseResult
 from nlmapsweb.processing.converting import (delete_spaces, features_to_mrl,
                                              mrl_to_features)
 from nlmapsweb.processing.parsing import ParseResult
+from nlmapsweb.tutorial import tutorial_dummy_parser
 
 
 @current_app.route('/mrl_to_features', methods=['POST'])
@@ -41,7 +42,9 @@ def parse_nl():
     form = NlQueryForm()
     if form.validate_on_submit():
         nl = form.nl.data.strip()
-        result = ParseResult.from_nl(nl)
+        result = tutorial_dummy_parser(nl)
+        if not result:
+            result = ParseResult.from_nl(nl)
         status = 200 if result.success else 500
         return jsonify(result.to_dict()), status
 

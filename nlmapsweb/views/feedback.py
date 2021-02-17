@@ -13,6 +13,7 @@ from nlmapsweb.models import FeedbackState
 import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.processing.converting import delete_spaces, functionalise, linearise
+from nlmapsweb.tutorial import tutorial_dummy_saver
 
 
 def get_lin_and_mrl(lin, mrl):
@@ -101,6 +102,10 @@ def create_feedback():
             'Received feedback: {}. Converted to feedback: {}'
             .format(data, feedback)
         )
+
+        if feedback['model'] == 'tutorial':
+            response_dict, status_code = tutorial_dummy_saver(feedback)
+            return jsonify(response_dict), status_code
 
         response = mt_server.post('save_feedback', json=feedback)
 

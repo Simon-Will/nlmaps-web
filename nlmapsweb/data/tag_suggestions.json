@@ -1,4 +1,28 @@
 {
+    "buddhist": {
+        "amenity=place_of_worship AND religion=buddhist": "Any buddhist place of worship"
+    },
+    "hindu": {
+        "amenity=place_of_worship AND religion=buddhist": "Any hindu place of worship"
+    },
+    "mosque": {
+        "amenity=place_of_worship AND religion=muslim": "Any mosque",
+        "amenity=place_of_worship AND denomination=sunni": "Sunni mosque",
+        "amenity=place_of_worship AND denomination=shia": "Shia mosque"
+    },
+    "church": {
+        "amenity=place_of_worship AND religion=christian": "Any Christian church",
+        "amenity=place_of_worship AND denomination=catholic": "Any catholic church",
+        "amenity=place_of_worship AND denomination=baptist": "Baptist church",
+        "amenity=place_of_worship AND denomination=orthodox": "Any orthodox church",
+        "amenity=place_of_worship AND denomination=lutheran": "Lutheran church",
+        "amenity=place_of_worship AND denomination=anglican": "Anglican church",
+        "amenity=place_of_worship AND denomination=protestant": "Protestant church",
+        "amenity=place_of_worship AND denomination=methodist": "Methodist church"
+    },
+    "synagogue": {
+        "amenity=place_of_worship AND religion=jewish": "Any synagogue"
+    },
     "recreation": {
         "landuse=recreation_ground OR leisure=recreation_ground": "Recreation ground"
     },
@@ -20,7 +44,7 @@
         "amenity=drinking_water OR drinking_water=yes": "Drinking water"
     },
     "food": {
-        "shop=convenience OR shop=deli OR shop=supermarket": "Store felling food, food shop",
+        "shop=convenience OR shop=deli OR shop=supermarket": "Store selling food",
         "amenity=restaurant OR amenity=fast_food": "Place serving food for eating. Use this if not specifically asking for a store."
     },
     "atm": {

@@ -65,8 +65,13 @@ class AnswerResult(Result):
         if len(parts) != 2:
             error = f'Unexpected answering result: {result!r}'
             current_app.logger.warning(error)
-            return cls(success=False, mrl=mrl, answer=None, features=[],
-                       error=error)
+            if len(parts) == 1:
+                # XXX: The answer seems left out. For now, we’re trying to
+                # recover by assuming an empty answer.
+                parts.insert(0, 'No answer found.')
+            else:
+                return cls(success=False, mrl=mrl, answer=None, features=[],
+                           error=error)
 
         answer = parts[0]
         features_str = parts[1]

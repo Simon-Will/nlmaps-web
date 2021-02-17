@@ -1,3 +1,4 @@
+import itertools
 from pathlib import Path
 import re
 
@@ -25,6 +26,33 @@ def count_areas(name):
     result = requests.get(overpass_url, params={'data': query})
     if result.status_code == 200:
         return len(result.json()['elements'])
+
+
+def get_name_tokens(features):
+    if features:
+        if 'sub' in features:
+            # For dist query features
+            return list(itertools.chain.from_iterable(
+                get_name_tokens(sub_features)
+                for sub_features in features['sub']
+            ))
+
+        # For normal features
+        tokens = []
+        if 'area' in features:
+            tokens.extend([
+                token.lower() for token in features['area'].split()
+            ])
+        for feature_name in ['center_nwr', 'target_nwr']:
+            for tag in features.get(feature_name, []):
+                if isinstance(tag, tuple) and tag[0] == 'name':
+                    tokens.extend([
+                        token.lower() for token in tag[1].split()
+                    ])
+        return tokens
+
+    # For empty features
+    return []
 
 
 class DiagnoseResult(Result):
@@ -81,22 +109,8 @@ class DiagnoseResult(Result):
 
         if tf_idf_scores:
             features = mrl_to_features(mrl)
-            tokens_to_be_deleted = []
-            if features:
-                if 'area' in features:
-                    tokens_to_be_deleted.extend([
-                        token.lower() for token in features['area'].split()
-                    ])
-                if 'area_2' in features:
-                    tokens_to_be_deleted.extend([
-                        token.lower() for token in features['area_2'].split()
-                    ])
-                for feature_name in ['center_nwr', 'target_nwr', 'target_nwr_2']:
-                    for tag in features.get(feature_name, []):
-                        if isinstance(tag, tuple) and tag[0] == 'name':
-                            tokens_to_be_deleted.extend([
-                                token.lower() for token in tag[1].split()
-                            ])
+            tokens_to_be_deleted = get_name_tokens(features)
+
             tokens = list(tf_idf_scores.keys())
             for token in tokens:
                 if token in tokens_to_be_deleted or is_stop_word(token):

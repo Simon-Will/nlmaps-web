@@ -59,7 +59,7 @@ def is_json(form, field):
 
 class QueryFeaturesForm(BaseForm):
     query_type = SelectField(
-        'Query Class', default='around_query',
+        'Question Class', default='around_query',
         choices=[('in_query', 'Thing in Area'),
                  ('around_query', 'Thing around Reference Point'),
                  ('dist_closest', 'Distance to Closest Thing'),
@@ -75,9 +75,13 @@ class QueryFeaturesForm(BaseForm):
     area = StringField('Area')
     maxdist = StringField('Maximum Distance')
 
-    around_topx = IntegerField(
-        'Limit to at Most',
-        validators=[Optional()]
+    #around_topx = IntegerField(
+    #    'Limit to at Most',
+    #    validators=[Optional()]
+    #)
+    around_topx = SelectField(
+        'Limit to', default='',
+        choices=[('', '[No Limit]'), ('1', 'Closest')],
     )
 
     qtype = SelectField(
@@ -139,6 +143,7 @@ class QueryFeaturesForm(BaseForm):
             'qtype': self.qtype.data,
         }
         dist_features = {}
+        dist_between = self.query_type.data == 'dist_between'
         if self.query_type.data in ('dist_closest', 'dist_between'):
             dist_features['query_type'] = 'dist'
         else:
@@ -167,7 +172,7 @@ class QueryFeaturesForm(BaseForm):
 
             dist_features['sub'] = [features]
 
-            if dist_features['query_type'] == 'dist_between':
+            if dist_between:
                 features_2 = {'qtype': (Symbol('latlong'),),
                               'query_type': 'in_query'}
                 if self.target_nwr_2.data:

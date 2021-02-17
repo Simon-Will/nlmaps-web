@@ -1,0 +1,21 @@
+.example {
+    background-color: #ffeead;
+    border: solid 1pt #ffcc5c;
+    padding: 0em 1em;
+    margin: 1em 0em;
+}
+
+.task {
+    background-color: #b7e7cf;
+    border: solid 1pt #88d8b0;
+    padding: 0em 1em;
+    margin: 1em 0em;
+}
+
+.task ol {
+    margin-left: 0em;
+}
+
+.tutorial-nav a {
+    margin: 0em 1em;
+}

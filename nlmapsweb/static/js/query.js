@@ -360,8 +360,7 @@ window.addEventListener('load', function() {
             this.linElm.innerHTML = '';
             this.mrlElm.innerHTML = '';
             this.featuresElm.innerHTML = '';
-            const tagWarning = document.getElementById('bad-tag-warning');
-            if (tagWarning) {tagWarning.remove();}
+            document.querySelectorAll('#bad-tag-warning').forEach(elm => elm.remove());
             this.setVisibility('hidden');
             this.hideJudgement();
         }
@@ -680,7 +679,7 @@ window.addEventListener('load', function() {
                         = features.maxdist;
                 }
                 if (features.around_topx) {
-                    this.featuresForm.querySelector("input[name='around_topx']").value
+                    this.featuresForm.querySelector("select[name='around_topx']").value
                         = features.around_topx;
                 }
 
@@ -843,13 +842,15 @@ window.addEventListener('load', function() {
         }
         formData.set('target_nwr',
                      JSON.stringify(targetNwrSuperField.getNwrFeatures()));
-        formData.set('center_nwr',
-                     JSON.stringify(centerNwrSuperField.getNwrFeatures()));
         const targetNwr2 = targetNwr2SuperField.getNwrFeatures();
         if (targetNwr2.length > 0) {
             formData.set('target_nwr_2', JSON.stringify(targetNwr2));
+        } else {
+            formData.set('center_nwr',
+                         JSON.stringify(centerNwrSuperField.getNwrFeatures()));
         }
 
+        document.querySelectorAll('#bad-tag-warning').forEach(elm => elm.remove());
         answerBlock.reset();
         mrlEditBlock.reset();
 
@@ -890,12 +891,25 @@ window.addEventListener('load', function() {
         ajaxPost(
             '/feedback/create',
             function(xhr) {
-                let parseStatus = document.getElementById('query-status');
                 messagesBlock.addMessage('Feedback received. Thanks!');
+
+                const feedback = JSON.parse(xhr.responseText);
+                if (feedback.chapter_finished) {
+                    // In case of tutorial fulfillment, redirect to next
+                    // tutorial chapter.
+                    const newUrl = window.location.origin
+                          + '/tutorial?chapter='
+                          + (feedback.chapter_finished + 1);
+                    window.location.replace(newUrl);
+                }
             },
             function(xhr) {
-                let parseStatus = document.getElementById('query-status');
-                messagesBlock.addMessage('Feedback not received.', true);
+                const feedback = JSON.parse(xhr.responseText);
+                if (feedback.error) {
+                    messagesBlock.addMessage(feedback['error'], true);
+                } else {
+                    messagesBlock.addMessage('Feedback not received.', true);
+                }
             },
             null,
             formData
@@ -943,7 +957,7 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = true;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
-                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("select[name='around_topx']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
 
                 queryFeaturesForm.querySelector("select[name='qtype']").hidden = false;
@@ -957,7 +971,7 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = false;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = false;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = false;
-                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = false;
+                queryFeaturesForm.querySelector("select[name='around_topx']").hidden = false;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = false;
 
                 queryFeaturesForm.querySelector("select[name='qtype']").hidden = false;
@@ -971,7 +985,7 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = false;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
-                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("select[name='around_topx']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
 
                 queryFeaturesForm.querySelector("select[name='qtype']").hidden = true;
@@ -984,7 +998,7 @@ window.addEventListener('load', function() {
                 queryFeaturesForm.querySelector("label[for='center_nwr']").hidden = true;
                 queryFeaturesForm.querySelector("input[name='maxdist']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='maxdist']").hidden = true;
-                queryFeaturesForm.querySelector("input[name='around_topx']").hidden = true;
+                queryFeaturesForm.querySelector("select[name='around_topx']").hidden = true;
                 queryFeaturesForm.querySelector("label[for='around_topx']").hidden = true;
 
                 queryFeaturesForm.querySelector("select[name='qtype']").hidden = true;

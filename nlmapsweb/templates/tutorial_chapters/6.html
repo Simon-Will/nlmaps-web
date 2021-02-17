@@ -1,0 +1,27 @@
+<p>Previously, we asked about the closest object to some named reference place.
+We can also ask how far away that object is from the reference place. This is
+the first kind of distance query.</p>
+
+<p>The fields in the form are essentially the same as previously with the
+difference that some fields are missing because a default value is assumed for
+them.</p>
+
+<div class="task">
+    <ol>
+        <li>Ask the question below.</li>
+        <li>Correct errors and send feedback. Pay close attention to the
+        different tags about vegetarian food. Hint: You will have to use “AND”
+        as well as “OR” for this query.</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">How far is it from Rotes Rathaus in Berlin to the next restaurant serving some vegetarian food?</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">dist(query(around(center(area(keyval('name','Berlin')),nwr(keyval('name','Rotes Rathaus'))),search(nwr(keyval('amenity','restaurant'),keyval('diet:vegetarian',or('only','yes')))),maxdist(DIST_INTOWN),topx(1)),qtype(latlong)))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

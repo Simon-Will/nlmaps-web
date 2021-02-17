@@ -1,0 +1,78 @@
+<p>It’s also possible to query for things around a named reference place. For
+example, in your next task, you will ask for hotels in walking distance of the
+Taj Mahal. There are four named maximum distances, which are explained in the
+table below.</p>
+
+<table>
+    <thead>
+        <tr>
+            <th>Maximum distance name</th>
+            <th>Kilometers</th>
+            <th>Comment</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>WALKING_DIST</td>
+            <td>1</td>
+            <td>Used for phrases such as “in walking distance of”</td>
+        </tr>
+        <tr>
+            <td>DIST_INTOWN</td>
+            <td>5</td>
+            <td>Default distance used for phrases such as “near”, “close to”.</td>
+        </tr>
+        <tr>
+            <td>DIST_OUTTOWN</td>
+            <td>20</td>
+            <td>Used for phrases such as “in the surroundings of”</td>
+        </tr>
+        <tr>
+            <td>DIST_DAYTRIP</td>
+            <td>80</td>
+            <td>Used for phrases such as “within a daytrip of”</td>
+        </tr>
+    </tbody>
+</table>
+
+<!-- TODO: Insert diagram -->
+
+<p>You can also specify an exact maximum distance like in the following example.
+Note that even though the question uses the wording “2 kilometers”, the maxdist
+value used is in meters: “2000”.</p>
+
+<div class="example">
+    <p class="nl-prefixed">Count the cafes within 2 kilometers of the Monument to the Battle of the Nations in Leipzig!</p>
+    <p id="mrl-info-features">
+        <table class="features-info">
+            <tbody>
+                <tr><td>Question Class</td><td>Thing around Reference Point</td></tr>
+                <tr><td>Target Tags</td><td>amenity=cafe</td></tr>
+                <tr><td>Reference Point</td><td>name=Monument to the Battle of Nations</td></tr>
+                <tr><td>Area</td><td>Leipzig</td></tr>
+                <tr><td>Maximum Distance</td><td>2000</td></tr>
+                <tr><td>QType</td><td>count</td></tr>
+            </tbody>
+        </table>
+    </p>
+</div>
+
+<div class="task">
+    <ol>
+        <li>Ask for hotels in walking distance of the Taj Mahal with the query
+        below.</li>
+        <li>Correct errors in the MRL and send your feedback.</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">Are there any hotels that we can walk to from the
+        Taj Mahal?</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">query(around(center(nwr(keyval('name','Taj Mahal'))),search(nwr(keyval('tourism','hotel'))),maxdist(WALKING_DIST)),qtype(least(topx(1))))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

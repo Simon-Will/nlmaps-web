@@ -1,0 +1,90 @@
+<h3>What is OpenStreetMap?</h3>
+
+<p><a href="https://www.openstreetmap.org/">OpenStreetMap</a> (OSM) is a map of
+    the world that is free for everyone to both use and edit. The map is made up
+    of different elements: <em>nodes</em>, <em>ways</em> (ordered
+    lists of nodes), <em>areas</em> (closed ways) and <em>relations</em>
+    (groups of elements), but they are meaningless without the <em>tags</em>
+    that are added to them.</p>
+
+<img src="/static/media/riegler.jpg" alt="Image of map containing a bakery and some other map features">
+
+<p>For instance, the buildings on the map picture above hold some address
+    information. There is also a node on the left that is tagged as a recycling
+    station. On the top, there are two nodes tagged as trees. And there is a
+    node that is tagged as a bakery. The bakery’s tags include the following:</p>
+
+<ul>
+    <li>shop=bakery</li>
+    <li>name=Riegler</li>
+    <li>website=https://baeckerei-riegler.de/</li>
+    <li>wheelchair=yes</li>
+    <li>opening_hours=Mo-Fr 05:30-18:00; Sa 06:00-13:00; Su 08:30-11:30,14:00-16:00</li>
+</ul>
+
+<p>You can see that every tag consists of a key (e.g. shop) and a value (e.g. bakery).
+    The meaning of tags is documented in the
+    <a href="https://wiki.openstreetmap.org/wiki/Main_Page">OpenStreetMap Wiki</a>.
+    For example, the page <a href="https://wiki.openstreetmap.org/wiki/Key:shop">Key:shop</a>
+    holds information about what is considered a shop and what kinds of
+    shops there are. And the page <a href="https://wiki.openstreetmap.org/wiki/Tag:shop=bakery">Tag:shop=bakery</a> holds
+    more detailed information on what is considered a bakery and how to
+    tag it.</p>
+
+<h3>What is NLMaps Web?</h3>
+
+<p>NLMaps Web aims to provide a way to query information in
+    OpenStreetMap by using plain English. In order to do this, it converts your English (<em>natural language</em> or
+    NL) query into a <em>machine-readable language</em> (MRL) query,
+    which is used to retrieve the queried information from
+    OpenStreetMap, which is then shown on a map. Here is an example of
+    a simple NL query with its MRL equivalent.</p>
+
+<div class="example">
+    <p class="nl-prefixed">Show me all the supermarkets in New York City!</p>
+    <p class="mrl-prefixed">query(area(keyval('name','New York City')),nwr(keyval('shop','supermarket')),qtype(latlong))</p>
+</div>
+
+<p>There is also another version of displaying the information contained
+    in the MRL, which is a little more human-readable:</p>
+
+<div class="example">
+    <p id="mrl-info-features">
+        <table class="features-info">
+            <tbody>
+                <tr><td>Question Class</td><td>Thing in Area</td></tr>
+                <tr><td>Target Tags</td><td>shop=supermarket</td></tr>
+                <tr><td>Area</td><td>New York City</td></tr>
+                <tr><td>QType</td><td>latlong</td></tr>
+            </tbody>
+        </table>
+    </p>
+</div>
+
+<p>NLMaps Web learns to improve when you give it feedback on how it
+    performed. So let’s do that as your first task:</p>
+
+<div class="task">
+    <ol>
+        <li>Go to the query page in a new tab and ask the query below.
+            For this tutorial, please always copy the provided examples
+            and use them exactly as they are.</li>
+        <li>Check that the question class is “Thing in
+            Area”, the queried tag is “shop=bakery”, the requested area is
+            “Hamburg” and the qtype (the thing you’re asking for) is
+            “count”.</li>
+        <li>If everything is alright, press the button saying “That’s
+            Correct!” to send your feedack to the server.</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">How many bakeries are there in Hamburg?</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">query(area(keyval('name','Hamburg')),nwr(keyval('shop','bakery')),qtype(count))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

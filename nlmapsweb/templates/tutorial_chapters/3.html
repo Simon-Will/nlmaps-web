@@ -1,0 +1,46 @@
+<h3>Available Question Types</h3>
+
+<p>In the previous two queries, we asked for the number of things and for the
+    location of things. In the MRL, the <em>qtype</em> (for question type) was
+    <em>count</em> and <em>latlong</em>, respectively. Here is the full list
+    of qtypes that NLMaps Web currently recognizes:</p>
+
+<table>
+    <tbody>
+        <tr><td>latlong</td><td>Where is it?</td></tr>
+        <tr><td>count</td><td>How many are there?</td></tr>
+        <tr><td>least(topx(1))</td><td>Is there at least one?</td></tr>
+        <tr><td>findkey('name')</td><td>What is its name?</td></tr>
+        <tr><td>findkey('opening_hours')</td><td>When is it open?</td></tr>
+        <tr><td>findkey('website')</td><td>What is its website?</td></tr>
+        <tr><td>findkey('wheelchair')</td><td>Is it wheelchair-accessible?</td></tr>
+    </tbody>
+</table>
+
+<h3>Named Places</h3>
+
+<p>Instead of querying a class of things (like playgrounds), we can also ask for
+a named place. It is important that we get the place’s name right, because
+NLMaps Web will not correct your spelling of named things.</p>
+
+<div class="task">
+    <ol>
+        <li>Enter the query below, which asks when the Guggenheim Museum is
+        open. Note that we included New York City as the area, since there is
+        also one in Bilbao.</li>
+        <li>Check the resulting MRL and correct it if necessary. (Like before,
+        use the MRL features form to adjust it and say “That’s correct!” when it
+        is.)</li>
+    </ol>
+    <div class="example example-green">
+        <p class="nl-prefixed">When can we visit the Guggenheim Museum in New York City?</p>
+    </div>
+    {% if completed %}
+    <p>✔ Completed.</p>
+    <div class="example">
+        <p class="mrl-prefixed">query(area(keyval('name','New York City')),nwr(keyval('name','Guggenheim Museum')),qtype(findkey('opening_hours')))</p>
+    </div>
+    {% else %}
+    <p>❌ Not completed yet.</p>
+    {% endif %}
+</div>

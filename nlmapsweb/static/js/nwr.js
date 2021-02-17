@@ -15,6 +15,7 @@ class NwrSuperField {
         this.root.appendChild(this.makeGroup(0));
 
         const andButton = document.createElement('button');
+        andButton.type = 'button';
         andButton.innerHTML = 'And';
         andButton.classList.add('add-nwr-super-field-group');
         const thisNwrSuperField = this;
@@ -43,6 +44,7 @@ class NwrSuperField {
         elm.appendChild(this.makeField(groupIdx, 0));
 
         const orButton = document.createElement('button');
+        orButton.type = 'button';
         orButton.innerHTML = 'Or';
         orButton.classList.add('add-nwr-super-field-field');
         const thisNwrSuperField = this;
@@ -68,6 +70,7 @@ class NwrSuperField {
         elm.appendChild(input);
 
         const removeButton = document.createElement('button');
+        removeButton.type = 'button';
         removeButton.classList.add('remove-nwr-super-field-field');
         removeButton.innerHTML = '✖';
         removeButton.onclick = function() {

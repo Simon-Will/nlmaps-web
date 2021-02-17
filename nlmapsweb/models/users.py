@@ -14,6 +14,10 @@ class User(BaseModel, UserMixin):
     admin = db.Column(db.Boolean, nullable=False, default=False)
     password_hash = db.Column(db.Unicode(128), nullable=True)
 
+    # Should be set to -1 when the tutorial is completed.
+    tutorial_chapter = db.Column(db.Integer, nullable=False, default=1,
+                                 server_default='1')
+
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
 

@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% set page = 'tutorial' %}
+
+{% block content %}
+<div id="tutorial-toc-block"  class="row block">
+    <div class="block-header">
+        <span class="block-title">Table of Contents</span>
+    </div>
+    <div class="block-body">
+        <ol>
+            {% for i in range(toc|length) %}
+            {% if i + 1 <= max_chapter %}
+            <li><a href="{{ url_for('tutorial') }}?chapter={{ i + 1 }}">{{ toc[i] }}</a></li>
+            {% else %}
+            <li>{{ toc[i] }}</li>
+            {% endif %}
+            {% endfor %}
+        </ol>
+    </div>
+</div>
+
+<div id="tutorial-chapter-block"  class="row block">
+    <div class="block-header">
+        <span class="block-title">{{ toc[chapter - 1] }}</span>
+    </div>
+    <div class="block-body">
+        {% set prev_chapter = chapter - 1 if chapter > 1 else None %}
+        {% set next_chapter = chapter + 1 if chapter < max_chapter else None %}
+        <nav class="container-horizontal-flex tutorial-nav">
+            {% if prev_chapter %}
+            <a href="{{ url_for('tutorial') }}?chapter={{ prev_chapter }}">Previous</a>
+            {% endif %}
+            {% if next_chapter %}
+            <a href="{{ url_for('tutorial') }}?chapter={{ next_chapter }}">Next</a>
+            {% endif %}
+        </nav>
+
+        {% set completed = max_chapter > chapter %}
+        {% include 'tutorial_chapters/' + chapter|string + '.html' %}
+
+        <nav class="container-horizontal-flex tutorial-nav">
+            {% if prev_chapter %}
+            <a href="{{ url_for('tutorial') }}?chapter={{ prev_chapter }}">Previous</a>
+            {% endif %}
+            {% if next_chapter %}
+            <a href="{{ url_for('tutorial') }}?chapter={{ next_chapter }}">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+</div>
+
+{% endblock %}
