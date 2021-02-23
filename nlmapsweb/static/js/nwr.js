@@ -67,6 +67,9 @@ class NwrSuperField {
         input.setAttribute('data-tag-idx', tagIdx);
         input.setAttribute('type', 'text');
         input.setAttribute('size', this.inputSize);
+        input.setAttribute('pattern', '[^=]+=[^=]+');
+        input.setAttribute('title', 'key=value');
+        input.setAttribute('placeholder', 'key=value');
         elm.appendChild(input);
 
         const removeButton = document.createElement('button');

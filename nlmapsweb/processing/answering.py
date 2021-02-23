@@ -4,7 +4,7 @@ import traceback
 
 from flask import current_app
 
-from nlmaps_tools.answer_mrl import load_features, answer
+from nlmaps_tools.answer_mrl import load_features, answer, merge_feature_collections
 
 from nlmapsweb.processing.result import Result
 
@@ -12,11 +12,17 @@ def answer_query(mrl_query):
     current_app.logger.info('Interpreting query "{}".'.format(mrl_query))
 
     features = load_features(mrl_query)
-    if features and features['query_type'] == 'in_query':
+    if features:
         result = answer(features)
-        current_app.logger.info('Received py answering result {}'.format(result))
+        current_app.logger.info('Received py answering result'.format(result))
+        if 'centers' in result:
+            result['geojson'] = merge_feature_collections(result['centers'],
+                                                          result['targets'])
+            del result['centers']
+        else:
+            result['geojson'] = result['targets']
+        del result['targets']
         return result
-
 
     answer_cmd = current_app.config['ANSWER_COMMAND']
     try:
@@ -69,7 +75,7 @@ class AnswerResult(Result):
             else:
                 self.geojson = {'type': 'FeatureCollection', 'features': []}
 
-            self.answer = json.dumps(py_result)
+            self.answer = py_result
 
     @classmethod
     def from_mrl(cls, mrl):

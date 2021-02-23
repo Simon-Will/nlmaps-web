@@ -33,7 +33,7 @@ def features_to_mrl_view():
         if mrl:
             return mrl, 200
     if form.errors:
-        return jsonify(form.errors), 400
+        return jsonify({'errors': form.formatted_errors}), 400
     return 'Bad Request', 400
 
 

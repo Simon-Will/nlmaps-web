@@ -73,7 +73,15 @@ class QueryFeaturesForm(BaseForm):
 
     center_nwr = JSONStringField('Reference Point')#, validators=[is_json])
     area = StringField('Area')
-    maxdist = StringField('Maximum Distance')
+    maxdist = StringField(
+        'Maximum Distance',
+        render_kw={
+            'pattern': (r'(WALKING_DIST|DIST_INTOWN|DIST_OUTTOWN|DIST_DAYTRIP|'
+                        r'\d+)'),
+            'title': ('Number of meters OR one of [WALKING_DIST, DIST_INTOWN,'
+                      'DIST_OUTTOWN, DIST_DAYTRIP]'),
+        }
+    )
 
     #around_topx = IntegerField(
     #    'Limit to at Most',
@@ -136,6 +144,18 @@ class QueryFeaturesForm(BaseForm):
     #        ('mi', 'Imperial'),
     #    ],
     #)
+
+    def validate(self, *args, **kwargs):
+        success = super().validate(*args, **kwargs)
+        if success:
+            if self.query_type.data == 'around_query' and not self.maxdist.data:
+                success = False
+                if not isinstance(self.maxdist.errors, list):
+                    self.maxdist.errors = []
+                self.maxdist.errors.append(
+                    'This field is required.')
+        return success
+
 
     def get_features(self):
         features = {

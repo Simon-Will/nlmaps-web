@@ -307,6 +307,48 @@ window.addEventListener('load', function() {
         return help;
     }
 
+    function makeAnswerText(text) {
+        const p = document.createElement('p');
+        p.appendChild(document.createTextNode(text));
+        return p;
+    }
+
+    function makeSingleAnswer(answer) {
+        const answerElm = document.createElement('div');
+        if (answer.type === 'map') {
+            answerElm.appendChild(makeAnswerText('See Map for Answer.'));
+        } else if (answer.type === 'text') {
+            answerElm.appendChild(makeAnswerText(answer.text));
+        } else if (answer.type === 'error') {
+            answerElm.appendChild(makeAnswerText('Error: ' + answer.error));
+        } else if (answer.type === 'dist') {
+            const text = 'From ' + answer.center[1]
+                  + ' to ' + answer.target[1]
+                  + ': ' + answer.dist.toString()
+                  + ' km';
+            answerElm.appendChild(makeAnswerText(text));
+        } else if (answer.type === 'list') {
+            answer.list.forEach(function(text) {
+                answerElm.appendChild(makeAnswerText(text));
+            });
+        } else {
+            console.error('Unexpected answer type:', answer.type);
+        }
+        return answerElm;
+    }
+
+    function makeAnswerElm(answer) {
+        const wrap = document.createElement('div');
+        if (answer.type === 'sub') {
+            answer.sub.forEach(function(a) {
+                wrap.appendChild(makeSingleAnswer(a));
+            });
+        } else {
+            wrap.appendChild(makeSingleAnswer(answer));
+        }
+        return wrap;
+    }
+
     class MessagesBlock extends Block {
         constructor(element) {
             super(element);
@@ -725,13 +767,14 @@ window.addEventListener('load', function() {
                     );
                 }
 
-                let content = '';
+                let content = null;
                 if (answerResult.success) {
-                    content = answerResult.answer;
+                    content = makeAnswerElm(answerResult.answer);
                 } else {
-                    content = 'Error: ' + answerResult.error;
+                    content = makeAnswerElm({type: 'error',
+                                             'error': answerResult.error});
                 }
-                thisAnswerBlock.body.innerHTML = htmlEscape(content);
+                thisAnswerBlock.body.appendChild(content);
                 thisAnswerBlock.setVisibility('expanded');
             });
         }
@@ -854,26 +897,26 @@ window.addEventListener('load', function() {
                          JSON.stringify(centerNwrSuperField.getNwrFeatures()));
         }
 
-        document.querySelectorAll('#bad-tag-warning').forEach(elm => elm.remove());
-        answerBlock.reset();
-        mrlEditBlock.reset();
+        document.querySelectorAll('.flashed-message').forEach(elm => elm.remove());
 
+        const thisForm = this;
         ajaxPost(
             '/features_to_mrl',
             function(xhr) {
+                document.querySelectorAll('#bad-tag-warning').forEach(elm => elm.remove());
+                answerBlock.reset();
+                mrlEditBlock.reset();
                 const mrl = xhr.responseText;
                 mrlInfoBlock.processMrl(mrl, true);
             },
             function(xhr) {
-                let msg = 'Retrieving mrl failed.';
-                /*
-                try {
-                    msg =  'Retrieving mrl failed: ' + xhr.responseText;
-                } catch (SyntaxError) {
-                    msg = 'Retrieving mrl failed.';
+                const response = JSON.parse(xhr.responseText);
+                if (response.errors) {
+                    response.errors.forEach(function(error) {
+                        flashMessage(thisForm, error, 'bg-danger', null);
+                    });
                 }
-                */
-                messagesBlock.addMessage(msg, true);
+                messagesBlock.addMessage('Retrieving mrl failed.', true);
             },
             null,
             formData
