@@ -74,6 +74,11 @@
     color: red;
 }
 
+.nwr-super-field-separator {
+    font-style: italic;
+    font-size: small;
+}
+
 #mrl-edit-help-container {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;

@@ -1,3 +1,13 @@
+function removeAdjacentSeparator(elm) {
+    let sep = elm.previousElementSibling;
+    if (sep === null) {
+        sep = elm.nextElementSibling;
+    }
+    if (sep.classList.contains('nwr-super-field-separator')) {
+        sep.remove();
+    }
+}
+
 class NwrSuperField {
     constructor(id, name = '', inputSize = 40) {
         this.id = id;
@@ -25,6 +35,7 @@ class NwrSuperField {
             if (prevGroup) {
                 groupIdx = 1 + Number(prevGroup.getAttribute('data-group-idx'));
             }
+            this.insertAdjacentElement('beforebegin', thisNwrSuperField.makeSeparator('and'));
             this.insertAdjacentElement('beforebegin', thisNwrSuperField.makeGroup(groupIdx));
             return false;
         };
@@ -49,6 +60,7 @@ class NwrSuperField {
         orButton.classList.add('add-nwr-super-field-field');
         const thisNwrSuperField = this;
         orButton.onclick = function() {
+            this.insertAdjacentElement('beforebegin', thisNwrSuperField.makeSeparator('or'));
             const prevTagIdx = Number(this.previousElementSibling.getAttribute('data-tag-idx'));
             this.insertAdjacentElement('beforebegin', thisNwrSuperField.makeField(groupIdx, prevTagIdx + 1));
             return false;
@@ -79,14 +91,24 @@ class NwrSuperField {
         removeButton.onclick = function() {
             if (elm.parentElement.querySelectorAll('.nwr-super-field-field').length <=1) {
                 // This is the last element that is left. Remove the whole group.
-                elm.parentElement.remove();
+                const parent = elm.parentElement;
+                removeAdjacentSeparator(parent);
+                parent.remove();
             } else {
+                removeAdjacentSeparator(elm);
                 elm.remove();
             }
         };
         elm.appendChild(removeButton);
 
         return elm;
+    }
+
+    makeSeparator(text) {
+        const sep = document.createElement('span');
+        sep.classList.add('nwr-super-field-separator');
+        sep.appendChild(document.createTextNode(text));
+        return sep;
     }
 
     addTag(groupIdx, tag) {
