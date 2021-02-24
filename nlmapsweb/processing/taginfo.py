@@ -41,24 +41,28 @@ def reverse_tags(tags):
     return rev_tags
 
 
-def get_tags_with_similar_vals(val):
+def get_tags_with_similar_vals(key, val):
+    if val in ['yes', 'no']:
+        return []
+
     ensure_tags_loaded()
     tags = []
     similar_vals = difflib.get_close_matches(val, REV_TAGS.keys(), n=5,
                                              cutoff=0.8)
     for suggested_val in similar_vals:
         for suggested_key in REV_TAGS[suggested_val]:
-            tags.append((suggested_key, suggested_val))
+            if not (key == suggested_key and val == suggested_val):
+                tags.append((suggested_key, suggested_val))
 
     return tags
 
 
-def find_alternatives(val):
-    alternatives = get_tags_with_similar_vals(val)
+def find_alternatives(key, val):
+    alternatives = get_tags_with_similar_vals(key, val)
     val_parts = val.split('_')
     if len(val_parts) > 1:
         for part in val_parts:
-            alternatives.extend(get_tags_with_similar_vals(part))
+            alternatives.extend(get_tags_with_similar_vals(key, part))
 
     return alternatives
 

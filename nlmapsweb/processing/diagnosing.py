@@ -114,7 +114,7 @@ class DiagnoseResult(Result):
                         (key, val),
                         counts.get((key, val), 0),
                         tag_is_common(key, val),
-                        find_alternatives(val)
+                        find_alternatives(key, val)
                     ])
             except:
                 success = False

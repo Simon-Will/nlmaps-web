@@ -172,8 +172,13 @@ window.addEventListener('load', function() {
     }
 
     function makeMrlEditHelp(title, content = null) {
-        const titleElm = document.createElement('span');
-        titleElm.appendChild(document.createTextNode(title));
+        let titleElm = null;
+        if (title instanceof Element) {
+            titleElm = title;
+        } else {
+            titleElm = document.createElement('span');
+            titleElm.appendChild(document.createTextNode(title));
+        }
         titleElm.classList.add('mrl-edit-help-title');
 
         if (content === null) {
@@ -241,7 +246,15 @@ window.addEventListener('load', function() {
         for (let tag of foundTags.slice(0, 3)) {
             content.appendChild(makeSingleTagHelp(tag));
         }
-        const title = 'Tag candidates for “' + htmlEscape(keyword) + '”';
+
+        const tagFinderLink = document.createElement('a');
+        tagFinderLink.innerHTML = 'TagFinder';
+        tagFinderLink.href = 'https://tagfinder.herokuapp.com/';
+        tagFinderLink.target = '_blank';
+        const title = document.createElement('span');
+        title.appendChild(tagFinderLink);
+        title.appendChild(document.createTextNode(' help for “' + keyword + '”'));
+
         return makeMrlEditHelp(title, content);
     }
 
@@ -590,7 +603,7 @@ window.addEventListener('load', function() {
                             document.createTextNode(count + ' (' + usageClass.name + ')'));
                         usageElm.appendChild(numberElm);
 
-                        const tag = makeTag(key, val);
+                        const tag = makeTag(key, val, true);
                         taginfo.appendChild(tag);
                         taginfo.appendChild(usageElm);
 
