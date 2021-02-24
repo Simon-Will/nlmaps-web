@@ -1,14 +1,47 @@
 {
+    "caf\\u00e9": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
+    "caf\\u00e9s": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
+    "cafes": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
+    "cafe": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
+    "coffees": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
+    "coffee": {
+        "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
+    },
     "buddhist": {
         "amenity=place_of_worship AND religion=buddhist": "Any buddhist place of worship"
     },
     "hindu": {
         "amenity=place_of_worship AND religion=buddhist": "Any hindu place of worship"
     },
+    "mosques": {
+        "amenity=place_of_worship AND religion=muslim": "Any mosque",
+        "amenity=place_of_worship AND denomination=sunni": "Sunni mosque",
+        "amenity=place_of_worship AND denomination=shia": "Shia mosque"
+    },
     "mosque": {
         "amenity=place_of_worship AND religion=muslim": "Any mosque",
         "amenity=place_of_worship AND denomination=sunni": "Sunni mosque",
         "amenity=place_of_worship AND denomination=shia": "Shia mosque"
+    },
+    "churches": {
+        "amenity=place_of_worship AND religion=christian": "Any Christian church",
+        "amenity=place_of_worship AND denomination=catholic": "Any catholic church",
+        "amenity=place_of_worship AND denomination=baptist": "Baptist church",
+        "amenity=place_of_worship AND denomination=orthodox": "Any orthodox church",
+        "amenity=place_of_worship AND denomination=lutheran": "Lutheran church",
+        "amenity=place_of_worship AND denomination=anglican": "Anglican church",
+        "amenity=place_of_worship AND denomination=protestant": "Protestant church",
+        "amenity=place_of_worship AND denomination=methodist": "Methodist church"
     },
     "church": {
         "amenity=place_of_worship AND religion=christian": "Any Christian church",
@@ -20,6 +53,9 @@
         "amenity=place_of_worship AND denomination=protestant": "Protestant church",
         "amenity=place_of_worship AND denomination=methodist": "Methodist church"
     },
+    "synagogues": {
+        "amenity=place_of_worship AND religion=jewish": "Any synagogue"
+    },
     "synagogue": {
         "amenity=place_of_worship AND religion=jewish": "Any synagogue"
     },
@@ -27,7 +63,8 @@
         "landuse=recreation_ground OR leisure=recreation_ground": "Recreation ground"
     },
     "station": {
-        "building=train_station OR railway=station": "Railway station"
+        "building=train_station OR railway=station": "Railway station",
+        "station=subway": "Subway station"
     },
     "sculpture": {
         "artwork_type=statue OR memorial=statue": "Statue"
@@ -49,6 +86,11 @@
     },
     "atm": {
         "amenity=atm OR atm=yes": "ATM, cash machine, cash point"
+    },
+    "cash": {
+        "amenity=atm OR atm=yes": "ATM, cash machine, cash point",
+        "payment:cash=yes": "Place allows paying in cash",
+        "payment:cash=no": "Place does not allow paying in cash"
     },
     "nursing": {
         "amenity=nursing_home OR social_facility=nursing_home": "Nursing home"

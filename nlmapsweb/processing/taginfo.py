@@ -1,14 +1,18 @@
 from collections import defaultdict
 import difflib
 import json
-import re
+import os
 from pathlib import Path
+import re
 
 from flask import current_app
 import requests
 
-TAGS = None
+from nlmapsweb.utils.cache import read_from_cache, write_to_cache
 
+CACHE = 'taginfo'
+
+TAGS = None
 REV_TAGS = None
 
 
@@ -72,25 +76,49 @@ def get_key_val_pairs(mrl):
     return key_val_pairs
 
 
+def make_concise(tagfinder_info):
+    needed_keys = ('prefLabel', 'subject', 'isKey', 'scopeNote', 'countAll',
+                   'depiction')
+    return [{key: info[key] for key in needed_keys} for info in tagfinder_info]
+
+
 def taginfo_lookup(key_val_pairs):
+
+    info_by_key_val = {}
+    key_val_pairs_to_look_up = []
+    for key, val in key_val_pairs:
+        tag = '{}={}'.format(key, val)
+        info = read_from_cache(CACHE, tag)
+        if info:
+            info_by_key_val[(key, val)] = info
+        else:
+            key_val_pairs_to_look_up.append((key, val))
+
     url_base = current_app.config['TAGINFO_URL']
     url = url_base + 'api/4/tags/list'
-    current_app.logger.info('Looking up {} at url {}'.format(url, url))
+    if key_val_pairs_to_look_up:
+        tags_string = ','.join(
+            '{}={}'.format(key, val) for key, val in key_val_pairs_to_look_up)
+        current_app.logger.info('Looking up {} at url {}'.format(tags_string, url))
+        response = requests.get(url, params={'tags': tags_string})
+        if response.ok:
+            current_app.logger.info('Lookup successful.')
+            data = response.json()['data']
+            for info in data:
+                info = {
+                    key: info[key]
+                    for key in ('key', 'value', 'count_all', 'count_nodes',
+                                'count_ways', 'count_relations')
+                }
+                key, val = info['key'], info['value']
+                tag = '{}={}'.format(key, val)
+                write_to_cache(CACHE, tag, info)
+                info_by_key_val[(key, val)] = info
+        else:
+            current_app.logger.error('Lookup failed with status code {}.'
+                                     .format(response.status_code))
 
-    tags_string = ','.join(
-        '{}={}'.format(key, val) for key, val in key_val_pairs)
-    current_app.logger.info('Looking up {} at url {}'.format(tags_string, url))
-
-    response = requests.get(url, params={'tags': tags_string})
-
-    if response.ok:
-        current_app.logger.info('Lookup successful.')
-        data = response.json()['data']
-        count_by_key_val = {}
-        for info in data:
-            count_by_key_val[(info['key'], info['value'])] = info['count_all']
-        return count_by_key_val
-
-    current_app.logger.error('Lookup failed with status code {}.'
-                             .format(response.status_code))
-    return None
+    count_by_key_val = {}
+    for key_val_pair, info in info_by_key_val.items():
+        count_by_key_val[key_val_pair] = info['count_all']
+    return count_by_key_val
