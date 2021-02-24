@@ -203,6 +203,7 @@ window.addEventListener('load', function() {
         const link = document.createElement('a');
         link.appendChild(document.createTextNode(nameContent));
         link.href = tagInfo.subject;
+        link.target = '_blank';
         name.appendChild(link);
 
         const description = document.createElement('li');

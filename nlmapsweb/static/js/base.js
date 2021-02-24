@@ -177,13 +177,16 @@ function copyTextToClipboard(text, flashParent = null) {
     }
 }
 
-function makeTag(key, val, makeLink = false) {
+function makeTag(key, val, makeLink = false, target = '_blank') {
     const content = document.createTextNode(key + '=' + val);
     let tagElm;
     if (makeLink) {
         tagElm = document.createElement('a');
         tagElm.href = 'https://wiki.openstreetmap.org/wiki/Tag:'
             + content.textContent;
+        if (target) {
+            tagElm.target = target;
+        }
         tagElm.appendChild(content);
     } else {
         tagElm = content;
