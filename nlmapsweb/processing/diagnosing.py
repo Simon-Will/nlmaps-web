@@ -153,7 +153,7 @@ class DiagnoseResult(Result):
         custom_suggestions = get_suggestions(tokens)
 
         area_name = get_area_name(mrl)
-        if area_name and False:  # TODO: Make area lookup smarter
+        if area_name:  # TODO: Make area lookup smarter
             area_count = count_areas(area_name)
             area = {'name': area_name, 'count': area_count}
         else:
