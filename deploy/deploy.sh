@@ -57,6 +57,19 @@ python_install() {
     fi
 }
 
+external_js_install() {
+    local openlayers_url='https://github.com/openlayers/openlayers/releases/download/v6.5.0/v6.5.0-dist.zip'
+    local libdir="$NLMAPSWEB_REPO/nlmapsweb/static/lib"
+    if [ "$REINSTALL" = 1 ] || ! [ -d "$libdir" ]; then
+        log 'Downloading and installing OpenLayers'
+        wget "$openlayers_url" -O /tmp/ol-dist.zip
+        unzip -d /tmp/ol-dist /tmp/ol-dist.zip
+
+        mkdir -p "$libdir/ol"
+        find /tmp/ol-dist -type f -exec mv {} "$libdir/ol" \;
+    fi
+}
+
 ensure_secret_key() {
     if ! [ -f "$ASSETS/secret_key.txt" ]; then
         log 'Creating secret key'

@@ -1,0 +1,11 @@
+{% macro js(static_path) %}
+{% if static_path|asset_exists %}
+<script src="{{ url_for('static', filename=static_path) }}" type="text/javascript"></script>
+{% endif %}
+{% endmacro %}
+
+{% macro css(static_path) %}
+{% if static_path|asset_exists %}
+<link href="{{ url_for('static', filename=static_path) }}" rel="stylesheet"  type="text/css">
+{% endif %}
+{% endmacro %}

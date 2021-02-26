@@ -8,6 +8,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_wtf.csrf import CSRFProtect
 
 from nlmapsweb.utils.json import SymbolAwareJSONEncoder
+from nlmapsweb.utils.template_filters import FILTERS as JINJA_FILTERS
 
 csrf = CSRFProtect()
 db = SQLAlchemy()
@@ -18,6 +19,7 @@ login_manager = LoginManager()
 def create_app() -> Flask:
     app = Flask(__name__)
     config_app(app)
+    init_jinja(app)
     init_csrf(app)
     init_sqlalchemy(app)
     init_migrate(app)
@@ -48,6 +50,12 @@ def config_app(app: Flask) -> Flask:
     app.logger.info('Config loaded.')
     app.logger.debug(f'{app.config}')
 
+
+def init_jinja(app: Flask) -> None:
+    app.logger.info('Start initializing Jinja.')
+    for func in JINJA_FILTERS:
+        app.add_template_filter(func)
+    app.logger.info('Jinja initialized.')
 
 def init_csrf(app: Flask) -> None:
     app.logger.info('Start initializing CSRF protection.')
