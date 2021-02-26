@@ -131,6 +131,7 @@ main() {
     mkdir -p "$ASSETS"
     repo_sync
     python_install
+    external_js_install
     ensure_secret_key
     migrate
     start_app
