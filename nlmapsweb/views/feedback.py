@@ -39,10 +39,6 @@ class FeedbackPiece:
 
         self.correct_lin, self.correct_mrl = get_lin_and_mrl(
             correct_lin, correct_mrl)
-        if not self.correct_mrl:
-            raise ValueError(
-                'FeedbackPiece must have a correct_mrl, but it is None')
-
         self.original_lin, self.original_mrl = get_lin_and_mrl(
             original_lin, original_mrl)
         self.model_lin, self.model_mrl = get_lin_and_mrl(
@@ -89,6 +85,7 @@ def create_feedback():
             correct_mrl = delete_spaces(data['correctMrl'])
             correct_lin = linearise(correct_mrl) or ''
         else:
+            correct_mrl = ''
             correct_lin = ''
         feedback['correct_lin'] = correct_lin
 

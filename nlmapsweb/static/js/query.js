@@ -814,6 +814,7 @@ window.addEventListener('load', function() {
     const queryFeaturesForm = document.getElementById('query-features-form');
     const confirmMrlButton = document.getElementById('confirm-mrl');
     const adjustMrlButton = document.getElementById('adjust-mrl');
+    const rejectMrlButton = document.getElementById('reject-mrl');
     const switchAdjustFormButton = document.getElementById('switch-adjust-form');
 
     const targetNwrSuperField = new NwrSuperField('target_nwr');
@@ -938,7 +939,7 @@ window.addEventListener('load', function() {
         return false;
     };
 
-    confirmMrlButton.onclick = function(){
+    confirmMrlButton.onclick = function() {
         const formData = new FormData();
         formData.append('nl', mrlInfoBlock.nl);
         formData.append('systemMrl', mrlInfoBlock.systemMrl);
@@ -963,6 +964,37 @@ window.addEventListener('load', function() {
                           + (feedback.chapter_finished + 1);
                     window.location.replace(newUrl);
                 }
+            },
+            function(xhr) {
+                const feedback = JSON.parse(xhr.responseText);
+                if (feedback.error) {
+                    messagesBlock.addMessage(feedback['error'], true);
+                } else {
+                    messagesBlock.addMessage('Feedback not received.', true);
+                }
+            },
+            null,
+            formData
+        );
+        return false;
+    };
+
+    rejectMrlButton.onclick = function() {
+        const formData = new FormData();
+        formData.append('nl', mrlInfoBlock.nl);
+        formData.append('systemMrl', mrlInfoBlock.systemMrl);
+        formData.append('correctMrl', '');
+        formData.append('model', mrlInfoBlock.model);
+        formData.append('csrf_token', CSRF_TOKEN);
+
+        mrlInfoBlock.hideJudgement();
+        mrlEditBlock.reset();
+
+        ajaxPost(
+            '/feedback/create',
+            function(xhr) {
+                messagesBlock.addMessage(
+                    'Feedback received. Thanks! We’ll figure out the correct mrl for you.');
             },
             function(xhr) {
                 const feedback = JSON.parse(xhr.responseText);
