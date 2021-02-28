@@ -48,16 +48,16 @@
             <h1>NLMaps Web</h1>
             <nav id="main-nav">
                 <a class="nav-element" href="{{ url_for('query') }}">Query</a>
-                <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
+                <a class="nav-element" href="{{ url_for('tutorial') }}">Tutorial</a>
                 {% if current_user.admin %}
                 <a class="nav-element" href="{{ url_for('train') }}">Train Status</a>
                 {% endif %}
-                {% if current_user.is_anonymous %}
-                <a class="nav-element" href="{{ url_for('login') }}">Log In</a>
-                {% else %}
-                <a class="nav-element" href="{{ url_for('tutorial') }}">Tutorial</a>
+                {% if current_user.is_authenticated %}
+                <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
                 <a class="nav-element" href="{{ url_for('logout') }}">Log Out</a>
                 <span>👤 {{ current_user.name }}</span>
+                {% else %}
+                <a class="nav-element" href="{{ url_for('login') }}">Log In</a>
                 {% endif %}
             </nav>
         </div>

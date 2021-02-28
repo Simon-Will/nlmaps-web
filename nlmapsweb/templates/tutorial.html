@@ -22,7 +22,7 @@
 
 <div id="tutorial-chapter-block"  class="row block">
     <div class="block-header">
-        <span class="block-title">{{ toc[chapter - 1] }}</span>
+        <span class="block-title">{{ chapter_title }}</span>
     </div>
     <div class="block-body">
         {% set prev_chapter = chapter - 1 if chapter > 1 else None %}

@@ -1,4 +1,4 @@
-from flask import current_app, jsonify, render_template, request
+from flask import current_app, jsonify, render_template, request, session
 
 from nlmapsweb.app import db
 from nlmapsweb.forms import (DiagnoseForm, QueryFeaturesForm, MrlQueryForm,

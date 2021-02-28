@@ -1,6 +1,7 @@
 import time
 
 from flask_login import current_user
+from flask import session
 
 from nlmapsweb.app import db
 from nlmapsweb.processing.converting import functionalise, linearise
@@ -53,7 +54,6 @@ NL_TO_INSTRUCTIONS = {
         'parsed_mrl': "dist(query(around(center(area(keyval('name','New York City')),nwr(keyval('name','Empire State Building'))),search(nwr(keyval('name','Bratislavský hrad'))),maxdist(DIST_INTOWN),topx(1)),qtype(latlong)))",
         'feedback_mrl': "dist(query(area(keyval('name','New York City')),nwr(keyval('name','Empire State Building')),qtype(latlong)),query(nwr(keyval('name','Bratislavský hrad')),qtype(latlong)))",
     },
-
 }
 
 
@@ -68,21 +68,34 @@ def tutorial_dummy_parser(nl):
     return None
 
 
+def get_user_chapter():
+    if current_user.is_authenticated:
+        return current_user.tutorial_chapter
+    return session.get('tutorial_chapter', 0)
+
+
+def set_user_chapter(chapter_finished):
+    if chapter_finished == len(CHAPTERS) - 1:
+        # Tutorial is finished. Set to -1.
+        chapter_to_set = -1
+    else:
+        chapter_to_set = chapter_finished + 1
+
+    if current_user.is_authenticated:
+        current_user.tutorial_chapter = chapter_to_set
+        db.session.add(current_user)
+        db.session.commit()
+    else:
+        session['tutorial_chapter'] = chapter_to_set
+
+
 def tutorial_dummy_saver(feedback):
     instructions = NL_TO_INSTRUCTIONS.get(feedback['nl'])
     if instructions:
         mrl = functionalise(feedback['correct_lin'])
         if mrl == instructions['feedback_mrl']:
             chapter_finished = instructions['chapter']
-            if current_user.is_authenticated:
-                if chapter_finished == len(CHAPTERS) - 1:
-                    # Tutorial is finished. Set to -1.
-                    current_user.tutorial_chapter = -1
-                else:
-                    current_user.tutorial_chapter = chapter_finished + 1
-                db.session.add(current_user)
-                db.session.commit()
-
+            set_user_chapter(chapter_finished)
             feedback['id'] = 0
             feedback['chapter_finished'] = chapter_finished
             return feedback, 200
