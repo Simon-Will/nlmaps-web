@@ -58,6 +58,7 @@
                 <span>👤 {{ current_user.name }}</span>
                 {% else %}
                 <a class="nav-element" href="{{ url_for('login') }}">Log In</a>
+                <a class="nav-element" href="{{ url_for('register') }}">Register</a>
                 {% endif %}
             </nav>
         </div>
@@ -65,7 +66,11 @@
 
         {#- Main Wrapper #}
         <div id="wrapper">
-            <div id="flash-container"></div>
+            <div id="flash-container">
+                {% for category, message in get_flashed_messages(with_categories=true) %}
+                {{ M.flashed_message(message, 'bg-danger' if category == 'error' else 'bg-success') }}
+                {% endfor %}
+            </div>
             {% block main %}
             {% block content %}{% endblock %}
             {% endblock %}

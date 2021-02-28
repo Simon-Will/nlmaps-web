@@ -152,10 +152,8 @@ class QueryFeaturesForm(BaseForm):
                 success = False
                 if not isinstance(self.maxdist.errors, list):
                     self.maxdist.errors = []
-                self.maxdist.errors.append(
-                    'This field is required.')
+                self.maxdist.errors.append('This field is required.')
         return success
-
 
     def get_features(self):
         features = {

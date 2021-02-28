@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% set page = 'register' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Register</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.name.label }}{{ form.name(size=50, autofocus=True) }}
+            {{ form.email.label }}{{ form.email(size=50) }}
+            {{ form.password.label }}{{ form.password(size=50) }}
+            {{ form.password2.label }}{{ form.password2(size=50) }}
+            <input type="submit" value="Register">
+        </form>
+    </div>
+</div>
+{% endblock %}

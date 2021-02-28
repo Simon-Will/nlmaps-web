@@ -99,9 +99,7 @@ def init_views(app: Flask) -> None:
 
     with app.app_context():
         from nlmapsweb import views
-
         imported = [v for v in views.__dict__ if not v.startswith('_')]
-
         app.logger.info('Views initialized.')
 
 
