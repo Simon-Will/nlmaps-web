@@ -20,7 +20,7 @@ def upgrade():
     with op.batch_alter_table(
             'users', table_args=(sa.UniqueConstraint('email'),)) as batch_op:
         batch_op.add_column(sa.Column('email', sa.Unicode(length=200),
-                                      nullable=False))
+                                      nullable=False, server_default=''))
 
 
 def downgrade():
