@@ -19,7 +19,7 @@
     margin-bottom: 0.5em;
 }
 
-#main-nav * {
+#main-nav > * {
     padding: 0.5em 1em;
     border: solid 1pt #ccc;
 }

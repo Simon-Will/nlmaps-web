@@ -31,8 +31,8 @@ class User(BaseModel, UserMixin):
     def set_password(self, password):
         self.password_hash = hash_password(password)
 
-    def check_password_hash(self, password):
-        if self.password_hash:
+    def check_password(self, password):
+        if self.password_hash and isinstance(password, str):
             return check_password(password, self.password_hash)
         return False
 

@@ -9,6 +9,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="csrf-token" content="{{ csrf_token() }}">
+        {% if current_user.is_authenticated %}
+        <meta name="username" content="{{ current_user.name }}">
+        {% endif %}
         {% endblock %}
 
         {#- Page title #}
@@ -55,7 +58,7 @@
                 {% if current_user.is_authenticated %}
                 <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
                 <a class="nav-element" href="{{ url_for('logout') }}">Log Out</a>
-                <span>👤 {{ current_user.name }}</span>
+                <span class="nav-element">👤 <a href="{{ url_for('profile') }}">{{ current_user.name }}</a></span>
                 {% else %}
                 <a class="nav-element" href="{{ url_for('login') }}">Log In</a>
                 <a class="nav-element" href="{{ url_for('register') }}">Register</a>

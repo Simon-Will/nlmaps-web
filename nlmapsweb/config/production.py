@@ -4,6 +4,8 @@ from pathlib import Path
 DEBUG = False
 
 ASSETS_DIR = Path(os.environ['ASSETS'])
+
+SECRETS_INI = (ASSETS_DIR / 'secrets.ini').resolve()
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     (ASSETS_DIR / 'nlmapsweb.db').resolve()
 )
@@ -18,3 +20,4 @@ MODELS = [
     'will_nlmaps_3delta.noise.plusv2_web2to1_ratio05_pilot.yaml',
 ]
 CURRENT_MODEL = 'will_nlmaps_3delta.noise.plusv2_web2to1_ratio05_pilot.yaml'
+

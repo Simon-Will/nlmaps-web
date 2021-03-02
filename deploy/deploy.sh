@@ -78,6 +78,13 @@ ensure_secret_key() {
     fi
 }
 
+install_nlmapsweb_ini() {
+    if [ -f "$NLMAPSWEB_INI" ]; then
+        log 'Installing nlmapsweb.ini'
+        cp "$NLMAPSWEB_INI" "$ASSETS/nlmapsweb.ini"
+    fi
+}
+
 migrate() {
     log 'Running migrations'
     pushd "$NLMAPSWEB_REPO"
@@ -94,8 +101,9 @@ main() {
     REINSTALL=0
     NLMAPSWEB_PORT=8000
     ASSETS="$HOME/assets"
+    NLMAPSWEB_INI=''
 
-    while getopts ':rp:a:' opt; do
+    while getopts ':rp:a:i:' opt; do
         case $opt in
             r)
                 REINSTALL=1
@@ -105,6 +113,9 @@ main() {
                 ;;
             a)
                 ASSETS="$OPTARG"
+                ;;
+            i)
+                NLMAPSWEB_INI="$OPTARG"
                 ;;
             \?)
                 err_with_help "Invalid option: -$OPTARG"
@@ -133,6 +144,7 @@ main() {
     python_install
     external_js_install
     ensure_secret_key
+    install_nlmapsweb_ini
     migrate
     start_app
 }

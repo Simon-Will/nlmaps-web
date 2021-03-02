@@ -3,6 +3,7 @@ venv
 nlmapsweb.db
 tmp/
 mrl
+nlmapsweb-prod.ini
 
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python

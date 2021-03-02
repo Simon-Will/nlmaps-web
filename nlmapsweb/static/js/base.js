@@ -469,26 +469,30 @@ function makeFeaturesElm(features) {
 }
 
 function checkFeedbackStates() {
-    ajaxGet('/feedback/check', function(xhr) {
-        const check_data = JSON.parse(xhr.responseText);
-        const flashDiv = document.getElementById('flash-container');
-        if (check_data.learned.length !== 0) {
-            let content = 'Model learned to correctly parse feedbacks';
-            for (const info of check_data.learned) {
-                content += ' #' + info.id;
+    const username = document.querySelector('meta[name="username"]');
+    // Only check feedback states if user is logged in.
+    if (username) {
+        ajaxGet('/feedback/check', function(xhr) {
+            const check_data = JSON.parse(xhr.responseText);
+            const flashDiv = document.getElementById('flash-container');
+            if (check_data.learned.length !== 0) {
+                let content = 'Model learned to correctly parse feedbacks';
+                for (const info of check_data.learned) {
+                    content += ' #' + info.id;
+                }
+                content += '.';
+                flashMessage(flashDiv, content, 'bg-success', null);
             }
-            content += '.';
-            flashMessage(flashDiv, content, 'bg-success', null);
-        }
-        if (check_data.unlearned.length !== 0) {
-            let content = 'Model unlearned to correctly parse feedbacks';
-            for (const info of check_data.unlearned) {
-                content += ' #' + info.id;
+            if (check_data.unlearned.length !== 0) {
+                let content = 'Model unlearned to correctly parse feedbacks';
+                for (const info of check_data.unlearned) {
+                    content += ' #' + info.id;
+                }
+                content += '.';
+                flashMessage(flashDiv, content, 'bg-warning', null);
             }
-            content += '.';
-            flashMessage(flashDiv, content, 'bg-warning', null);
-        }
-    });
+        });
+    }
 }
 
 window.addEventListener('load', checkFeedbackStates);

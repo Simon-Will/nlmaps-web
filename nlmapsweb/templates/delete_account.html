@@ -1,20 +1,20 @@
 {% extends 'base.html' %}
 
-{% set page = 'login' %}
+{% set page = 'delete_account' %}
 
 {% block content %}
 <div class="row block">
     <div class="block-header">
-        <span class="block-title">Log In</span>
+        <span class="block-title">Delete Account</span>
     </div>
     <div class="block-body">
+        <p>Please enter your password to confirm that you want to delete your
+        account.</p>
         <form class="form-grid" method="post">
             {{ form.hidden_tag() }}
-            {{ form.name.label }}{{ form.name(size=30, autofocus=True) }}
             {{ form.password.label }}{{ form.password(size=30) }}
-            <input type="submit" value="Log In">
+            <input type="submit" value="Delete Account">
         </form>
-        <p style="font-size: smaller;">Forgot Password? <a href="{{ url_for('reset_password') }}">Reset it here.</a></p>
     </div>
 </div>
 {% endblock %}

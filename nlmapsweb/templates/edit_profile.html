@@ -1,0 +1,19 @@
+{% extends 'base.html' %}
+
+{% set page = 'edit_profile' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Edit Profile</span>
+    </div>
+    <div class="block-body">
+        <p>Name: {{ current_user.name }}</p>
+        <form class="form-grid" method="post">
+            {{ form.hidden_tag() }}
+            {{ form.email.label }}{{ form.email(size=30) }}
+            <input type="submit" value="Submit">
+        </form>
+    </div>
+</div>
+{% endblock %}

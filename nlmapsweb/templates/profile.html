@@ -1,0 +1,18 @@
+{% extends 'base.html' %}
+
+{% set page = 'profile' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Profile</span>
+    </div>
+    <div class="block-body">
+        <p>Name: {{ current_user.name }}</p>
+        <p>Email Address: {{ current_user.email }}</p>
+        <p><a href="{{ url_for('edit_profile') }}">Edit Profile</a></p>
+        <p><a href="{{ url_for('change_password') }}">Change Password</a></p>
+        <p><a href="{{ url_for('delete_account') }}">Delete Account</a></p>
+    </div>
+</div>
+{% endblock %}

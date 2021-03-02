@@ -1,3 +1,4 @@
+from configparser import ConfigParser
 import os
 import sys
 
@@ -46,6 +47,15 @@ def config_app(app: Flask) -> Flask:
         except ImportError:
             app.logger.error('Could not load {} configuration.'.format(env))
             sys.exit(1)
+
+    secrets_ini = app.config.get('SECRETS_INI')
+    if secrets_ini:
+        app.logger.info('Loading {}.'.format(secrets_ini))
+        cp = ConfigParser(delimiters=('=',), comment_prefixes=('#',))
+        cp.read(secrets_ini)
+        for key, value in cp['DEFAULT'].items():
+            app.config[key.upper()] = value
+
 
     app.logger.info('Config loaded.')
     app.logger.debug(f'{app.config}')
