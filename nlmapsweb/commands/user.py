@@ -21,18 +21,20 @@ def list():
         print("No users could be found.")
 
 
+@click.option('--password')
 @click.argument('username')
-def set_new_password(username):
+def set_new_password(password, username):
     """
     Set a new password for the given user. A password prompt will be shown
     with a password suggestion for convenience.
     """
     dbuser = db.session.query(User).filter_by(name=username).one_or_none()
     if dbuser:
-        password_suggestion = random_string_with_digits(8)
-        password = input(f"Password [{password_suggestion}]: ")
         if not password:
-            password = password_suggestion
+            password_suggestion = random_string_with_digits(8)
+            password = input(f"Password [{password_suggestion}]: ")
+            if not password:
+                password = password_suggestion
         dbuser.set_password(password)
         db.session.commit()
         print(f"Updated password for user {str(dbuser)}.")
