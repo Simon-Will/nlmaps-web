@@ -89,6 +89,7 @@ create_setup_sh() {
     cat >"$ASSETS/setup.sh" <<EOT
 export FLASK_APP=nlmapsweb.fullapp
 export FLASK_ENV=production
+export ASSETS='$ASSETS'
 . '$ASSETS/venv/bin/activate'
 EOT
 }
