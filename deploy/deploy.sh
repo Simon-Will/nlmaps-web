@@ -85,6 +85,14 @@ install_nlmapsweb_ini() {
     fi
 }
 
+create_setup_sh() {
+    cat >"$ASSETS/setup.sh" <<EOT
+export FLASK_APP=nlmapsweb.fullapp
+export FLASK_ENV=production
+. '$ASSETS/venv/bin/activate'
+EOT
+}
+
 migrate() {
     log 'Running migrations'
     pushd "$NLMAPSWEB_REPO"
@@ -145,6 +153,7 @@ main() {
     external_js_install
     ensure_secret_key
     install_nlmapsweb_ini
+    create_setup_sh
     migrate
     start_app
 }
