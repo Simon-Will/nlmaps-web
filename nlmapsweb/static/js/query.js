@@ -1015,18 +1015,20 @@ window.addEventListener('load', function() {
         return false;
     };
 
-    switchAdjustFormButton.onclick = function() {
-        if (mrlQueryForm.hidden) {
-            this.innerHTML = 'Switch to features form';
-            queryFeaturesForm.hidden = true;
-            mrlQueryForm.hidden = false;
-        } else {
-            this.innerHTML = 'Switch to MRL form';
-            queryFeaturesForm.hidden = false;
-            mrlQueryForm.hidden = true;
-        }
-        return false;
-    };
+    if (switchAdjustFormButton) {
+        switchAdjustFormButton.onclick = function() {
+            if (mrlQueryForm.hidden) {
+                this.innerHTML = 'Switch to features form';
+                queryFeaturesForm.hidden = true;
+                mrlQueryForm.hidden = false;
+            } else {
+                this.innerHTML = 'Switch to MRL form';
+                queryFeaturesForm.hidden = false;
+                mrlQueryForm.hidden = true;
+            }
+            return false;
+        };
+    }
 
     queryFeaturesForm.querySelector("select[name='query_type']")
         .addEventListener('change', function() {

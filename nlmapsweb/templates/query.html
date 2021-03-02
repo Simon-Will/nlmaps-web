@@ -128,7 +128,9 @@
                 <input type="submit" value="Resubmit">
             </form>
         </div>
+        {% if current_user.is_authenticated and current_user.admin %}
         <button id="switch-adjust-form">Switch to MRL form</button>
+        {% endif %}
     </div>
 </div>
 
