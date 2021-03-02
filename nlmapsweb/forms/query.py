@@ -73,15 +73,16 @@ class QueryFeaturesForm(BaseForm):
 
     center_nwr = JSONStringField('Reference Point')#, validators=[is_json])
     area = StringField('Area')
-    maxdist = StringField(
+    maxdist = SelectField(
         'Maximum Distance',
-        render_kw={
-            'pattern': (r'(WALKING_DIST|DIST_INTOWN|DIST_OUTTOWN|DIST_DAYTRIP|'
-                        r'\d+)'),
-            'title': ('Number of meters OR one of [WALKING_DIST, DIST_INTOWN,'
-                      'DIST_OUTTOWN, DIST_DAYTRIP]'),
-        }
+        choices=[('', '[No distance]'),
+                 ('WALKING_DIST', 'Walking distance (WALKING_DIST)'),
+                 ('DIST_INTOWN', 'Distance inside a town (DIST_INTOWN)'),
+                 ('DIST_OUTTOWN', 'Larger distance, around a town (DIST_OUTTOWN)'),
+                 ('DIST_DAYTRIP', 'Day trip (DIST_DAYTRIP)'),
+                 ('CUSTOM', 'Custom distance (Enter below)')],
     )
+    custom_maxdist = IntegerField('Custom Distance (in m)')
 
     #around_topx = IntegerField(
     #    'Limit to at Most',
@@ -148,11 +149,20 @@ class QueryFeaturesForm(BaseForm):
     def validate(self, *args, **kwargs):
         success = super().validate(*args, **kwargs)
         if success:
-            if self.query_type.data == 'around_query' and not self.maxdist.data:
-                success = False
-                if not isinstance(self.maxdist.errors, list):
-                    self.maxdist.errors = []
-                self.maxdist.errors.append('This field is required.')
+            if self.query_type.data == 'around_query':
+                if not self.maxdist.data:
+                    success = False
+                    if not isinstance(self.maxdist.errors, list):
+                        self.maxdist.errors = []
+                    self.maxdist.errors.append('This field is required.')
+                elif (self.maxdist.data == 'CUSTOM'
+                      and not self.custom_maxdist.data):
+                    success = False
+                    if not isinstance(self.custom_maxdist.errors, list):
+                        self.custom_maxdist.errors = []
+                    self.custom_maxdist.errors.append(
+                        'When choosing a custom distance, you must enter one.')
+
         return success
 
     def get_features(self):
@@ -167,7 +177,10 @@ class QueryFeaturesForm(BaseForm):
         else:
             features['query_type'] = self.query_type.data
             if self.maxdist.data:
-                features['maxdist'] = Symbol(self.maxdist.data)
+                if self.maxdist.data == 'CUSTOM' and self.custom_maxdist.data:
+                    features['maxdist'] = Symbol(str(self.custom_maxdist.data))
+                else:
+                    features['maxdist'] = Symbol(self.maxdist.data)
             if self.around_topx.data:
                 features['around_topx'] = Symbol(str(self.around_topx.data))
 
