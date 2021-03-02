@@ -82,7 +82,9 @@
     },
     "food": {
         "shop=convenience OR shop=deli OR shop=supermarket": "Store selling food",
-        "amenity=restaurant OR amenity=fast_food": "Place serving food for eating. Use this if not specifically asking for a store."
+        "amenity=restaurant": "Real restaurant, where you sit down and are served",
+        "amenity=fast_food": "A fast food restaurant",
+        "amenity=restaurant OR amenity=fast_food": "Place serving food for eating. Use this if not specifically asking for a store or a restaurant type, e.g. “food in Berlin”."
     },
     "atm": {
         "amenity=atm OR atm=yes": "ATM, cash machine, cash point"
@@ -165,306 +167,306 @@
     "regional": {
         "cuisine=regional AND amenity=restaurant": "Regional restaurant",
         "cuisine=regional AND amenity=fast_food": "Regional fast food restaurant",
-        "cuisine=regional": "Place serving regional food"
+        "cuisine=regional": "Place serving regional food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "italian": {
         "cuisine=italian AND amenity=restaurant": "Italian restaurant",
         "cuisine=italian AND amenity=fast_food": "Italian fast food restaurant",
-        "cuisine=italian": "Place serving italian food"
+        "cuisine=italian": "Place serving italian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "chinese": {
         "cuisine=chinese AND amenity=restaurant": "Chinese restaurant",
         "cuisine=chinese AND amenity=fast_food": "Chinese fast food restaurant",
-        "cuisine=chinese": "Place serving chinese food"
+        "cuisine=chinese": "Place serving chinese food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "mexican": {
         "cuisine=mexican AND amenity=restaurant": "Mexican restaurant",
         "cuisine=mexican AND amenity=fast_food": "Mexican fast food restaurant",
-        "cuisine=mexican": "Place serving mexican food"
+        "cuisine=mexican": "Place serving mexican food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "japanese": {
         "cuisine=japanese AND amenity=restaurant": "Japanese restaurant",
         "cuisine=japanese AND amenity=fast_food": "Japanese fast food restaurant",
-        "cuisine=japanese": "Place serving japanese food"
+        "cuisine=japanese": "Place serving japanese food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "american": {
         "cuisine=american AND amenity=restaurant": "American restaurant",
         "cuisine=american AND amenity=fast_food": "American fast food restaurant",
-        "cuisine=american": "Place serving american food"
+        "cuisine=american": "Place serving american food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "indian": {
         "cuisine=indian AND amenity=restaurant": "Indian restaurant",
         "cuisine=indian AND amenity=fast_food": "Indian fast food restaurant",
-        "cuisine=indian": "Place serving indian food"
+        "cuisine=indian": "Place serving indian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "asian": {
         "cuisine=asian AND amenity=restaurant": "Asian restaurant",
         "cuisine=asian AND amenity=fast_food": "Asian fast food restaurant",
-        "cuisine=asian": "Place serving asian food"
+        "cuisine=asian": "Place serving asian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "french": {
         "cuisine=french AND amenity=restaurant": "French restaurant",
         "cuisine=french AND amenity=fast_food": "French fast food restaurant",
-        "cuisine=french": "Place serving french food"
+        "cuisine=french": "Place serving french food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "german": {
         "cuisine=german AND amenity=restaurant": "German restaurant",
         "cuisine=german AND amenity=fast_food": "German fast food restaurant",
-        "cuisine=german": "Place serving german food"
+        "cuisine=german": "Place serving german food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "thai": {
         "cuisine=thai AND amenity=restaurant": "Thai restaurant",
         "cuisine=thai AND amenity=fast_food": "Thai fast food restaurant",
-        "cuisine=thai": "Place serving thai food"
+        "cuisine=thai": "Place serving thai food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "greek": {
         "cuisine=greek AND amenity=restaurant": "Greek restaurant",
         "cuisine=greek AND amenity=fast_food": "Greek fast food restaurant",
-        "cuisine=greek": "Place serving greek food"
+        "cuisine=greek": "Place serving greek food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "international": {
         "cuisine=international AND amenity=restaurant": "International restaurant",
         "cuisine=international AND amenity=fast_food": "International fast food restaurant",
-        "cuisine=international": "Place serving international food"
+        "cuisine=international": "Place serving international food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "vietnamese": {
         "cuisine=vietnamese AND amenity=restaurant": "Vietnamese restaurant",
         "cuisine=vietnamese AND amenity=fast_food": "Vietnamese fast food restaurant",
-        "cuisine=vietnamese": "Place serving vietnamese food"
+        "cuisine=vietnamese": "Place serving vietnamese food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "turkish": {
         "cuisine=turkish AND amenity=restaurant": "Turkish restaurant",
         "cuisine=turkish AND amenity=fast_food": "Turkish fast food restaurant",
-        "cuisine=turkish": "Place serving turkish food"
+        "cuisine=turkish": "Place serving turkish food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "spanish": {
         "cuisine=spanish AND amenity=restaurant": "Spanish restaurant",
         "cuisine=spanish AND amenity=fast_food": "Spanish fast food restaurant",
-        "cuisine=spanish": "Place serving spanish food"
+        "cuisine=spanish": "Place serving spanish food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "local": {
         "cuisine=local AND amenity=restaurant": "Local restaurant",
         "cuisine=local AND amenity=fast_food": "Local fast food restaurant",
-        "cuisine=local": "Place serving local food"
+        "cuisine=local": "Place serving local food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "korean": {
         "cuisine=korean AND amenity=restaurant": "Korean restaurant",
         "cuisine=korean AND amenity=fast_food": "Korean fast food restaurant",
-        "cuisine=korean": "Place serving korean food"
+        "cuisine=korean": "Place serving korean food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "mediterranean": {
         "cuisine=mediterranean AND amenity=restaurant": "Mediterranean restaurant",
         "cuisine=mediterranean AND amenity=fast_food": "Mediterranean fast food restaurant",
-        "cuisine=mediterranean": "Place serving mediterranean food"
+        "cuisine=mediterranean": "Place serving mediterranean food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "lebanese": {
         "cuisine=lebanese AND amenity=restaurant": "Lebanese restaurant",
         "cuisine=lebanese AND amenity=fast_food": "Lebanese fast food restaurant",
-        "cuisine=lebanese": "Place serving lebanese food"
+        "cuisine=lebanese": "Place serving lebanese food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "indonesian": {
         "cuisine=indonesian AND amenity=restaurant": "Indonesian restaurant",
         "cuisine=indonesian AND amenity=fast_food": "Indonesian fast food restaurant",
-        "cuisine=indonesian": "Place serving indonesian food"
+        "cuisine=indonesian": "Place serving indonesian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "georgian": {
         "cuisine=georgian AND amenity=restaurant": "Georgian restaurant",
         "cuisine=georgian AND amenity=fast_food": "Georgian fast food restaurant",
-        "cuisine=georgian": "Place serving georgian food"
+        "cuisine=georgian": "Place serving georgian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "arab": {
         "cuisine=arab AND amenity=restaurant": "Arab restaurant",
         "cuisine=arab AND amenity=fast_food": "Arab fast food restaurant",
-        "cuisine=arab": "Place serving arab food"
+        "cuisine=arab": "Place serving arab food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "portuguese": {
         "cuisine=portuguese AND amenity=restaurant": "Portuguese restaurant",
         "cuisine=portuguese AND amenity=fast_food": "Portuguese fast food restaurant",
-        "cuisine=portuguese": "Place serving portuguese food"
+        "cuisine=portuguese": "Place serving portuguese food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "russian": {
         "cuisine=russian AND amenity=restaurant": "Russian restaurant",
         "cuisine=russian AND amenity=fast_food": "Russian fast food restaurant",
-        "cuisine=russian": "Place serving russian food"
+        "cuisine=russian": "Place serving russian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "filipino": {
         "cuisine=filipino AND amenity=restaurant": "Filipino restaurant",
         "cuisine=filipino AND amenity=fast_food": "Filipino fast food restaurant",
-        "cuisine=filipino": "Place serving filipino food"
+        "cuisine=filipino": "Place serving filipino food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "polish": {
         "cuisine=polish AND amenity=restaurant": "Polish restaurant",
         "cuisine=polish AND amenity=fast_food": "Polish fast food restaurant",
-        "cuisine=polish": "Place serving polish food"
+        "cuisine=polish": "Place serving polish food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "african": {
         "cuisine=african AND amenity=restaurant": "African restaurant",
         "cuisine=african AND amenity=fast_food": "African fast food restaurant",
-        "cuisine=african": "Place serving african food"
+        "cuisine=african": "Place serving african food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "malaysian": {
         "cuisine=malaysian AND amenity=restaurant": "Malaysian restaurant",
         "cuisine=malaysian AND amenity=fast_food": "Malaysian fast food restaurant",
-        "cuisine=malaysian": "Place serving malaysian food"
+        "cuisine=malaysian": "Place serving malaysian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "peruvian": {
         "cuisine=peruvian AND amenity=restaurant": "Peruvian restaurant",
         "cuisine=peruvian AND amenity=fast_food": "Peruvian fast food restaurant",
-        "cuisine=peruvian": "Place serving peruvian food"
+        "cuisine=peruvian": "Place serving peruvian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "caribbean": {
         "cuisine=caribbean AND amenity=restaurant": "Caribbean restaurant",
         "cuisine=caribbean AND amenity=fast_food": "Caribbean fast food restaurant",
-        "cuisine=caribbean": "Place serving caribbean food"
+        "cuisine=caribbean": "Place serving caribbean food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "bavarian": {
         "cuisine=bavarian AND amenity=restaurant": "Bavarian restaurant",
         "cuisine=bavarian AND amenity=fast_food": "Bavarian fast food restaurant",
-        "cuisine=bavarian": "Place serving bavarian food"
+        "cuisine=bavarian": "Place serving bavarian food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "pizza": {
         "cuisine=pizza AND amenity=restaurant": "Pizza restaurant",
         "cuisine=pizza AND amenity=fast_food": "Pizza fast food restaurant",
-        "cuisine=pizza": "Place serving pizza"
+        "cuisine=pizza": "Place serving pizza. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "burger": {
         "cuisine=burger AND amenity=restaurant": "Burger restaurant",
         "cuisine=burger AND amenity=fast_food": "Burger fast food restaurant",
-        "cuisine=burger": "Place serving burgers"
+        "cuisine=burger": "Place serving burgers. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "sandwich": {
         "cuisine=sandwich AND amenity=restaurant": "Sandwich restaurant",
         "cuisine=sandwich AND amenity=fast_food": "Sandwich fast food restaurant",
-        "cuisine=sandwich": "Place serving sandwiches"
+        "cuisine=sandwich": "Place serving sandwiches. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "sandwiches": {
         "cuisine=sandwich AND amenity=restaurant": "Sandwich restaurant",
         "cuisine=sandwich AND amenity=fast_food": "Sandwich fast food restaurant",
-        "cuisine=sandwich": "Place serving sandwiches"
+        "cuisine=sandwich": "Place serving sandwiches. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "chicken": {
         "cuisine=chicken AND amenity=restaurant": "Chicken restaurant",
         "cuisine=chicken AND amenity=fast_food": "Chicken fast food restaurant",
-        "cuisine=chicken": "Place serving chicken"
+        "cuisine=chicken": "Place serving chicken. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "kebab": {
         "cuisine=kebab AND amenity=restaurant": "Kebab restaurant",
         "cuisine=kebab AND amenity=fast_food": "Kebab fast food restaurant",
-        "cuisine=kebab": "Place serving kebab"
+        "cuisine=kebab": "Place serving kebab. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "sushi": {
         "cuisine=sushi AND amenity=restaurant": "Sushi restaurant",
         "cuisine=sushi AND amenity=fast_food": "Sushi fast food restaurant",
-        "cuisine=sushi": "Place serving sushi"
+        "cuisine=sushi": "Place serving sushi. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "seafood": {
         "cuisine=seafood AND amenity=restaurant": "Seafood restaurant",
         "cuisine=seafood AND amenity=fast_food": "Seafood fast food restaurant",
-        "cuisine=seafood": "Place serving seafood"
+        "cuisine=seafood": "Place serving seafood. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "noodle": {
         "cuisine=noodle AND amenity=restaurant": "Noodle restaurant",
         "cuisine=noodle AND amenity=fast_food": "Noodle fast food restaurant",
-        "cuisine=noodle": "Place serving noodles"
+        "cuisine=noodle": "Place serving noodles. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "noodles": {
         "cuisine=noodle AND amenity=restaurant": "Noodle restaurant",
         "cuisine=noodle AND amenity=fast_food": "Noodle fast food restaurant",
-        "cuisine=noodle": "Place serving noodles"
+        "cuisine=noodle": "Place serving noodles. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "barbecue": {
         "cuisine=barbecue AND amenity=restaurant": "Barbecue restaurant",
         "cuisine=barbecue AND amenity=fast_food": "Barbecue fast food restaurant",
-        "cuisine=barbecue": "Place serving barbecue"
+        "cuisine=barbecue": "Place serving barbecue. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "fish": {
         "cuisine=fish AND amenity=restaurant": "Fish restaurant",
         "cuisine=fish AND amenity=fast_food": "Fish fast food restaurant",
-        "cuisine=fish": "Place serving fish"
+        "cuisine=fish": "Place serving fish. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "ramen": {
         "cuisine=ramen AND amenity=restaurant": "Ramen restaurant",
         "cuisine=ramen AND amenity=fast_food": "Ramen fast food restaurant",
-        "cuisine=ramen": "Place serving ramen"
+        "cuisine=ramen": "Place serving ramen. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "donut": {
         "cuisine=donut AND amenity=restaurant": "Donut restaurant",
         "cuisine=donut AND amenity=fast_food": "Donut fast food restaurant",
-        "cuisine=donut": "Place serving donuts"
+        "cuisine=donut": "Place serving donuts. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "donuts": {
         "cuisine=donut AND amenity=restaurant": "Donut restaurant",
         "cuisine=donut AND amenity=fast_food": "Donut fast food restaurant",
-        "cuisine=donut": "Place serving donuts"
+        "cuisine=donut": "Place serving donuts. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "breakfast": {
         "cuisine=breakfast AND amenity=restaurant": "Breakfast restaurant",
         "cuisine=breakfast AND amenity=fast_food": "Breakfast fast food restaurant",
-        "cuisine=breakfast": "Place serving breakfast"
+        "cuisine=breakfast": "Place serving breakfast. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "friture": {
         "cuisine=friture AND amenity=restaurant": "Friture restaurant",
         "cuisine=friture AND amenity=fast_food": "Friture fast food restaurant",
-        "cuisine=friture": "Place serving friture"
+        "cuisine=friture": "Place serving friture. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "crepe": {
         "cuisine=crepe AND amenity=restaurant": "Crepe restaurant",
         "cuisine=crepe AND amenity=fast_food": "Crepe fast food restaurant",
-        "cuisine=crepe": "Place serving crepes"
+        "cuisine=crepe": "Place serving crepes. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "crepes": {
         "cuisine=crepe AND amenity=restaurant": "Crepe restaurant",
         "cuisine=crepe AND amenity=fast_food": "Crepe fast food restaurant",
-        "cuisine=crepe": "Place serving crepes"
+        "cuisine=crepe": "Place serving crepes. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "juice": {
         "cuisine=juice AND amenity=restaurant": "Juice restaurant",
         "cuisine=juice AND amenity=fast_food": "Juice fast food restaurant",
-        "cuisine=juice": "Place serving juice"
+        "cuisine=juice": "Place serving juice. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "juices": {
         "cuisine=juice AND amenity=restaurant": "Juice restaurant",
         "cuisine=juice AND amenity=fast_food": "Juice fast food restaurant",
-        "cuisine=juice": "Place serving juice"
+        "cuisine=juice": "Place serving juice. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "tapas": {
         "cuisine=tapas AND amenity=restaurant": "Tapas restaurant",
         "cuisine=tapas AND amenity=fast_food": "Tapas fast food restaurant",
-        "cuisine=tapas": "Place serving tapas"
+        "cuisine=tapas": "Place serving tapas. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "wings": {
         "cuisine=wings AND amenity=restaurant": "Wings restaurant",
         "cuisine=wings AND amenity=fast_food": "Wings fast food restaurant",
-        "cuisine=wings": "Place serving wings"
+        "cuisine=wings": "Place serving wings. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "cake": {
         "cuisine=cake AND amenity=restaurant": "Cake restaurant",
         "cuisine=cake AND amenity=fast_food": "Cake fast food restaurant",
-        "cuisine=cake": "Place serving cakes"
+        "cuisine=cake": "Place serving cakes. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "cakes": {
         "cuisine=cake AND amenity=restaurant": "Cake restaurant",
         "cuisine=cake AND amenity=fast_food": "Cake fast food restaurant",
-        "cuisine=cake": "Place serving cakes"
+        "cuisine=cake": "Place serving cakes. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "bagel": {
         "cuisine=bagel AND amenity=restaurant": "Bagel restaurant",
         "cuisine=bagel AND amenity=fast_food": "Bagel fast food restaurant",
-        "cuisine=bagel": "Place serving bagels"
+        "cuisine=bagel": "Place serving bagels. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "bagels": {
         "cuisine=bagel AND amenity=restaurant": "Bagel restaurant",
         "cuisine=bagel AND amenity=fast_food": "Bagel fast food restaurant",
-        "cuisine=bagel": "Place serving bagels"
+        "cuisine=bagel": "Place serving bagels. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "pasta": {
         "cuisine=pasta AND amenity=restaurant": "Pasta restaurant",
         "cuisine=pasta AND amenity=fast_food": "Pasta fast food restaurant",
-        "cuisine=pasta": "Place serving pasta"
+        "cuisine=pasta": "Place serving pasta. Use this without amenity tag if you don’t care about what type of restaurant it is."
     },
     "grill": {
         "cuisine=grill AND amenity=restaurant": "Grill restaurant",
         "cuisine=grill AND amenity=fast_food": "Grill fast food restaurant",
-        "cuisine=grill": "Place serving grilled food"
+        "cuisine=grill": "Place serving grilled food. Use this without amenity tag if you don’t care about what type of restaurant it is."
     }
 }
