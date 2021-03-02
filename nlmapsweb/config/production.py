@@ -5,7 +5,7 @@ DEBUG = False
 
 ASSETS_DIR = Path(os.environ['ASSETS'])
 
-SECRETS_INI = (ASSETS_DIR / 'secrets.ini').resolve()
+SECRETS_INI = (ASSETS_DIR / 'nlmapsweb.ini').resolve()
 SQLALCHEMY_DATABASE_URI = 'sqlite:///{}'.format(
     (ASSETS_DIR / 'nlmapsweb.db').resolve()
 )
