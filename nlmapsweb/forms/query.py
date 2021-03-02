@@ -82,7 +82,8 @@ class QueryFeaturesForm(BaseForm):
                  ('DIST_DAYTRIP', 'Day trip (DIST_DAYTRIP)'),
                  ('CUSTOM', 'Custom distance (Enter below)')],
     )
-    custom_maxdist = IntegerField('Custom Distance (in m)')
+    custom_maxdist = IntegerField('Custom Distance (in m)',
+                                  validators=[Optional()])
 
     #around_topx = IntegerField(
     #    'Limit to at Most',
