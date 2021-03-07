@@ -1,5 +1,5 @@
 .map {
-    height: 400px;
+    height: 600px;
     width: 100%;
 }
 .ol-popup {
@@ -42,6 +42,18 @@
 }
 .ol-popup-closer:after {
     content: "✖";
+}
+
+#terms-notice {
+    padding: 0.5em;
+    background-color: #ffc966;
+    border: solid #ffae19 1pt;
+    font-size: small;
+}
+
+#terms-notice p {
+    margin-top: 0;
+    font-weight: bold;
 }
 
 #adjust-form-wrapper {

@@ -1,7 +1,7 @@
 from flask_login import current_user
-from wtforms import HiddenField, PasswordField, StringField
+from wtforms import BooleanField, HiddenField, PasswordField, StringField
 from wtforms.fields.html5 import EmailField
-from wtforms.validators import DataRequired, Length, ValidationError
+from wtforms.validators import DataRequired, Length, Optional, ValidationError
 
 from nlmapsweb.forms.base import BaseForm
 from nlmapsweb.models import Token, User
@@ -57,6 +57,8 @@ class RegisterForm(BaseForm, PasswordSetMixin, EmailSetMixin):
         },
     )
 
+    accepted_terms = BooleanField('Terms of Service')
+
     def validate_name(self, field):
         wanted_name = field.data
 
@@ -71,9 +73,16 @@ class RegisterForm(BaseForm, PasswordSetMixin, EmailSetMixin):
             raise ValidationError('Name {} is already taken.'
                                   .format(wanted_name))
 
+    def validate_accepted_terms(self, field):
+        if field.data is not True:
+            raise ValidationError('You must accept the terms of service.')
+
 
 class ProfileForm(BaseForm, EmailSetMixin):
-    pass
+    contributor_name = StringField(
+        'Contributor Name',
+        validators=[Optional(), Length(min=2, max=200)],
+    )
 
 
 class ChangePasswordForm(BaseForm, PasswordSetMixin):

@@ -98,6 +98,7 @@ def edit_profile():
     form = ProfileForm(obj=current_user)
     if form.validate_on_submit():
         current_user.email = form.email.data
+        current_user.contributor_name = form.contributor_name.data
         db.session.add(current_user)
         db.session.commit()
         flash('Profile changed.')

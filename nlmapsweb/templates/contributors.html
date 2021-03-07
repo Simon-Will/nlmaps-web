@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% set page = 'contributors' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Contributors</span>
+    </div>
+    <div class="block-body">
+        <p>These are the contributors who have opted into their contributions to
+        the NLMaps Web dataset being attributed to them.</p>
+
+        <ul>
+            {% for name in names %}
+            <li>{{ name }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+{% endblock %}

@@ -10,6 +10,12 @@
     <div class="block-body">
         <p>Name: {{ current_user.name }}</p>
         <p>Email Address: {{ current_user.email }}</p>
+        {% if current_user.contributor_name %}
+        <p>Contributions attributed under: {{ current_user.contributor_name }}</p>
+        {% else %}
+        <p>Your contributions are not attributed to you. You can change that by
+        editing your profile.</p>
+        {% endif %}
         <p><a href="{{ url_for('edit_profile') }}">Edit Profile</a></p>
         <p><a href="{{ url_for('change_password') }}">Change Password</a></p>
         <p><a href="{{ url_for('delete_account') }}">Delete Account</a></p>

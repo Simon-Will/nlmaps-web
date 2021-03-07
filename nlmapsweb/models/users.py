@@ -28,6 +28,9 @@ class User(BaseModel, UserMixin):
     tutorial_chapter = db.Column(db.Integer, nullable=False, default=1,
                                  server_default='1')
 
+    contributor_name = db.Column(db.Unicode(200), nullable=False, default='',
+                                 server_default='')
+
     def set_password(self, password):
         self.password_hash = hash_password(password)
 

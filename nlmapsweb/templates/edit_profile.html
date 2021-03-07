@@ -9,9 +9,15 @@
     </div>
     <div class="block-body">
         <p>Name: {{ current_user.name }}</p>
-        <form class="form-grid" method="post">
+        <form method="post">
             {{ form.hidden_tag() }}
-            {{ form.email.label }}{{ form.email(size=30) }}
+            <div class="form-grid">
+                {{ form.email.label }}{{ form.email(size=30) }}
+            </div>
+            <p>Enter a contributor name if you want your contributions attributed to you.</p>
+            <div class="form-grid">
+                {{ form.contributor_name.label }}{{ form.contributor_name(size=30) }}
+            </div>
             <input type="submit" value="Submit">
         </form>
     </div>

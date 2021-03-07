@@ -15,7 +15,7 @@
         {% endblock %}
 
         {#- Page title #}
-        <title>{% block title %}{% if page is defined %}{{ page | replace('_', ' ') | title }}{% endif %}{% endblock %}</title>
+        <title>{% block title %}{% if page is defined %}NLMaps Web | {{ page | replace('_', ' ') | title }}{% endif %}{% endblock %}</title>
 
         {#- Base style #}
         {% block base_style %}
@@ -77,6 +77,13 @@
             {% block main %}
             {% block content %}{% endblock %}
             {% endblock %}
+        </div>
+        <div id="footer">
+            <nav id="footer-nav">
+                <a href="{{ url_for('legal_notice') }}">Legal Notice</a>
+                <a href="{{ url_for('terms') }}">Terms of Service</a>
+                <a href="{{ url_for('contributors') }}">Contributors</a>
+            </nav>
         </div>
     </body>
 </html>

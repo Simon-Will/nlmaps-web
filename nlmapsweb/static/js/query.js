@@ -1130,5 +1130,19 @@ window.addEventListener('load', function() {
                 showSecondFeaturesFieldset(true);
             }
         });
+
+    const termsNotice = document.getElementById('terms-notice');
+    if (termsNotice) {
+        const username = document.querySelector('meta[name="username"]');
+        if (window.localStorage.hideTermsNotice || username) {
+            // User has an account or has explicitly hidden the notice.
+            termsNotice.hidden = true;
+        }
+        document.getElementById('hide-terms-notice').onclick = function() {
+            window.localStorage.hideTermsNotice = true;
+            termsNotice.hidden = true;
+            return false;
+        };
+    }
     // End events
 });
