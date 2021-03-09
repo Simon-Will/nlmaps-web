@@ -4,7 +4,25 @@ from flask import current_app
 from nlmapsweb.utils.smtp import MySMTP
 
 
-def send_mail(message, subject, to, cc=tuple(), bcc=tuple()):
+FOOTER = (
+    '\r\n'
+    '---\r\n'
+    'Simon Will\r\n'
+    '\r\n'
+    'Berliner Straße 109A\r\n'
+    '69121 Heidelberg\r\n'
+    'Germany\r\n'
+    '\r\n'
+    'nlmapsweb@nlmaps.gorgor.de\r\n'
+    '\r\n'
+    'https://nlmaps.gorgor.de/\r\n'
+)
+
+
+def send_mail(message, subject, to, cc=tuple(), bcc=tuple(), footer=FOOTER):
+    if footer:
+        message += footer
+
     if isinstance(to, str):
         to = (to,)
     if isinstance(cc, str):

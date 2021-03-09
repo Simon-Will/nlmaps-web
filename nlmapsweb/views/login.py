@@ -16,10 +16,15 @@ from nlmapsweb.models import Token, User
 def send_welcome_mail(user):
     nlmaps_url = request.url_root
     message = (
-        'Hello {name},\n\n'
-        'thanks for registering at {url}!\n'
-        'If this wasn’t you, reset your password login and delete the'
-        ' account again.'
+        'Hello {name},\r\n'
+        '\r\n'
+        'thanks for registering for NLMaps Web at {url}!'
+        'We hope you will enjoy our service.\r\n'
+        '\r\n'
+        'If it wasn’t you who registered with this email address, you can go'
+        ' to our site, log in, reset your password and delete the account.\r\n'
+        '\r\n'
+        'Have a nice day!\r\n'
         .format(name=user.name, url=nlmaps_url)
     )
     subject = 'Welcome to NLMaps Web'
@@ -29,9 +34,11 @@ def send_welcome_mail(user):
 def send_password_reset_mail(user, token):
     url = url_for('set_new_password', code=token.code, _external=True)
     message = (
-        'Hello {name},\n\n'
-        'you can reset your password here:\n\n'
-        '{url}'
+        'Hello {name},\r\n'
+        '\r\n'
+        'You can reset your password here:\r\n'
+        '\r\n'
+        '{url}\r\n'
         .format(name=user.name, url=url)
     )
     subject = 'Welcome to NLMaps Web'
