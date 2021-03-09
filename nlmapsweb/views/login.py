@@ -1,8 +1,8 @@
 import datetime as dt
 
 from flask_login import current_user, login_required, login_user, logout_user
-from flask import (current_app, flash, redirect, render_template, request,
-                   url_for)
+from flask import (abort, current_app, flash, redirect, render_template,
+                   request, url_for)
 
 from nlmapsweb.app import db
 from nlmapsweb.utils.emailing import send_mail
@@ -164,6 +164,11 @@ def reset_password():
 
 @current_app.route('/set_new_password/<code>', methods=['GET', 'POST'])
 def set_new_password(code):
+    if request.method == 'GET':
+        token = Token.query.filter_by(code=code).first()
+        if not token:
+            abort(404)
+
     form = SetNewPasswordForm(data={'code': code})
     if form.validate_on_submit():
         token = Token.query.filter_by(code=form.code.data).first()
