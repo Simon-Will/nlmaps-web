@@ -18,8 +18,8 @@ def send_welcome_mail(user):
     message = (
         'Hello {name},\r\n'
         '\r\n'
-        'thanks for registering for NLMaps Web at {url}!'
-        'We hope you will enjoy our service.\r\n'
+        'thanks for registering for NLMaps Web at {url}\r\n'
+        'We hope you will enjoy the service.\r\n'
         '\r\n'
         'If it wasn’t you who registered with this email address, you can go'
         ' to our site, log in, reset your password and delete the account.\r\n'
