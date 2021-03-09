@@ -989,6 +989,11 @@ window.addEventListener('load', function() {
                 const feedback = JSON.parse(xhr.responseText);
                 if (feedback.error) {
                     messagesBlock.addMessage(feedback['error'], true);
+                    if (feedback.tips) {
+                        feedback.tips.forEach(function(tip) {
+                            messagesBlock.addMessage('TIP: ' + tip, true);
+                        });
+                    }
                 } else {
                     messagesBlock.addMessage('Feedback not received.', true);
                 }

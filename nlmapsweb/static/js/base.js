@@ -153,8 +153,8 @@ function copyTextToClipboard(text, flashParent = null) {
     function flashSuccess(success) {
         if (flashParent) {
             let message = '';
-            if (text.length > 70) {
-                message = success ? 'Copied.' : 'Failed to copy.';
+            if (text.length > 150) {
+                message = success ? 'Copied a long text.' : 'Failed to copy.';
             } else {
                 message = success ? 'Copied “' + text + '”.'
                     : 'Failed to copy “' + text + '”.';

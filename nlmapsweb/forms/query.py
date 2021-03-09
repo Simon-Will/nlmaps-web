@@ -80,7 +80,7 @@ class QueryFeaturesForm(BaseForm):
                  ('DIST_INTOWN', 'Distance inside a town (DIST_INTOWN)'),
                  ('DIST_OUTTOWN', 'Larger distance, around a town (DIST_OUTTOWN)'),
                  ('DIST_DAYTRIP', 'Day trip (DIST_DAYTRIP)'),
-                 ('CUSTOM', 'Custom distance (Enter below)')],
+                 ('CUSTOM', '[Custom distance] (Enter below)')],
     )
     custom_maxdist = IntegerField('Custom Distance (in m)',
                                   validators=[Optional()])
