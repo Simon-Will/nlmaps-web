@@ -55,9 +55,10 @@ def login():
         user = User.query.filter_by(name=form.name.data).first()
         if user is None or not user.check_password(form.password.data):
             flash('Login failed.', 'error')
-            return redirect(url_for('login'))
+            return redirect(request.url)
         login_user(user, remember=True)
-        return redirect(url_for('profile'))
+        next_url = request.args.get('next', url_for('profile'))
+        return redirect(next_url)
 
     return render_template('login.html', form=form)
 

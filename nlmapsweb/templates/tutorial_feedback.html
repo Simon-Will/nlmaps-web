@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% set page = 'tutorial_feedback' %}
+
+{% block content %}
+
+{% for piece in feedback %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Tutorial Feedback {{ piece.id }}</span>
+    </div>
+    <div class="block-body">
+        <p>{{ piece.content }}</p>
+    </div>
+</div>
+{% endfor %}
+{% endblock %}

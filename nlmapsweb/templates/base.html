@@ -54,6 +54,7 @@
                 <a class="nav-element" href="{{ url_for('tutorial') }}">Tutorial</a>
                 {% if current_user.admin %}
                 <a class="nav-element" href="{{ url_for('train') }}">Train Status</a>
+                <a class="nav-element" href="{{ url_for('tutorial_feedback') }}">Tutorial Feedback</a>
                 {% endif %}
                 {% if current_user.is_authenticated %}
                 <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>

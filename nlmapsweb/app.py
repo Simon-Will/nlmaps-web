@@ -87,6 +87,7 @@ def init_migrate(app: Flask) -> None:
 
 def init_login(app: Flask) -> None:
     app.logger.info("Start initializing Flask-Login.")
+    login_manager.login_view = 'login'
     login_manager.init_app(app=app)
     from nlmapsweb.models.users import User
 

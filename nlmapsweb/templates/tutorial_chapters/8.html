@@ -1,6 +1,17 @@
 <h3>Finished!</h3>
 
 <p>Thanks a lot for finishing the tutorial! Hopefully, everything went alright
-    and you can now work with NLMaps Web. In case you have some questions, feel
-    free to send them to
+and you can now work with NLMaps Web.</p>
+
+<p>We’d love to hear your feedback about the tutorial. How long did it take?
+What problems did you have? Any questions? The feedback will be stored
+anonymously.</p>
+
+<form id="tutorial-feedback-form" method="post" action="{{ url_for('tutorial_feedback') }}">
+    <textarea minlength="2" maxlength="2000" cols="80" rows="10" name="feedback"></textarea>
+    <br>
+    <input type="submit" value="Submit">
+</form>
+
+<p>You can also contact us with any questions or remarks at
     <a href="will@cl.uni-heidelberg.de?subject=About NLMaps Web">will@cl.uni-heidelberg.de</a></p>

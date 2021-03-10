@@ -15,4 +15,29 @@ window.addEventListener('load', function() {
         };
         example.appendChild(button);
     });
+
+    const CSRF_TOKEN = document.querySelector('meta[name="csrf-token"]')
+          .getAttribute('content');
+
+    const tutorialFeedbackForm = document.getElementById('tutorial-feedback-form');
+    if (tutorialFeedbackForm) {
+        tutorialFeedbackForm.onsubmit = function() {
+            const formData = new FormData(this);
+            formData.append('csrf_token', CSRF_TOKEN);
+            const thisForm = this;
+            ajaxPost(
+                this.action,
+                function(xhr) {
+                    thisForm.reset();
+                    console.log('success');
+                },
+                function(xhr) {
+                    console.log('error');
+                },
+                null,
+                formData
+            );
+            return false;
+        };
+    }
 });
