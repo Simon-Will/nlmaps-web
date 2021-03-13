@@ -4,6 +4,17 @@
 
 {% block content %}
 
+{% if feedback|length == 0 %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">No Tutorial Feedback</span>
+    </div>
+    <div class="block-body">
+        <p>No feedback has been given for the tutorial, yet.</p>
+    </div>
+</div>
+{% endif %}
+
 {% for piece in feedback %}
 <div class="row block">
     <div class="block-header">

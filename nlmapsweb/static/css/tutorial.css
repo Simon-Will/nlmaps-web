@@ -19,3 +19,12 @@
 .tutorial-nav a {
     margin: 0em 1em;
 }
+
+table.tutorial-table {
+    border-collapse: collapse;
+}
+
+table.tutorial-table th, table.tutorial-table td {
+    padding: 0.3em;
+    border: solid 1pt black;
+}

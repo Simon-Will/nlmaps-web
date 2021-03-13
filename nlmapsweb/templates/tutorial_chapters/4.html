@@ -1,9 +1,9 @@
 <p>It’s also possible to query for things around a named reference place. For
 example, in your next task, you will ask for hotels in walking distance of the
-Taj Mahal. There are four named maximum distances, which are explained in the
+Taj Mahal. There are four <em>named maximum distances</em>, which are explained in the
 table below.</p>
 
-<table>
+<table class="tutorial-table">
     <thead>
         <tr>
             <th>Maximum distance name</th>
@@ -35,11 +35,24 @@ table below.</p>
     </tbody>
 </table>
 
-<!-- TODO: Insert diagram -->
+<div class="example">
+    <p class="nl-prefixed">Show me all alpine huts in the area of Mont Blanc</p>
+    <p id="mrl-info-features">
+        <table class="features-info">
+            <tbody>
+                <tr><td>Question Class</td><td>Thing around Reference Point</td></tr>
+                <tr><td>Target Tags</td><td>tourism=alpine_hut</td></tr>
+                <tr><td>Reference Point</td><td>name=Mont Blanc</td></tr>
+                <tr><td>Maximum Distance</td><td>DIST_OUTTOWN</td></tr>
+                <tr><td>QType</td><td>latlong</td></tr>
+            </tbody>
+        </table>
+    </p>
+</div>
 
-<p>You can also specify an exact maximum distance like in the following example.
-Note that even though the question uses the wording “2 kilometers”, the maxdist
-value used is in meters: “2000”.</p>
+<p>Instead of using a named distance, you can also specify an exact maximum
+distance like in the following example. Note that even though the question uses
+the wording “2 kilometers”, the maxdist value used is in meters: “2000”.</p>
 
 <div class="example">
     <p class="nl-prefixed">Count the cafes within 2 kilometers of the Monument to the Battle of the Nations in Leipzig!</p>
