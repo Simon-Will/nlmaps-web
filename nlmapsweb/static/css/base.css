@@ -20,7 +20,7 @@ body {
     flex: 1 1 auto;
 }
 
-#main-nav {
+.top-nav {
     display: flex;
     flex-direction: row;
     justify-content: space-around;
@@ -28,9 +28,14 @@ body {
     margin-bottom: 0.5em;
 }
 
-#main-nav > * {
+.top-nav > * {
     padding: 0.5em 1em;
     border: solid 1pt #ccc;
+}
+
+#admin-nav > * {
+    background-color: #ffc366;
+    border-color: #e2851e;
 }
 
 #footer {

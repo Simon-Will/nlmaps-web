@@ -49,13 +49,9 @@
         {% block header %}
         <div id="header">
             <h1>NLMaps Web</h1>
-            <nav id="main-nav">
+            <nav class="top-nav" id="main-nav">
                 <a class="nav-element" href="{{ url_for('query') }}">Query</a>
                 <a class="nav-element" href="{{ url_for('tutorial') }}">Tutorial</a>
-                {% if current_user.admin %}
-                <a class="nav-element" href="{{ url_for('train') }}">Train Status</a>
-                <a class="nav-element" href="{{ url_for('tutorial_feedback') }}">Tutorial Feedback</a>
-                {% endif %}
                 {% if current_user.is_authenticated %}
                 <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
                 <a class="nav-element" href="{{ url_for('logout') }}">Log Out</a>
@@ -65,6 +61,13 @@
                 <a class="nav-element" href="{{ url_for('register') }}">Register</a>
                 {% endif %}
             </nav>
+            {% if current_user.admin %}
+            <nav class="top-nav" id="admin-nav">
+                <a class="nav-element" href="{{ url_for('train') }}">Train Status</a>
+                <a class="nav-element" href="{{ url_for('tutorial_feedback') }}">Tutorial Feedback</a>
+                <span class="nav-element">⚙ Admin</span>
+            </nav>
+            {% endif %}
         </div>
         {% endblock %}
 
