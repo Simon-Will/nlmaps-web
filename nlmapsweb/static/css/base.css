@@ -64,17 +64,6 @@ h1 {
     margin-bottom: 0.5em;
 }
 
-.block {
-    background-color: #eee;
-    border: solid 1pt #ccc;
-    padding-left: 1em;
-    padding-right: 1em;
-}
-
-.block-title {
-    font-weight: bold;
-}
-
 .container-horizontal-flex {
     display: flex;
     flex-direction: row;
@@ -133,6 +122,17 @@ button {
     color: red;
 }
 
+.block {
+    background-color: #eee;
+    border: solid 1pt #ccc;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.block-title {
+    font-weight: bold;
+}
+
 .block-expanded:hover {
     background-color: #ddd;
 }
@@ -154,6 +154,7 @@ button {
 .block-header {
     padding-top: 0.5em;
     padding-bottom: 0.5em;
+    cursor: pointer;
 }
 
 .block-body {
