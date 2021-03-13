@@ -51,6 +51,26 @@ window.addEventListener('load', function() {
         return false;
     };
 
+    const styles = {
+        'Point': new ol.style.Style({
+            image: new ol.style.Circle({
+                radius: 7,
+                stroke: new ol.style.Stroke({color: 'red', width: 1.5}),
+                fill: new ol.style.Fill({
+                    color: 'rgba(255,0,0,0.4)',
+                })
+            })
+        }),
+    };
+
+    function getFeatureStyle(feature, resolution) {
+        let style = styles[feature.getGeometry().getType()];
+        if (!style) {
+            style = ol.style.Style.createDefaultStyle(feature, resolution)[0];
+        }
+        return style;
+    }
+
     const map = new ol.Map({
         target: 'map',
         layers: [
@@ -58,7 +78,8 @@ window.addEventListener('load', function() {
                 source: new ol.source.OSM()
             }),
             new ol.layer.Vector({
-                source: vectorSource
+                source: vectorSource,
+                style: getFeatureStyle
             })
         ],
         overlays: [overlay],
