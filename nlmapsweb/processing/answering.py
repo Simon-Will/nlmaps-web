@@ -18,17 +18,6 @@ def answer_query(mrl_query):
     if features:
         result = get_answer(features)
         current_app.logger.info('Received py answering result')
-        if 'centers' in result:
-            result['geojson'] = merge_feature_collections(
-                result.get('centers'), result.get('targets')
-            )
-            del result['centers']
-        elif 'targets' in result:
-            result['geojson'] = result['targets']
-
-        if 'targets' in result:
-            del result['targets']
-
         return result
 
     return {'error': 'Unknown MRL interpretation error'}
@@ -40,10 +29,8 @@ class AnswerResult(Result):
         super().__init__(success, error)
         self.mrl = mrl
 
-        if 'geojson' in result:
-            self.geojson = result.pop('geojson')
-        else:
-            self.geojson = {'type': 'FeatureCollection', 'features': []}
+        self.centers = result.pop('centers', None)
+        self.targets = result.pop('targets', None)
 
         if 'error' in result:
             current_app.logger.error('MRL interpretation error: {}'
@@ -67,4 +54,4 @@ class AnswerResult(Result):
     def to_dict(self):
         return {'success': self.success, 'error': self.error,
                 'mrl': self.mrl, 'answer': self.answer,
-                'geojson': self.geojson}
+                'centers': self.centers, 'targets': self.targets}

@@ -63,6 +63,16 @@ window.addEventListener('load', function() {
         }),
     };
 
+    const centerPointStyle = new ol.style.Style({
+        image: new ol.style.Circle({
+            radius: 9,
+            stroke: new ol.style.Stroke({color:  'rgb(8,165,223)', width: 1.5}),
+            fill: new ol.style.Fill({
+                color: 'rgba(8,165,223,0.4)',
+            })
+        })
+    });
+
     function getFeatureStyle(feature, resolution) {
         let style = styles[feature.getGeometry().getType()];
         if (!style) {
@@ -138,7 +148,6 @@ window.addEventListener('load', function() {
             '/diagnose',
             function(xhr) {
                 const diagnoseResult = JSON.parse(xhr.responseText);
-                console.log(diagnoseResult.tf_idf_scores);
                 callback(diagnoseResult);
             },
             function(xhr) {
@@ -603,7 +612,6 @@ window.addEventListener('load', function() {
 
                 const thisMrlEditBlock = this;
                 diagnoseProblems(mrlInfoBlock.nl, mrl, function(diagnoseResult) {
-                    console.log(diagnoseResult);
                     diagnoseResult.taginfo.forEach(function(tuple) {
                         const key = tuple[0][0];
                         const val = tuple[0][1];
@@ -677,7 +685,6 @@ window.addEventListener('load', function() {
                     if (diagnoseResult.tf_idf_scores) {
                         for (let token in diagnoseResult.tf_idf_scores) {
                             const score = diagnoseResult.tf_idf_scores[token];
-                            console.log(token, score);
                             if (score > 0.3) {
                                 appendTagFinderHelp(
                                     token, thisMrlEditBlock.mrlEditHelpContainer);
@@ -688,7 +695,6 @@ window.addEventListener('load', function() {
                     if (diagnoseResult.custom_suggestions) {
                         for (let token in diagnoseResult.custom_suggestions) {
                             const suggestions = diagnoseResult.custom_suggestions[token];
-                            console.log(token, suggestions);
                             thisMrlEditBlock.mrlEditHelpContainer.appendChild(
                                 makeCustomSuggestionsHelp(token, suggestions)
                             );
@@ -703,7 +709,6 @@ window.addEventListener('load', function() {
 
         setFeatures(features) {
             if (features) {
-                console.log(features);
                 const query_type_select = this.featuresForm.querySelector("select[name='query_type']");
                 query_type_select.value = features.query_type;
 
@@ -796,20 +801,32 @@ window.addEventListener('load', function() {
         processMrl(mrl) {
             const thisAnswerBlock = this;
             processAnswerResult(mrl, function(answerResult) {
-                messagesBlock.addMessage(
-                    'Retrieved '
-                        + answerResult.geojson.features.length
-                        + ' results.'
-                );
 
-                if (answerResult.geojson.features.length > 0) {
+                let numResults = 0;
+                if (answerResult.targets) {
+                    numResults = answerResult.targets.features.length;
                     vectorSource.addFeatures(
                         vectorSource.getFormat().readFeatures(
-                            answerResult.geojson,
+                            answerResult.targets,
                             {featureProjection: 'EPSG:3857'}
                         )
                     );
                 }
+
+                if (answerResult.centers) {
+                    const features = vectorSource.getFormat().readFeatures(
+                        answerResult.centers,
+                        {featureProjection: 'EPSG:3857'}
+                    );
+                    features.forEach(function(feature) {
+                        feature.setStyle(centerPointStyle);
+                    });
+                    vectorSource.addFeatures(features);
+                }
+
+                messagesBlock.addMessage(
+                    'Retrieved ' + numResults + ' results.'
+                );
 
                 let content = null;
                 if (answerResult.success) {
