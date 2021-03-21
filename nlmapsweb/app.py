@@ -67,6 +67,7 @@ def init_jinja(app: Flask) -> None:
         app.add_template_filter(func)
     app.logger.info('Jinja initialized.')
 
+
 def init_csrf(app: Flask) -> None:
     app.logger.info('Start initializing CSRF protection.')
     csrf.init_app(app=app)

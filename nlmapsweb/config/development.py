@@ -1,7 +1,6 @@
-import logging
-import sys
-
 MODELS = [
-    'will_nlmaps_3delta.noise.plusv2_web2to1_ratio05_fixed.yaml',
+    'n3epsilon.noise.plusv2_web2to1_ratio05_exp.yaml',
 ]
-CURRENT_MODEL = 'will_nlmaps_3delta.noise.plusv2_web2to1_ratio05_fixed.yaml'
+CURRENT_MODEL = 'n3epsilon.noise.plusv2_web2to1_ratio05_exp.yaml'
+
+JOEY_SERVER_URL = 'http://localhost:5051/'

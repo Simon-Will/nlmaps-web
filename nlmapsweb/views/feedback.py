@@ -29,7 +29,7 @@ class FeedbackPiece:
     def __init__(self, nl, id=None, parent_id=None, user_id=None, model=None,
                  correct_lin=None, correct_mrl=None, original_model=None,
                  original_lin=None, original_mrl=None, model_lin=None,
-                 model_mrl=None, children=None):
+                 model_mrl=None, children=None, split=None):
         self.nl = nl
         self.id = id
         self.parent_id = parent_id
@@ -45,6 +45,8 @@ class FeedbackPiece:
             model_lin, model_mrl)
 
         self.children = children or []
+
+        self.split = split
 
     def get_opcodes(self, model=True, as_json=True):
         system_mrl = self.model_mrl if model else self.original_mrl
