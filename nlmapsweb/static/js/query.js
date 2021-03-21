@@ -357,9 +357,14 @@ window.addEventListener('load', function() {
         return p;
     }
 
-    function makeSingleAnswer(answer) {
+    function makeSingleAnswer(answer, numResults = null) {
         const answerElm = document.createElement('div');
-        if (answer.type === 'map') {
+        if (numResults === 0) {
+            const msg = 'No objects satisfied your query.'
+                  + ' Either there are no suitable objects in the data'
+                  + ' or the MRL is wrong. Maybe you can help fix it?';
+            answerElm.appendChild(makeAnswerText(msg));
+        } else if (answer.type === 'map') {
             answerElm.appendChild(makeAnswerText('See Map for Answer.'));
         } else if (answer.type === 'text') {
             answerElm.appendChild(makeAnswerText(answer.text));
@@ -381,11 +386,11 @@ window.addEventListener('load', function() {
         return answerElm;
     }
 
-    function makeAnswerElm(answer) {
+    function makeAnswerElm(answer, numResults = null) {
         const wrap = document.createElement('div');
         if (answer.type === 'sub') {
             answer.sub.forEach(function(a) {
-                wrap.appendChild(makeSingleAnswer(a));
+                wrap.appendChild(makeSingleAnswer(a, numResults));
             });
         } else {
             wrap.appendChild(makeSingleAnswer(answer));
@@ -830,10 +835,10 @@ window.addEventListener('load', function() {
 
                 let content = null;
                 if (answerResult.success) {
-                    content = makeAnswerElm(answerResult.answer);
+                    content = makeAnswerElm(answerResult.answer, numResults);
                 } else {
                     content = makeAnswerElm({type: 'error',
-                                             'error': answerResult.error});
+                                             error: answerResult.error});
                 }
                 thisAnswerBlock.body.appendChild(content);
                 thisAnswerBlock.setVisibility('expanded');
