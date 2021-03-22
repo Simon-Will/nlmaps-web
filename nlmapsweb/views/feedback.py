@@ -17,6 +17,7 @@ from nlmapsweb.tutorial import tutorial_dummy_saver
 
 
 def get_lin_and_mrl(lin, mrl):
+    """Complete lin, mrl combo as well as possible."""
     if lin and not mrl:
         mrl = functionalise(lin)
     elif mrl and not lin:
@@ -25,6 +26,15 @@ def get_lin_and_mrl(lin, mrl):
 
 
 class FeedbackPiece:
+    """Representation of a piece of feedback
+
+    The feedback resides in the database of the machine translation server.
+    This is a mirror that provides the MRLs in addition to the LIN query.
+
+    correct_{lin,mrl}: The correct query as given by the user feedback
+    original_{lin,mrl}: The query as originally parsed by the server
+    model_{lin,mrl}: The query as recently parsed by the server
+    """
 
     def __init__(self, nl, id=None, parent_id=None, user_id=None, model=None,
                  correct_lin=None, correct_mrl=None, original_model=None,
@@ -49,16 +59,22 @@ class FeedbackPiece:
         self.split = split
 
     def get_opcodes(self, model=True, as_json=True):
+        """Get opcodes to edit system MRL into correct MRL."""
         system_mrl = self.model_mrl if model else self.original_mrl
         return get_opcodes(system_mrl, self.correct_mrl, as_json=as_json)
 
     def get_type(self, model=True):
+        """Get correctness type of feedback type."""
         system_mrl = self.model_mrl if model else self.original_mrl
         return get_feedback_type(system_mrl, self.correct_mrl)
 
 
 @current_app.route('/feedback/create', methods=['POST'])
 def create_feedback():
+    """Create feedback at the machine translation server.
+
+    Use by Ajax.
+    """
     form = FeedbackCreateForm()
     if form.validate_on_submit():
         data = form.get_data(exclude=['csrf_token'])
@@ -119,6 +135,7 @@ def create_feedback():
 @current_app.route('/export_feedback', methods=['GET'])
 @login_required
 def export_feedback():
+    """Export feedback as a zip file of nlmaps dataset."""
     if current_user.admin:
         parsing_model_form = AdminParsingModelForm(request.args)
         try:
@@ -182,6 +199,7 @@ def export_feedback():
 @current_app.route('/feedback/<id>', methods=['GET', 'POST'])
 @login_required
 def feedback_piece(id):
+    """Display/Edit a single piece of feedback."""
     try:
         id = int(id)
     except ValueError:
@@ -225,6 +243,7 @@ def feedback_piece(id):
 @current_app.route('/feedback/<id>/delete', methods=['GET'])
 @login_required
 def delete_feedback_piece(id):
+    """Delete a feedback piece."""
     try:
         id = int(id)
     except ValueError:
@@ -255,6 +274,7 @@ def delete_feedback_piece(id):
 @current_app.route('/feedback/list', methods=['GET'])
 @login_required
 def list_feedback():
+    """List all pieces of feedback for one or all users."""
     if current_user.admin:
         parsing_model_form = AdminParsingModelForm(request.args)
         try:
@@ -313,6 +333,17 @@ def list_feedback():
 @current_app.route('/feedback/check', methods=['GET'])
 @login_required
 def check_feedback_states():
+    """Check if model parses of feedback changed.
+
+    This view is for checking if a saved feedback query that was previously
+    parsed correctly is now parsed incorrectly, or vice versa.
+
+    This is done by saving the last state (correct/incorrect) for each feedback
+    locally and comparing it to the current state at the machine translation
+    server. The local last state is also updated during the process.
+
+    Use by Ajax.
+    """
     form = ParsingModelForm(request.args)
     model = form.model.data or current_app.config['CURRENT_MODEL']
     filters = {'model': model, 'user_id': current_user.id}

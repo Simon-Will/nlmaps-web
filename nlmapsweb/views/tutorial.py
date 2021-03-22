@@ -10,6 +10,14 @@ from nlmapsweb.utils.auth import admin_required
 
 @current_app.route('/tutorial', methods=['GET'])
 def tutorial():
+    """Serve a tutorial page.
+
+    The GET argument 'chapter' determines which chapter to view, with 1 being
+    the first actual chapter and 0 being an info page for unauthenticated users
+    visiting the tutorial for he first time.
+
+    See the tutorial.py file for more information about how the tutorial works.
+    """
     if request.args.get('no_login'):
         set_user_chapter(chapter_finished=0)
 
@@ -38,6 +46,11 @@ def tutorial():
 
 @current_app.route('/tutorial_feedback', methods=['GET', 'POST'])
 def tutorial_feedback():
+    """Common endpoint for listing and creating feedback for the tutorial.
+
+    This view for splitting GET and POST is used so we can use the
+    @admin_required decorator for the viewing part.
+    """
     if request.method == 'POST':
         return post_tutorial_feedback()
     else:
@@ -45,6 +58,7 @@ def tutorial_feedback():
 
 
 def post_tutorial_feedback():
+    """Create feedback for the tutorial."""
     feedback = request.form.get('feedback')
     if feedback:
         current_app.logger.info('Received tutorial feedback.')
@@ -58,5 +72,6 @@ def post_tutorial_feedback():
 
 @admin_required
 def get_tutorial_feedback():
+    """List all feedback given for the tutorial."""
     feedback = list(TutorialFeedback.query.all())
     return render_template('tutorial_feedback.html', feedback=feedback)

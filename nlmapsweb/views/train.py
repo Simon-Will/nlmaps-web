@@ -17,6 +17,7 @@ def _check_train_status():
 @current_app.route('/train', methods=['GET', 'POST'])
 @admin_required
 def train():
+    """Serve training monitoring page with option of starting training."""
     error = None
     status = 200
 
@@ -43,4 +44,8 @@ def train():
 @current_app.route('/train_status', methods=['GET'])
 @admin_required
 def check_train_status():
+    """Check if training is running on the machine translation server.
+
+    Use by Ajax.
+    """
     return jsonify(_check_train_status())

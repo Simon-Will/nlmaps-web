@@ -1,3 +1,16 @@
+"""Data and functions for the NLMaps Web tutorial.
+
+The tutorial consists of chapters, each of which is completed by sending the
+correct feedback for a specific NL query. The normal NL and feedback handling
+in `query.py` view recognizes if one of these specific NL queries is sent and
+handles it by using the `tutorial_dummy_parser` and `tutorial_dummy_saver`
+below. The normal flow is then replaced by using the data from
+NL_TO_INSTRUCTIONS.
+
+A user’s progress in the tutorial is stored in the user row in the database if
+the user is authenticated. Otherwise it is stored in a browser session.
+"""
+
 import time
 
 from flask_login import current_user
@@ -75,6 +88,10 @@ NL_TO_INSTRUCTIONS = {
 
 
 def tutorial_dummy_parser(nl):
+    """Return the premade MRL for the given NL.
+
+    Most of the MRLs above contain a number of errors that the user has to fix.
+    """
     instructions = NL_TO_INSTRUCTIONS.get(nl)
     if instructions:
         mrl = instructions['parsed_mrl']
@@ -86,12 +103,21 @@ def tutorial_dummy_parser(nl):
 
 
 def get_user_chapter():
+    """Return the current chapter the user is at.
+
+    This is taken from the database if the user is authenticated, else from the
+    session.
+    """
     if current_user.is_authenticated:
         return current_user.tutorial_chapter
     return session.get('tutorial_chapter', 0)
 
 
 def set_user_chapter(chapter_finished):
+    """Set the user chapter to the chapter after the finished one.
+
+    Set in database for authenticated users, in the session for others.
+    """
     if chapter_finished == len(CHAPTERS) - 1:
         # Tutorial is finished. Set to -1.
         chapter_to_set = -1
@@ -108,6 +134,13 @@ def set_user_chapter(chapter_finished):
 
 
 def tutorial_dummy_saver(feedback):
+    """Tell the user if the feedback they gave was the one that was expected.
+
+    This function does not save any feedback. Instead, it gives the user tips
+    on how to give the expected feedback if the feedback was not the one that
+    was expected. Otherwise (i.e. the feedback was the expected one), the user
+    is redirected to the next chapter in the tutorial.
+    """
     instructions = NL_TO_INSTRUCTIONS.get(feedback['nl'])
     if instructions:
         mrl = functionalise(feedback['correct_lin'])
