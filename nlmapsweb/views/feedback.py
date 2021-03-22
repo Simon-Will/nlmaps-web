@@ -12,7 +12,7 @@ from nlmapsweb.forms import (AdminParsingModelForm, FeedbackCreateForm,
 from nlmapsweb.models import FeedbackState
 import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
-from nlmapsweb.processing.converting import delete_spaces, functionalise, linearise
+from nlmapsweb.processing.converting import functionalise, linearise
 from nlmapsweb.tutorial import tutorial_dummy_saver
 
 
@@ -77,14 +77,14 @@ def create_feedback():
         feedback['nl'] = nl
 
         if data['systemMrl']:
-            system_mrl = delete_spaces(data['systemMrl'])
+            system_mrl = data['systemMrl'].strip()
             system_lin = linearise(system_mrl) or ''
         else:
             system_lin = ''
         feedback['system_lin'] = system_lin
 
         if data['correctMrl']:
-            correct_mrl = delete_spaces(data['correctMrl'])
+            correct_mrl = data['correctMrl'].strip()
             correct_lin = linearise(correct_mrl) or ''
         else:
             correct_mrl = ''

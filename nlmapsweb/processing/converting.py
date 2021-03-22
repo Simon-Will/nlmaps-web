@@ -34,10 +34,6 @@ def linearise(mrl):
     return lin
 
 
-def delete_spaces(mrl):
-    return NLmaps().delete_spaces(mrl)
-
-
 def mrl_to_features(mrl, is_escaped=False):
     try:
         parse_result = MRL_GRAMMAR.parseMrl(mrl, is_escaped=is_escaped)

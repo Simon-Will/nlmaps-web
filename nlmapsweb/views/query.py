@@ -5,8 +5,7 @@ from nlmapsweb.forms import (DiagnoseForm, QueryFeaturesForm, MrlQueryForm,
                              NlQueryForm)
 from nlmapsweb.processing.answering import AnswerResult
 from nlmapsweb.processing.diagnosing import DiagnoseResult
-from nlmapsweb.processing.converting import (delete_spaces, features_to_mrl,
-                                             mrl_to_features)
+from nlmapsweb.processing.converting import features_to_mrl, mrl_to_features
 from nlmapsweb.processing.parsing import ParseResult
 from nlmapsweb.tutorial import tutorial_dummy_parser
 
@@ -15,7 +14,7 @@ from nlmapsweb.tutorial import tutorial_dummy_parser
 def mrl_to_features_view():
     form = MrlQueryForm()
     if form.validate_on_submit():
-        mrl = delete_spaces(form.mrl.data.strip())
+        mrl = form.mrl.data.strip()
         features = mrl_to_features(mrl)
         if features:
             return jsonify(features), 200
@@ -55,7 +54,7 @@ def parse_nl():
 def answer_mrl():
     mrl = request.args.get('mrl')
     if mrl:
-        mrl = delete_spaces(mrl)
+        mrl = mrl.strip()
         result = AnswerResult.from_mrl(mrl)
         status = 200 if result.success else 500
 
@@ -82,8 +81,7 @@ def diagnose():
     form = DiagnoseForm()
     if form.validate_on_submit():
         nl = form.nl.data
-        mrl = form.mrl.data
-        mrl = delete_spaces(mrl)
+        mrl = form.mrl.data.strip()
         result = DiagnoseResult.from_nl_mrl(nl, mrl)
         status = 200 if result.success else 500
         return jsonify(result.to_dict()), status

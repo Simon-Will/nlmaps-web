@@ -68,10 +68,10 @@ class QueryFeaturesForm(BaseForm):
     )
 
     target_nwr = JSONStringField(
-        'Target Tags', validators=[DataRequired()]#, is_json]
+        'Target Tags', validators=[DataRequired()]
     )
 
-    center_nwr = JSONStringField('Reference Point')#, validators=[is_json])
+    center_nwr = JSONStringField('Reference Point')
     area = StringField('Area')
     maxdist = SelectField(
         'Maximum Distance',
@@ -192,7 +192,7 @@ class QueryFeaturesForm(BaseForm):
             features['query_type'] = 'in_query'
 
         if self.area.data:
-            features['area'] = self.area.data
+            features['area'] = self.area.data.strip()
         if self.cardinal_direction.data:
             features['cardinal_direction'] = self.cardinal_direction.data
 
@@ -210,7 +210,7 @@ class QueryFeaturesForm(BaseForm):
                 if self.target_nwr_2.data:
                     features_2['target_nwr'] = sort_nwr(self.target_nwr_2.data)
                 if self.area_2.data:
-                    features_2['area'] = self.area_2.data
+                    features_2['area'] = self.area_2.data.strip()
                 if self.cardinal_direction_2.data:
                     features_2['cardinal_direction'] = (self.cardinal_direction_2
                                                         .data)

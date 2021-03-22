@@ -18,10 +18,10 @@ def sort_nwr(nwr_features):
             key_to_vals = defaultdict(set)
             for subfeat in feat[1:]:
                 if isinstance(subfeat[1], (tuple, list)):
-                    vals = set(subfeat[1][1:])
+                    vals = {val.strip() for val in subfeat[1][1:]}
                 else:
-                    vals = {subfeat[1]}
-                key_to_vals[subfeat[0]].update(vals)
+                    vals = {subfeat[1].strip()}
+                key_to_vals[subfeat[0].strip()].update(vals)
             subparts = []
             for key, vals in key_to_vals.items():
                 if len(vals) == 1:
@@ -38,10 +38,11 @@ def sort_nwr(nwr_features):
 
         elif (len(feat) == 2 and isinstance(feat[1], (tuple, list))
               and feat[1][0] == 'or'):
-            parts.append([feat[0], ['or', *sorted(feat[1][1:])]])
+            parts.append([feat[0].strip(),
+                          ['or', *sorted(val.strip() for val in feat[1][1:])]])
 
         elif len(feat) == 2 and all(isinstance(elm, str) for elm in feat):
-            parts.append([feat[0], feat[1]])
+            parts.append([feat[0].strip(), feat[1].strip()])
 
         else:
             raise ValueError('Unexpected nwr_features feat: {}'.format(feat))
