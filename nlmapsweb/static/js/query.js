@@ -122,15 +122,13 @@ window.addEventListener('load', function() {
             function(xhr) {
                 RESULT_RETRIEVAL_XHR = null;
                 const answerResult = JSON.parse(xhr.responseText);
-                console.log(answerResult);
                 callback(answerResult);
             },
             function(xhr) {
                 RESULT_RETRIEVAL_XHR = null;
                 messagesBlock.addMessage('Retrieving result failed.', true);
                 const answerResult = JSON.parse(xhr.responseText);
-                console.log('Error', xhr.status);
-                console.log(answerResult);
+                callback(answerResult);
             },
             {mrl: mrl}
         );
