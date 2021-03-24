@@ -4,7 +4,7 @@
 
 {% block content %}
 
-{% if evaluation_results|length == 0 %}
+{% if validations|length == 0 %}
 <div class="row block">
     <div class="block-header">
         <span class="block-title">No Evaluation Results</span>
@@ -15,9 +15,20 @@
 </div>
 {% endif %}
 
+{% if base64_jpg %}
 <div class="row block">
     <div class="block-header">
-        <span class="block-title">Evaluation Results</span>
+        <span class="block-title">Evaluation Results Plot</span>
+    </div>
+    <div class="block-body">
+        <img src="data:image/jpg;base64,{{ base64_jpg }}">
+    </div>
+</div>
+{% endif %}
+
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Evaluation Results Table</span>
     </div>
     <div class="block-body">
         <table class="pretty-table">
@@ -31,13 +42,13 @@
                 </tr>
             </thead>
             <tbody>
-                {% for evr in evaluation_results %}
+                {% for val in validations %}
                 <tr>
-                    <td>{{ evr.created }}</td>
-                    <td><a href="{{ url_for('validations', label=evr.label) }}">{{ evr.label }}</a></td>
-                    <td>{{ evr.correct }}</td>
-                    <td>{{ evr.total }}</td>
-                    <td>{{ '{:.3f}'.format(evr.accuracy) }}</td>
+                    <td>{{ val.created.isoformat(timespec='seconds') }}</td>
+                    <td><a href="{{ url_for('validations', label=val.label) }}">{{ val.label }}</a></td>
+                    <td>{{ val.correct }}</td>
+                    <td>{{ val.total }}</td>
+                    <td>{{ '{:.3f}'.format(val.accuracy) }}</td>
                 </tr>
                 {% endfor %}
             </tbody>
