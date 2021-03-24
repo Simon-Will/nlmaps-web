@@ -10,3 +10,4 @@ from .query import (answer_mrl, features_to_mrl, mrl_to_features_view, query,
                     parse_nl)
 from .train import check_train_status, train
 from .tutorial import tutorial
+from .validations import validations

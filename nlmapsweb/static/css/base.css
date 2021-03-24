@@ -230,3 +230,12 @@ label {
 .mrl-prefixed::before {
     content: "MRL: ";
 }
+
+table.pretty-table {
+    border-collapse: collapse;
+}
+
+table.pretty-table th, table.pretty-table td {
+    padding: 0.3em;
+    border: solid 1pt black;
+}

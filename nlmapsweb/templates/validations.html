@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% set page = 'validations' %}
+
+{% block content %}
+
+{% if evaluation_results|length == 0 %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">No Evaluation Results</span>
+    </div>
+    <div class="block-body">
+        <p>No evaluation results are saved on the Machine Translation server.</p>
+    </div>
+</div>
+{% endif %}
+
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Evaluation Results</span>
+    </div>
+    <div class="block-body">
+        <table class="pretty-table">
+            <thead>
+                <tr>
+                    <th>Creation Time</th>
+                    <th>Label</th>
+                    <th>Correct</th>
+                    <th>Total</th>
+                    <th>Accuracy</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for evr in evaluation_results %}
+                <tr>
+                    <td>{{ evr.created }}</td>
+                    <td><a href="{{ url_for('validations', label=evr.label) }}">{{ evr.label }}</a></td>
+                    <td>{{ evr.correct }}</td>
+                    <td>{{ evr.total }}</td>
+                    <td>{{ '{:.3f}'.format(evr.accuracy) }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
