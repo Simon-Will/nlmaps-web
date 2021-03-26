@@ -1,5 +1,4 @@
 from collections import defaultdict, namedtuple
-import time
 
 from flask_login import current_user, login_required
 from flask import current_app, render_template
@@ -7,7 +6,6 @@ from flask import current_app, render_template
 import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.converting import mrl_to_features, functionalise
 from nlmapsweb.processing.diagnosing import get_tags_in_features
-
 
 Progress = namedtuple('Progress', ['achieved', 'expected', 'percentage'])
 

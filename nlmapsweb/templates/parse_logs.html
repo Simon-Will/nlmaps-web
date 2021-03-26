@@ -1,0 +1,31 @@
+{% extends 'base.html' %}
+
+{% set page = 'parse_logs' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Parse Logs</span>
+    </div>
+    <div class="block-body">
+        <table class="pretty-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Creation Time</th>
+                    <th>Query</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for log in parse_logs %}
+                <tr>
+                    <td>{{ log.id }}</td>
+                    <td>{{ log.created.isoformat(timespec='seconds') }}</td>
+                    <td>{{ log.nl }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
