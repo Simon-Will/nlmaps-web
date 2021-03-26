@@ -17,8 +17,13 @@ depends_on = None
 
 
 def upgrade():
-    op.add_column('users', sa.Column('annotation_mode', sa.Boolean(), server_default='0', nullable=False))
+    with op.batch_alter_table('users') as batch_op:
+        batch_op.add_column(
+            sa.Column('annotation_mode', sa.Boolean(),
+                      server_default='0', nullable=False)
+        )
 
 
 def downgrade():
-    op.drop_column('users', 'annotation_mode')
+    with op.batch_alter_table('users') as batch_op:
+        batch_op.drop_column('annotation_mode')
