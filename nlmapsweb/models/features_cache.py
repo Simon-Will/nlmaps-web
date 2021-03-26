@@ -1,5 +1,7 @@
 import pickle
 
+from sqlalchemy.exc import IntegrityError
+
 from nlmapsweb.app import db
 from nlmapsweb.models.base import BaseModel
 
@@ -23,4 +25,7 @@ class FeaturesCacheEntry(BaseModel):
         if len(mrl) < 500 and len(pickled_features) < 500:
             entry = cls(mrl=mrl, pickled_features=pickled_features)
             db.session.add(entry)
-            db.session.commit()
+            try:
+                db.session.commit()
+            except IntegrityError:
+                db.session.rollback()
