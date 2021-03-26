@@ -4,6 +4,19 @@
 
 {% block content %}
 
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Select Evaluation Results</span>
+    </div>
+    <div class="block-body">
+        <form class="form-grid" method="GET">
+            {{ form.model.label }}{{ form.model() }}
+            {{ form.label.label }}{{ form.label() }}
+            <input type="submit" value="Show Evaluation Results">
+        </form>
+    </div>
+</div>
+
 {% if validations|length == 0 %}
 <div class="row block">
     <div class="block-header">
@@ -13,7 +26,8 @@
         <p>No evaluation results are saved on the Machine Translation server.</p>
     </div>
 </div>
-{% endif %}
+
+{% else %}
 
 {% if base64_jpg %}
 <div class="row block">
@@ -35,6 +49,7 @@
             <thead>
                 <tr>
                     <th>Creation Time</th>
+                    <th>Model</th>
                     <th>Label</th>
                     <th>Correct</th>
                     <th>Total</th>
@@ -45,7 +60,8 @@
                 {% for val in validations %}
                 <tr>
                     <td>{{ val.created.isoformat(timespec='seconds') }}</td>
-                    <td><a href="{{ url_for('validations', label=val.label) }}">{{ val.label }}</a></td>
+                    <td><a href="{{ url_for('validations', model=val.model) }}">{{ val.model }}</a></td>
+                    <td><a href="{{ url_for('validations', model=val.model, label=val.label) }}">{{ val.label }}</a></td>
                     <td>{{ val.correct }}</td>
                     <td>{{ val.total }}</td>
                     <td>{{ '{:.3f}'.format(val.accuracy) }}</td>
@@ -55,4 +71,5 @@
         </table>
     </div>
 </div>
+{% endif %}
 {% endblock %}

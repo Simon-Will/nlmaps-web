@@ -4,6 +4,7 @@ from flask_login import current_user
 from flask import current_app, render_template, request
 
 import nlmapsweb.mt_server as mt_server
+from nlmapsweb.forms.validations import ValidationsForm
 from nlmapsweb.utils.auth import admin_required
 from nlmapsweb.utils.plotting import fig_to_base64, plot_validations
 
@@ -11,11 +12,17 @@ from nlmapsweb.utils.plotting import fig_to_base64, plot_validations
 @current_app.route('/validations', methods=['GET'])
 @admin_required
 def validations():
-    label = request.args.get('label')
-    if label:
-        params = {'label': label}
+    form = ValidationsForm(request.args)
+    if form.model.data:
+        model = form.model.data
     else:
-        params = None
+        model = current_app.config['CURRENT_MODEL']
+        form.model.process_data(model)
+
+    params = {'model': model}
+    if form.label.data:
+        params['label'] = form.label.data
+
     response = mt_server.get('/validations', params=params)
 
     eval_results = response.json()
@@ -25,5 +32,5 @@ def validations():
     figure = plot_validations(eval_results)
     base64_jpg = fig_to_base64(figure, 'jpg')
 
-    return render_template('validations.html', validations=eval_results,
-                           base64_jpg=base64_jpg)
+    return render_template('validations.html', form=form,
+                           validations=eval_results, base64_jpg=base64_jpg)
