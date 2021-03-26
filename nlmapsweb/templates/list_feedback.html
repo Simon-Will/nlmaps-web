@@ -87,27 +87,6 @@
             </div>
             {% endfor %}
         </div>
-        <div class="add-child-div" hidden>
-            <p>Change details in your query to create a similar piece of
-                feedback. For example, you can change what you’re looking
-                for, choose another reference point or just switch up the
-                formulation.</p>
-            <p>Try to keep the part that may have been difficult for the
-                model. E.g.: If you were asking for a place to play “ping
-                pong” and it didn’t understand that you want to play table
-                tennis, just change the formulation of the question or other
-                details, but leave the “ping pong” part in.</p>
-            <form class="form-grid add-child-form" action="{{ url_for('create_feedback') }}" method="POST">
-                {{ feedback_create_form.csrf_token() }}
-                {{ feedback_create_form.parent_id(value=piece.id) }}
-                <label for="correctMrl">NL Query</label>{{ feedback_create_form.nl(size=100, value=piece.nl) }}
-                <label for="correctMrl">MRL Query</label>{{ feedback_create_form.correctMrl(size=100, value=piece.correct_mrl) }}
-                <input type="submit" value="Create Feedback">
-            </form>
-        </div>
-        {% if piece.children|length < 2 %}
-        <button style="max-width: 10em;" class="add-child-button" data-piece-id="{{ piece.id }}">Add Child</button>
-        {% endif %}
     </div>
 </div>
 {% endfor %}
