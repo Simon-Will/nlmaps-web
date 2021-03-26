@@ -16,6 +16,7 @@
             </div>
             <p>Enter a contributor name if you want your contributions attributed to you.</p>
             <div class="form-grid">
+                {{ form.annotation_mode.label }}{{ form.annotation_mode }}
                 {{ form.contributor_name.label }}{{ form.contributor_name(size=30) }}
             </div>
             <input type="submit" value="Submit">

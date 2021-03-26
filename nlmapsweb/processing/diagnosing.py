@@ -11,8 +11,8 @@ from nlmapsweb.processing.converting import mrl_to_features
 from nlmapsweb.processing.custom_tag_suggestions import get_suggestions
 from nlmapsweb.processing.result import Result
 from nlmapsweb.processing.stop_words import is_stop_word
-from nlmapsweb.processing.taginfo import (find_alternatives, get_key_val_pairs,
-                                          taginfo_lookup, tag_is_common)
+from nlmapsweb.processing.taginfo import (find_alternatives, taginfo_lookup,
+                                          tag_is_common)
 from nlmapsweb.processing.tf_idf import get_tf_idf_scores, load_tf_idf_pipeline
 
 

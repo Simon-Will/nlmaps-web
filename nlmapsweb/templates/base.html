@@ -69,6 +69,12 @@
                 <span class="nav-element">⚙ Admin</span>
             </nav>
             {% endif %}
+            {% if current_user.annotation_mode %}
+            <nav class="top-nav" id="annotation-nav">
+                <a class="nav-element" href="{{ url_for('annotation_progress') }}">Progress</a>
+                <span class="nav-element">✍ Annotator</span>
+            </nav>
+            {% endif %}
         </div>
         {% endblock %}
 

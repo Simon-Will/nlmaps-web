@@ -1,3 +1,4 @@
+from .annotating import annotation_progress
 from .batch_parse import batch_parse
 from .errors import (page_forbidden, page_not_found, internal_server_error,
                      mt_server_error)

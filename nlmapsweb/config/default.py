@@ -32,3 +32,21 @@ SESSION_COOKIE_SAMESITE = 'Strict'
 REMEMBER_COOKIE_SAMESITE = 'Strict'
 
 SECRETS_INI = (ASSETS_DIR / 'nlmapsweb.ini').resolve()
+
+QUESTS = {
+    'total': 400,
+    'tags': {
+        ('wheelchair', 'yes'): 50,
+    },
+    'keys': {
+        'shop': 30,
+        'leisure': 30,
+        'sport': 20,
+        'craft': 20,
+        'man_made': 20,
+        'cuisine': 30,
+    },
+    'key_prefixes': {
+        'diet:': 20,
+    }
+}

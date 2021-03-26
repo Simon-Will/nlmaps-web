@@ -31,6 +31,9 @@ class User(BaseModel, UserMixin):
     contributor_name = db.Column(db.Unicode(200), nullable=False, default='',
                                  server_default='')
 
+    annotation_mode = db.Column(db.Boolean, nullable=False, default=False,
+                                server_default='0')
+
     def set_password(self, password):
         self.password_hash = hash_password(password)
 

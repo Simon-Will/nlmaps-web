@@ -1,3 +1,4 @@
+import json
 import traceback
 
 from flask import current_app
@@ -6,6 +7,8 @@ import pyparsing
 from nlmaps_tools.mrl import NLmaps
 from nlmaps_tools.generate_mrl import generate_from_features
 from nlmaps_tools.parse_mrl import MrlGrammar
+
+from nlmapsweb.models.features_cache import FeaturesCacheEntry
 
 MRL_GRAMMAR = MrlGrammar()
 
@@ -35,6 +38,10 @@ def linearise(mrl):
 
 
 def mrl_to_features(mrl, is_escaped=False):
+    features = FeaturesCacheEntry.get_features_by_mrl(mrl)
+    if features:
+        return features
+
     try:
         parse_result = MRL_GRAMMAR.parseMrl(mrl, is_escaped=is_escaped)
     except pyparsing.ParseException:
@@ -48,6 +55,7 @@ def mrl_to_features(mrl, is_escaped=False):
             else:
                 features['query_type'] = 'dist_between'
 
+    FeaturesCacheEntry.create(mrl, features)
     return features
 
 

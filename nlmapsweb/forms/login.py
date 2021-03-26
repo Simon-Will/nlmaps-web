@@ -83,6 +83,7 @@ class ProfileForm(BaseForm, EmailSetMixin):
         'Contributor Name',
         validators=[Optional(), Length(min=2, max=200)],
     )
+    annotation_mode = BooleanField('Annotation Controls')
 
 
 class ChangePasswordForm(BaseForm, PasswordSetMixin):

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+
+{% set page = 'annotation_progress' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Annotation Progress</span>
+    </div>
+    <div class="block-body">
+        <h2>Total</h2>
+        <div class="progress-grid">
+            <span style="font-style: italic;">Total</span>
+            {{ M.progress_bar(quest_progress['total'].percentage) }}
+            <span>{{ quest_progress['total'].achieved }} / {{ quest_progress['total'].expected }}</span>
+        </div>
+
+        <h2>Tags</h2>
+        <div class="progress-grid">
+            {% for tag, progress in quest_progress['tags'].items() %}
+            <span>{{ tag[0] }}={{ tag[1] }}</span>
+            {{ M.progress_bar(progress.percentage) }}
+            <span>{{ progress.achieved }} / {{ progress.expected }}</span>
+            {% endfor %}
+        </div>
+
+        <h2>Keys</h2>
+        <div class="progress-grid">
+            {% for key, progress in quest_progress['keys'].items() %}
+            <span>{{ key }}=*</span>
+            {{ M.progress_bar(progress.percentage) }}
+            <span>{{ progress.achieved }} / {{ progress.expected }}</span>
+            {% endfor %}
+        </div>
+
+        <h2>Key Prefixes</h2>
+        <div class="progress-grid">
+            {% for key_prefix, progress in quest_progress['key_prefixes'].items() %}
+            <span>{{ key_prefix }}*=*</span>
+            {{ M.progress_bar(progress.percentage) }}
+            <span>{{ progress.achieved }} / {{ progress.expected }}</span>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

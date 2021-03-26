@@ -38,6 +38,11 @@ body {
     border-color: #e2851e;
 }
 
+#annotation-nav > * {
+    background-color: #88d8b0;
+    border-color: #6cac8c;
+}
+
 #footer {
     display: flex;
     flex-direction: column;
@@ -238,4 +243,8 @@ table.pretty-table {
 table.pretty-table th, table.pretty-table td {
     padding: 0.3em;
     border: solid 1pt black;
+}
+
+input[type="checkbox"] {
+    max-width: 1em;
 }

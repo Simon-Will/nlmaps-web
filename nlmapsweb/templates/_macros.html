@@ -10,10 +10,15 @@
 {% endif %}
 {% endmacro %}
 
-
 {% macro flashed_message(message, css_class='bg-success') %}
 <div class="flashed-message {{ css_class }}">
     <span class="flashed-message-content">{{ message }}</span>
     <button class="flashed-message-remove-button" onclick="this.parentElement.remove()">✖</button>
+</div>
+{% endmacro %}
+
+{% macro progress_bar(percentage) %}
+<div class="progress-bar">
+    <div class="progress {{ 'progress-complete' if percentage >= 100 else 'progress-incomplete' }}" style="width: {{ percentage }}%"></div>
 </div>
 {% endmacro %}

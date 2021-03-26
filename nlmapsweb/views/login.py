@@ -107,6 +107,7 @@ def edit_profile():
     if form.validate_on_submit():
         current_user.email = form.email.data
         current_user.contributor_name = form.contributor_name.data
+        current_user.annotation_mode = form.annotation_mode.data
         db.session.add(current_user)
         db.session.commit()
         flash('Profile changed.')
