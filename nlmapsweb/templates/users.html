@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+
+{% set page = 'users' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Users</span>
+    </div>
+    <div class="block-body">
+        <table class="pretty-table">
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Creation Time</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Contributor Name</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                <tr>
+                    <td>{{ user.id }}</td>
+                    <td>{{ user.created }}</td>
+                    <td>{{ user.name }}</td>
+                    <td>{{ user.email }}</td>
+                    <td>{{ user.contributor_name }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+

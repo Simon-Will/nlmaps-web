@@ -5,6 +5,7 @@ from flask import (abort, current_app, flash, redirect, render_template,
                    request, url_for)
 
 from nlmapsweb.app import db
+from nlmapsweb.utils.auth import admin_required
 from nlmapsweb.utils.emailing import send_mail
 from nlmapsweb.utils.helper import get_utc_now, random_string_with_digits
 from nlmapsweb.forms import (ChangePasswordForm, DeleteAccountForm, LoginForm,
@@ -210,3 +211,10 @@ def delete_account():
         flash(error, 'error')
 
     return render_template('delete_account.html', form=form)
+
+
+@current_app.route('/users')
+@admin_required
+def list_users():
+    users = User.query.all()
+    return render_template('users.html', users=users)
