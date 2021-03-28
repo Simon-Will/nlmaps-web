@@ -1,8 +1,11 @@
 from flask import current_app
-from wtforms import BooleanField, HiddenField, SelectField, StringField
+from wtforms import (BooleanField, HiddenField, IntegerField,
+                     SelectField, StringField)
 from wtforms.validators import DataRequired
 
 from nlmapsweb.forms.base import BaseForm
+from nlmapsweb.forms.parsing_model import ParsingModelForm
+from nlmapsweb.models.users import User
 
 
 class FeedbackExportForm(BaseForm):
@@ -29,3 +32,18 @@ class FeedbackCreateForm(BaseForm):
 class FeedbackEditForm(BaseForm):
     nl = StringField('NL Query', validators=[DataRequired()])
     correct_mrl = StringField('Correct MRL Query')
+
+
+class FeedbackListForm(ParsingModelForm):
+    page = IntegerField('Page', default=1)
+
+
+class AdminFeedbackListForm(FeedbackListForm):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        users = User.query.all()
+        self.user.choices = [(-1, '<All Users>')]
+        self.user.choices.extend([(user.id, user.name) for user in users])
+
+    user = SelectField('User', choices=[])

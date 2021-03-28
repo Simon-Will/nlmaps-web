@@ -248,3 +248,7 @@ table.pretty-table th, table.pretty-table td {
 input[type="checkbox"] {
     max-width: 1em;
 }
+
+.page-nav a {
+    margin: 0em 1em;
+}

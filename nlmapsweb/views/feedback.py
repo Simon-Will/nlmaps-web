@@ -7,8 +7,8 @@ from flask import (abort, current_app, jsonify, redirect, render_template,
                    request, send_file, url_for)
 
 from nlmapsweb.app import db
-from nlmapsweb.forms import (AdminParsingModelForm, FeedbackCreateForm,
-                             FeedbackEditForm, ParsingModelForm)
+from nlmapsweb.forms import (AdminFeedbackListForm, FeedbackCreateForm,
+                             FeedbackEditForm, FeedbackListForm)
 from nlmapsweb.models import FeedbackState
 import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
@@ -137,16 +137,16 @@ def create_feedback():
 def export_feedback():
     """Export feedback as a zip file of nlmaps dataset."""
     if current_user.admin:
-        parsing_model_form = AdminParsingModelForm(request.args)
+        feedback_list_form = AdminFeedbackListForm(request.args)
         try:
-            user_id = int(parsing_model_form.user.data)
+            user_id = int(feedback_list_form.user.data)
         except (TypeError, ValueError):
             user_id = None
         else:
             if user_id < 0:
                 user_id = None
     else:
-        parsing_model_form = ParsingModelForm(request.args)
+        feedback_list_form = FeedbackListForm(request.args)
         user_id = current_user.id
 
     filters = {'model': current_app.config['CURRENT_MODEL']}
@@ -276,31 +276,46 @@ def delete_feedback_piece(id):
 def list_feedback():
     """List all pieces of feedback for one or all users."""
     if current_user.admin:
-        parsing_model_form = AdminParsingModelForm(request.args)
+        feedback_list_form = AdminFeedbackListForm(request.args)
         try:
-            user_id = int(parsing_model_form.user.data)
+            user_id = int(feedback_list_form.user.data)
         except (TypeError, ValueError):
             user_id = None
         else:
             if user_id < 0:
                 user_id = None
     else:
-        parsing_model_form = ParsingModelForm(request.args)
+        feedback_list_form = FeedbackListForm(request.args)
         user_id = current_user.id
 
-    if parsing_model_form.model.data:
-        model = parsing_model_form.model.data
+    if feedback_list_form.model.data:
+        model = feedback_list_form.model.data
     else:
         model = current_app.config['CURRENT_MODEL']
-        parsing_model_form.model.process_data(model)
+        feedback_list_form.model.process_data(model)
 
-    filters = {'model': model}
+    try:
+        page = int(feedback_list_form.page.data)
+    except (TypeError, ValueError):
+        page = 1
+        feedback_list_form.page.process_data(page)
+    prev_page = None if page == 1 else page - 1
+
+    page_size = current_app.config.get('FEEDBACK_PAGE_SIZE', 50)
+    offset = (page - 1) * page_size
+
+    # Get one more piece of feedback than fits on the page, so we can find out
+    # if there is page after that.
+    filters = {'model': model, 'offset': offset, 'limit': page_size + 1}
     if user_id is not None:
         filters['user_id'] = user_id
 
     response = mt_server.post('query_feedback', json=filters)
+    feedback_objects = response.json()
+    next_page = page + 1 if len(feedback_objects) > page_size else None
+
     feedback_by_id = {piece_data['id']: FeedbackPiece(**piece_data)
-                      for piece_data in response.json()}
+                      for piece_data in feedback_objects[:page_size]}
 
     if model:
         unparsed_queries = sum(piece.model_mrl is None
@@ -322,11 +337,19 @@ def list_feedback():
 
     feedback_create_form = FeedbackCreateForm()
 
+    args = dict(request.args)
+    args['page'] = prev_page
+    prev_url = url_for('list_feedback', **args) if prev_page else None
+
+    args['page'] = next_page
+    next_url = url_for('list_feedback', **args) if next_page else None
+
     return render_template(
         'list_feedback.html',
-        parsing_model_form=parsing_model_form, model=model, feedback=feedback,
+        feedback_list_form=feedback_list_form, model=model, feedback=feedback,
         unparsed_queries=unparsed_queries, current_user=current_user,
-        feedback_create_form=feedback_create_form
+        feedback_create_form=feedback_create_form, prev_url=prev_url,
+        next_url=next_url
     )
 
 
@@ -344,7 +367,7 @@ def check_feedback_states():
 
     Use by Ajax.
     """
-    form = ParsingModelForm(request.args)
+    form = FeedbackListForm(request.args)
     model = form.model.data or current_app.config['CURRENT_MODEL']
     filters = {'model': model, 'user_id': current_user.id}
     response = mt_server.post('query_feedback', json=filters)

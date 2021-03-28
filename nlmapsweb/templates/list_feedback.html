@@ -9,10 +9,11 @@
     </div>
     <div class="block-body">
         <form class="form-grid" method="GET" action="{{ url_for('list_feedback') }}">
-            {% if parsing_model_form.user %}
-            {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
+            {% if feedback_list_form.user %}
+            {{ feedback_list_form.user.label }}{{ feedback_list_form.user() }}
             {% endif %}
-            {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
+            {{ feedback_list_form.model.label }}{{ feedback_list_form.model() }}
+            {{ feedback_list_form.page.label }}{{ feedback_list_form.page() }}
             <input type="submit" value="Show Feedback">
         </form>
     </div>
@@ -24,8 +25,8 @@
     </div>
     <div class="block-body">
         <form class="form-grid" method="GET" action="{{ url_for('export_feedback') }}">
-            {% if parsing_model_form.user %}
-            {{ parsing_model_form.user.label }}{{ parsing_model_form.user() }}
+            {% if feedback_list_form.user %}
+            {{ feedback_list_form.user.label }}{{ feedback_list_form.user() }}
             {% endif %}
             <input type="submit" value="Export Feedback">
         </form>
@@ -39,8 +40,8 @@
     </div>
     <div class="block-body">
         <form class="form-grid" method="POST" action="{{ url_for('train') }}">
-            {{ parsing_model_form.hidden_tag() }}
-            {{ parsing_model_form.model.label }}{{ parsing_model_form.model() }}
+            {{ feedback_list_form.hidden_tag() }}
+            {{ feedback_list_form.model.label }}{{ feedback_list_form.model() }}
             <input type="submit" value="Train">
         </form>
     </div>
@@ -63,6 +64,24 @@
 <p>Sys parses by model: <span class="model-name">{{ model }}</span></p>
 {% else %}
 <p>Sys parses from feedback creation time</p>
+{% endif %}
+
+{% if prev_url or next_url%}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">List Controls</span>
+    </div>
+    <div class="block-body">
+        <nav class="container-horizontal-flex page-nav">
+            {% if prev_url %}
+            <a href="{{ prev_url }}">Previous</a>
+            {% endif %}
+            {% if next_url %}
+            <a href="{{ next_url }}">Next</a>
+            {% endif %}
+        </nav>
+    </div>
+</div>
 {% endif %}
 
 {% for piece in feedback %}
@@ -90,5 +109,6 @@
     </div>
 </div>
 {% endfor %}
+
 
 {% endblock %}
