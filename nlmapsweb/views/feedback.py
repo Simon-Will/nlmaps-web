@@ -314,26 +314,13 @@ def list_feedback():
     feedback_objects = response.json()
     next_page = page + 1 if len(feedback_objects) > page_size else None
 
-    feedback_by_id = {piece_data['id']: FeedbackPiece(**piece_data)
-                      for piece_data in feedback_objects[:page_size]}
+    feedback = [FeedbackPiece(**piece_data)
+                for piece_data in feedback_objects[:page_size]]
 
     if model:
-        unparsed_queries = sum(piece.model_mrl is None
-                               for piece in feedback_by_id.values())
+        unparsed_queries = sum(piece.model_mrl is None for piece in feedback)
     else:
         unparsed_queries = None
-
-    feedback = []
-    for piece in feedback_by_id.values():
-        if piece.parent_id:
-            if piece.parent_id in feedback_by_id:
-                feedback_by_id[piece.parent_id].children.append(piece)
-            else:
-                current_app.logger.warning(
-                    'Parent not found for feedback with id {}.'
-                    .format(piece.id))
-        else:
-            feedback.append(piece)
 
     feedback_create_form = FeedbackCreateForm()
 
