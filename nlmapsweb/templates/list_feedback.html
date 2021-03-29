@@ -66,19 +66,30 @@
 <p>Sys parses from feedback creation time</p>
 {% endif %}
 
-{% if prev_url or next_url%}
+{% if paging_info and paging_info['page_count'] > 0 %}
 <div class="row block">
     <div class="block-header">
         <span class="block-title">List Controls</span>
     </div>
     <div class="block-body">
+        <p>{{ paging_info['object_count'] }} pieces of feedback</p>
+        {% set cur_page = paging_info['current_page'] %}
         <nav class="container-horizontal-flex page-nav">
-            {% if prev_url %}
-            <a href="{{ prev_url }}">Previous</a>
+            {% if cur_page != 1 %}
+            <a href="{{ paging_info['urls'][cur_page - 2] }}">Previous</a>
             {% endif %}
-            {% if next_url %}
-            <a href="{{ next_url }}">Next</a>
+            {% if cur_page != paging_info['page_count'] %}
+            <a href="{{ paging_info['urls'][cur_page] }}">Next</a>
             {% endif %}
+        </nav>
+        <nav class="container-horizontal-flex page-nav">
+            {% for url in paging_info['urls'] %}
+            {% if loop.index == cur_page %}
+            <span>{{ loop.index }}</span>
+            {% else %}
+            <a href="{{ url }}">{{ loop.index }}</a>
+            {% endif %}
+            {% endfor %}
         </nav>
     </div>
 </div>

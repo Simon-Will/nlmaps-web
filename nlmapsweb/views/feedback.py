@@ -14,6 +14,7 @@ import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.processing.converting import functionalise, linearise
 from nlmapsweb.tutorial import tutorial_dummy_saver
+from nlmapsweb.utils.paging import make_paging_info
 
 
 def get_lin_and_mrl(lin, mrl):
@@ -299,23 +300,25 @@ def list_feedback():
     except (TypeError, ValueError):
         page = 1
         feedback_list_form.page.process_data(page)
-    prev_page = None if page == 1 else page - 1
 
     page_size = current_app.config.get('FEEDBACK_PAGE_SIZE', 50)
     offset = (page - 1) * page_size
 
-    # Get one more piece of feedback than fits on the page, so we can find out
-    # if there is page after that.
-    filters = {'model': model, 'offset': offset, 'limit': page_size + 1}
+    filters = {'model': model, 'offset': offset, 'limit': page_size}
     if user_id is not None:
         filters['user_id'] = user_id
 
     response = mt_server.post('query_feedback', json=filters)
-    feedback_objects = response.json()
-    next_page = page + 1 if len(feedback_objects) > page_size else None
+    response_data = response.json()
+    feedback_objects = response_data['feedback']
+    total_count = response_data['total_count']
+    paging_info = make_paging_info(
+        current_page=page, page_size=page_size, object_count=total_count,
+        view_name='list_feedback', request_args=request.args
+    )
 
     feedback = [FeedbackPiece(**piece_data)
-                for piece_data in feedback_objects[:page_size]]
+                for piece_data in feedback_objects]
 
     if model:
         unparsed_queries = sum(piece.model_mrl is None for piece in feedback)
@@ -324,19 +327,11 @@ def list_feedback():
 
     feedback_create_form = FeedbackCreateForm()
 
-    args = dict(request.args)
-    args['page'] = prev_page
-    prev_url = url_for('list_feedback', **args) if prev_page else None
-
-    args['page'] = next_page
-    next_url = url_for('list_feedback', **args) if next_page else None
-
     return render_template(
         'list_feedback.html',
         feedback_list_form=feedback_list_form, model=model, feedback=feedback,
         unparsed_queries=unparsed_queries, current_user=current_user,
-        feedback_create_form=feedback_create_form, prev_url=prev_url,
-        next_url=next_url
+        feedback_create_form=feedback_create_form, paging_info=paging_info
     )
 
 

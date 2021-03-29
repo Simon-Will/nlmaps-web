@@ -249,6 +249,6 @@ input[type="checkbox"] {
     max-width: 1em;
 }
 
-.page-nav a {
+.page-nav * {
     margin: 0em 1em;
 }
