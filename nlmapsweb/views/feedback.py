@@ -155,7 +155,7 @@ def export_feedback():
         filters['user_id'] = user_id
 
     response = mt_server.post('query_feedback', json=filters)
-    feedback = [FeedbackPiece(**data) for data in response.json()]
+    feedback = [FeedbackPiece(**data) for data in response.json()['feedback']]
 
     independent_feedback = []
     parent_to_children = defaultdict(list)
@@ -361,7 +361,7 @@ def check_feedback_states():
         for state in FeedbackState.query.filter_by(model=model)
     }
     response_data = {'learned': [], 'unlearned': []}
-    for piece_data in response.json():
+    for piece_data in response.json()['feedback']:
         id_ = piece_data['id']
         state = feedback_states.get(id_)
         if not piece_data['model_lin'] or not piece_data['correct_lin']:
