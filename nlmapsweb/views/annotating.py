@@ -24,6 +24,7 @@ def annotation_progress():
     filters = {'user_id': current_user.id}
     response = mt_server.post('list_feedback', json=filters)
     lins = [piece['correct_lin'] for piece in response.json()]
+    total_feedback = len(lins)
     mrls = [mrl for mrl
             in (functionalise(lin) for lin in lins if lin)
             if mrl]
@@ -35,8 +36,12 @@ def annotation_progress():
     quests.setdefault('keys', {})
     quests.setdefault('key_prefixes', {})
 
+    total_complete = len(all_features)
+    total_incomplete = (total_feedback - total_complete)
+    total_annotations = total_complete + round(total_incomplete / 4)
+
     achieved = {
-        'total': len(all_features),
+        'total': total_annotations,
         'tags': defaultdict(lambda: 0),
         'keys': defaultdict(lambda: 0),
         'key_prefixes': defaultdict(lambda: 0),
@@ -56,7 +61,9 @@ def annotation_progress():
 
     quest_progress = {
         'total': get_progress(achieved['total'], quests['total']),
-        'tags': {}, 'keys': {}, 'key_prefixes': {}
+        'tags': {}, 'keys': {}, 'key_prefixes': {},
+        'total_complete': total_complete,
+        'total_incomplete': total_incomplete,
     }
     for quest_type in ('tags', 'keys', 'key_prefixes'):
         for quest in quests[quest_type]:

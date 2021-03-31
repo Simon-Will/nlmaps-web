@@ -36,15 +36,18 @@ SECRETS_INI = (ASSETS_DIR / 'nlmapsweb.ini').resolve()
 QUESTS = {
     'total': 400,
     'tags': {
-        ('wheelchair', 'yes'): 50,
+        ('wheelchair', 'yes'): 30,
+        ('amenity', 'restaurant'): 10,
+        ('amenity', 'fast_food'): 10,
+        ('amenity', 'cafe'): 10,
     },
     'keys': {
         'shop': 30,
-        'leisure': 30,
+        'leisure': 20,
         'sport': 20,
         'craft': 20,
-        'man_made': 20,
-        'cuisine': 30,
+        'man_made': 10,
+        'cuisine': 20,
     },
     'key_prefixes': {
         'diet:': 20,

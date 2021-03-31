@@ -14,11 +14,12 @@
             {{ M.progress_bar(quest_progress['total'].percentage) }}
             <span>{{ quest_progress['total'].achieved }} / {{ quest_progress['total'].expected }}</span>
         </div>
+        <p>({{ quest_progress['total_complete'] }} complete + round({{ quest_progress['total_incomplete'] }} incomplete / 4) = {{ quest_progress['total'].achieved }})</p>
 
         <h2>Tags</h2>
         <div class="progress-grid">
             {% for tag, progress in quest_progress['tags'].items() %}
-            <span>{{ tag[0] }}={{ tag[1] }}</span>
+            <a href="https://wiki.openstreetmap.org/wiki/Tag:{{ tag[0] }}={{ tag[1] }}">{{ tag[0] }}={{ tag[1] }}</a>
             {{ M.progress_bar(progress.percentage) }}
             <span>{{ progress.achieved }} / {{ progress.expected }}</span>
             {% endfor %}
@@ -27,7 +28,7 @@
         <h2>Keys</h2>
         <div class="progress-grid">
             {% for key, progress in quest_progress['keys'].items() %}
-            <span>{{ key }}=*</span>
+            <a href="https://wiki.openstreetmap.org/wiki/Key:{{ key }}">{{ key }}=*</a>
             {{ M.progress_bar(progress.percentage) }}
             <span>{{ progress.achieved }} / {{ progress.expected }}</span>
             {% endfor %}
