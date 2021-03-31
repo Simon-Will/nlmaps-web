@@ -529,7 +529,10 @@ window.addEventListener('load', function() {
                 this.mrlElm.innerHTML = '';
                 this.showJudgement(true);
 
-                messagesBlock.addMessage('Did not receive MRL.', true);
+                messagesBlock.addMessage(
+                    'Did not receive MRL. Can you construct the correct MRL on your own?',
+                    true
+                );
             }
             if (processFeatures) {
                 this.retrieveAndProcessFeatures(mrl);
