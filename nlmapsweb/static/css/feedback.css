@@ -34,16 +34,18 @@
 
 .feedback-id {
     float: right;
+    font-size: smaller;
 }
 
 .feedback-id::before {
     content: "#";
+    font-size: smaller;
 }
 
 .feedback-date {
     float: right;
+    font-size: smaller;
 }
-
 
 .feedback-nl {
     font-size: smaller;
