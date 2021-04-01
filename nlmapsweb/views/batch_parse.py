@@ -14,7 +14,7 @@ def batch_parse():
 
         response = mt_server.post('query_feedback', json=filters)
         nls = []
-        for feedback_info in response.json():
+        for feedback_info in response.json()['feedback']:
             if not feedback_info['model_lin']:
                 nls.append(feedback_info['nl'])
         result = parse_to_lin(nls, model=model)
