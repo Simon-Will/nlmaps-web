@@ -593,7 +593,6 @@ window.addEventListener('load', function() {
             this.setMrl(null);
             this.setFeatures(null);
             this.alternatives.innerHTML = '';
-            this.area.innerHTML = '';
             this.mrlEditHelpContainer
                 .querySelectorAll('.mrl-edit-help-tag-finder')
                 .forEach(function(tagFinderHelp) {
