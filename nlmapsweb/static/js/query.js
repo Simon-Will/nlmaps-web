@@ -585,8 +585,6 @@ window.addEventListener('load', function() {
             this.featuresForm = this.body.querySelector('#query-features-form');
             this.alternatives = this.body
                 .querySelector('#mrl-edit-help-alternatives');
-            this.area = this.body
-                .querySelector('#mrl-edit-help-area');
             this.mrlEditHelpContainer = this.body.querySelector('#mrl-edit-help-container');
         }
 
@@ -666,27 +664,15 @@ window.addEventListener('load', function() {
                             warning.appendChild(tag.cloneNode(true));
                             warning.appendChild(document.createTextNode(
                                 ' is ' + usageClass.name.toLowerCase()
-                                    + '. Please adjust the parse if you can.'
+                                    + (count <= 100
+                                       ? '. Please adjust the parse if you can.'
+                                       : '. It might need adjustment.')
                             ));
                             const featuresElm = document.getElementById(
                                 'mrl-info-features');
                             insertAfter(warning, featuresElm);
                         }
                     });
-
-                    if (diagnoseResult.area) {
-                        if (diagnoseResult.area.count) {
-                            thisMrlEditBlock.area.innerHTML = 'Found '
-                                + diagnoseResult.area.count.toString()
-                                + ' results for area “' + diagnoseResult.area.name
-                                + '”.';
-                        } else {
-                            thisMrlEditBlock.area.innerHTML = 'Found no results for area “'
-                                + diagnoseResult.area.name + '”.';
-                        }
-                    } else {
-                        thisMrlEditBlock.area.innerHTML = 'Problem with area query.';
-                    }
 
                     if (diagnoseResult.tf_idf_scores) {
                         for (let token in diagnoseResult.tf_idf_scores) {

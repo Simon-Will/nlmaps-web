@@ -36,20 +36,6 @@ def get_tags_in_features(features, exclude=tuple()):
     return tags
 
 
-def get_area_name(mrl):
-    match = re.search(r"area\(keyval\('name','(?P<name>[^']+)'", mrl)
-    if match:
-        return match.group('name')
-
-
-def count_areas(name):
-    overpass_url = current_app.config.get('OVERPASS_URL')
-    query = '[out:json];area[name="{}"];out ids;'.format(name)
-    result = requests.get(overpass_url, params={'data': query})
-    if result.status_code == 200:
-        return len(result.json()['elements'])
-
-
 def get_name_tokens(features):
     if features:
         if 'sub' in features:
@@ -79,13 +65,12 @@ def get_name_tokens(features):
 
 class DiagnoseResult(Result):
 
-    def __init__(self, success, nl, mrl, taginfo, area, tf_idf_scores,
+    def __init__(self, success, nl, mrl, taginfo, tf_idf_scores,
                  custom_suggestions, error=None):
         super().__init__(success, error)
         self.nl = nl
         self.mrl = mrl
         self.taginfo = taginfo
-        self.area = area
         self.tf_idf_scores = tf_idf_scores
         self.custom_suggestions = custom_suggestions
 
@@ -152,20 +137,13 @@ class DiagnoseResult(Result):
             tokens = nl.split(' ')
         custom_suggestions = get_suggestions(tokens)
 
-        area_name = get_area_name(mrl)
-        if area_name:  # TODO: Make area lookup smarter
-            area_count = count_areas(area_name)
-            area = {'name': area_name, 'count': area_count}
-        else:
-            area = None
-
         return cls(success=True, nl=nl, mrl=mrl, taginfo=taginfo,
-                   area=area, tf_idf_scores=tf_idf_scores,
+                   tf_idf_scores=tf_idf_scores,
                    custom_suggestions=custom_suggestions)
 
     def to_dict(self):
         return {
             'nl': self.nl, 'mrl': self.mrl, 'taginfo': self.taginfo,
-            'area': self.area, 'tf_idf_scores': self.tf_idf_scores,
+            'tf_idf_scores': self.tf_idf_scores,
             'custom_suggestions': self.custom_suggestions
         }
