@@ -106,6 +106,7 @@
                 <p class="feedback-id"><a href="{{ url_for('feedback_piece', id=piece.id) }}">{{ piece.id }}</a></p>
                 <p class="feedback-nl">{{ piece.nl }}</p>
                 <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
+                <p class="feedback-date">{{ piece.created }}</p>
                 <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
             </div>
             {% for child in piece.children %}

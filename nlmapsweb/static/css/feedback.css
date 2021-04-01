@@ -40,6 +40,11 @@
     content: "#";
 }
 
+.feedback-date {
+    float: right;
+}
+
+
 .feedback-nl {
     font-size: smaller;
 }

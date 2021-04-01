@@ -37,12 +37,13 @@ class FeedbackPiece:
     model_{lin,mrl}: The query as recently parsed by the server
     """
 
-    def __init__(self, nl, id=None, parent_id=None, user_id=None, model=None,
-                 correct_lin=None, correct_mrl=None, original_model=None,
-                 original_lin=None, original_mrl=None, model_lin=None,
-                 model_mrl=None, children=None, split=None):
+    def __init__(self, nl, id=None, created=None, parent_id=None, user_id=None,
+                 model=None, correct_lin=None, correct_mrl=None,
+                 original_model=None, original_lin=None, original_mrl=None,
+                 model_lin=None, model_mrl=None, children=None, split=None):
         self.nl = nl
         self.id = id
+        self.created = created
         self.parent_id = parent_id
         self.user_id = user_id
         self.model = model
@@ -233,7 +234,6 @@ def feedback_piece(id):
             abort(response.status_code)
         info = response.json()
 
-    del info['created']
     info['model_lin'] = info.pop('system_lin')
     piece = FeedbackPiece(**info)
     form = FeedbackEditForm(obj=piece)
