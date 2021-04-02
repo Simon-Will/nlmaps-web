@@ -55,7 +55,7 @@ NL_TO_INSTRUCTIONS = {
         'parsed_mrl': "query(around(center(nwr(keyval('name','Taj Mahal'))),search(nwr(keyval('tourism','hotel'))),maxdist(3000)),qtype(findkey('website')))",
         'feedback_mrl': "query(around(center(nwr(keyval('name','Taj Mahal'))),search(nwr(keyval('tourism','hotel'))),maxdist(WALKING_DIST)),qtype(least(topx(1))))",
         'tips': [
-            'Change the maximum distance to walking distance.',
+            'Change the maximum distance to walking distance, which is a *named* distance.',
             'Change the qtype such that it will tell you if there is at least one (“least(topx(1))”) result'
         ]
     },
@@ -81,7 +81,8 @@ NL_TO_INSTRUCTIONS = {
         'feedback_mrl': "dist(query(area(keyval('name','New York City')),nwr(keyval('name','Empire State Building')),qtype(latlong)),query(nwr(keyval('name','Bratislavský hrad')),qtype(latlong)))",
         'tips': [
             'Use the drop down menu to change the Question Class to find the distance between two objects.',
-            'Search for the Empire State Building in New York City and don’t restrict the area for Bratislavský hrad.'
+            'Search for the Empire State Building in New York City and don’t restrict the area for Bratislavský hrad.',
+            'Order is important. What is named first in the NL query should be first in the MRL query.',
         ]
     },
 }
