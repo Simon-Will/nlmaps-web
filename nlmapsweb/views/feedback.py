@@ -171,9 +171,10 @@ def export_feedback():
     mrl = []
 
     def append_piece(piece):
-        nl.append(piece.nl)
-        lin.append(piece.correct_lin)
-        mrl.append(piece.correct_mrl)
+        if piece.nl and piece.correct_lin and piece.correct_mrl:
+            nl.append(piece.nl)
+            lin.append(piece.correct_lin)
+            mrl.append(piece.correct_mrl)
 
     for parent in independent_feedback:
         append_piece(parent)
