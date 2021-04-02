@@ -56,6 +56,18 @@ class ParseResult(Result):
         mrl = functionalise(lin)
         if not mrl:
             error = 'Parsed linear query is ungrammatical'
+            current_app.logger.warning(error)
+
+            # Try fallback model
+            fallback_model = current_app.config.get('FALLBACK_MODEL')
+            if fallback_model:
+                current_app.logger.info(
+                    'Using fallback model {}'.format(fallback_model))
+                fallback_parse_result = cls.from_nl(nl, model=fallback_model)
+                if fallback_parse_result.success:
+                    current_app.logger.info('Fallback successful')
+                    return fallback_parse_result
+            # Fallback model was unsuccessful, as well.
             return cls(False, nl, lin, mrl, model=model, error=error)
 
         return cls(True, nl, lin, mrl, model=model)

@@ -84,11 +84,8 @@ def create_feedback():
         if current_user.is_authenticated:
             feedback['user_id'] = current_user.id
 
-        if data.get('model'):
-            feedback['model'] = data['model']
-        else:
-            feedback['train_model'] = current_app.config['CURRENT_MODEL']
-            feedback['model'] = ''
+        feedback['train_model'] = current_app.config['CURRENT_MODEL']
+        feedback['model'] = data.get('model', '')
 
         # TODO: Do these things in form.
         nl = data['nl'].strip()
