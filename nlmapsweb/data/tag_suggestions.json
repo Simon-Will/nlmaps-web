@@ -1,4 +1,13 @@
 {
+    "fire": {
+        "fireplace=yes OR leisure=firepit": "A place where you can make a fire."
+    },
+    "fireplace": {
+        "fireplace=yes OR leisure=firepit": "A place where you can make a fire."
+    },
+    "firepit": {
+        "fireplace=yes OR leisure=firepit": "A place where you can make a fire."
+    },
     "caf\\u00e9": {
         "amenity=cafe": "A generally informal place with sit-down facilities selling beverages and light meals and/or snacks."
     },
