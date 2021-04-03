@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+
+{% set page = 'guidelines' %}
+
+{% block content %}
+<a href="https://gitlab.cl.uni-heidelberg.de/will/nlmaps-ma/-/raw/master/annotation_project/guidelines/guidelines.pdf?inline=false">Guidelines as PDF</a>
+
+<h1 id="requirements">Requirements</h1>
+<p>The annotation website https://nlmaps.gorgor.de/ is meant to be used with a recent version of a modern Browser. That means Firefox, Safari, Chrome or any other Chromium derivates (such as recent MS Edge). It is not optimized for mobile use, so please use a desktop computer.</p>
+<h1 id="principles">Principles</h1>
+<p>In essence, we need a dataset that fulfills three criteria:</p>
+<ol type="1">
+<li><p>The natural language (NL) queries should be linguistically diverse, i.e. a mix of short search-engine-style queries and full questions like you would ask another person.</p></li>
+<li><p>The queries should cover a large part of the commonly used OpenStreetmap (OSM) tags that are relevant for our system.</p></li>
+<li><p>The queries should cover the most useful OSM tags in particular depth. E.g., asking for restaurants and shops is arguably one of the most useful areas.</p></li>
+</ol>
+<h1 id="linguistic-diversity">Linguistic Diversity</h1>
+<p>When entering queries, please diversify your language use. Valid variations of the same question include:</p>
+<ul>
+<li><em>closest swimming pool near Eiffel Tower in Paris</em></li>
+<li><em>In Paris, give me the swimming pool that is closest to the Eiffel Tower!</em></li>
+<li><em>Closest place where I can take a swim near Eiffel Tower in Paris</em></li>
+</ul>
+<p>However, keep it natural and don’t make your queries artificially complex. If a particular query style comes more natural to you, it’s alright to use it more often. Just make sure that not all of you queries look alike.</p>
+<p>Similarly, avoid using the same place name more than a couple of times. Also use place names in other languages than German and English, e.g. <em>České Budějovice</em> or <em>València</em>.</p>
+<p>It’s <strong>very important</strong> that you don’t only base your wording on the name of the OSM tags. E.g., for <code>highway=speed_camera</code> you can ask for a <em>speed camera</em>, but you can also ask for a <em>speed trap</em> or a <em>radar trap</em>.</p>
+<h1 id="tag-diversity-and-depth">Tag Diversity and Depth</h1>
+<p>Take a <em>quick</em> look at the <a href="https://wiki.openstreetmap.org/wiki/Map_features">most important OSM features</a> to get a feel for what things you can ask for in OSM. You can use this as an inspiration if you run out of ideas about what to ask. Choose tags that you find relevant.</p>
+<p><strong>Beware of the <code>building=*</code> tag!</strong> It is used to tag what the building was built as, not to tag its current use. E.g., a place tagged <code>building=church</code> may not be a church anymore; churches are tagged as <code>amenity=place_of_worship + religion=christian</code>. If in doubt, don’t use the <code>building=*</code> tag, at all.</p>
+<p>In general, enter more than one query for a chosen tag or tag combination, especially if the system fails answering the query correctly.</p>
+<h2 id="most-relevant-keys">Most relevant keys</h2>
+<p>Please enter at least the given amount of queries for each of the following. The linked wiki pages give you a feel for what the most common tags in each category are.</p>
+<ul>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:shop">shop=*</a>: 30</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:leisure">leisure=*</a>: 20</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:sport">sport=*</a>: 20</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:craft">craft=*</a>: 20</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:man_made">man_made=*</a>: 10</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Tag:amenity=cafe">amenity=cafe</a>: 10</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Tag:amenity=restaurant">amenity=restaurant</a>: 10</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Tag:amenity=fast_food">amenity=fast_food</a>: 10</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:cuisine">cuisine=*</a>: 20.</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:diet">diet:*=*</a>: 20.</li>
+<li><a href="https://wiki.openstreetmap.org/wiki/Key:wheelchair">wheelchair=yes</a>: 20. Just sprinkle phrases like <em>wheelchair-accessible [place]</em> or <em>[places] that are wheelchair-accessible</em> into your queries now and then.</li>
+</ul>
+<p>Some tags <em>can and should</em> be combined. E.g., use <code>shop=massage,wheelchair=yes</code> for wheelchair-accessible massage shops or <code>club=sport,sport=tennis</code> for tennis clubs. But use only <code>sport=tennis</code> if you’re just asking for places to play tennis at.</p>
+<p>Especially the <code>cuisine=*</code> and <code>diet:*=*</code> tags can be combined productively. Some examples:</p>
+<ul>
+<li><code>cuisine=japanese</code>: Places serving japanese food</li>
+<li><code>cuisine=japanese,amenity=fast_food</code>: Fast food restaurants serving japanese food</li>
+<li><code>or(diet:vegan=yes,diet:vegan=only),amenity=cafe</code>: Vegan cafes</li>
+<li><code>or(diet:gluten_free=yes,diet:gluten_free=only),</code> <code>cuisine=burger,amenity=restaurant</code>: Restaurants serving gluten-free burgers</li>
+</ul>
+<h1 id="miscellaneous">Miscellaneous</h1>
+<ul>
+<li><p>Sometimes deciding between QType <code>findkey('name')</code> and <code>latlong</code> is not obvious. By convention:</p>
+<ul>
+<li>“<em>Which/What</em> restaurants/museums/etc. …”: <code>findkey('name')</code></li>
+<li>“<em>Name</em> restaurants/museums/etc. …”: <code>findkey('name')</code></li>
+<li>“What are restaurants/museums/etc. … <em>called</em>?”: <code>findkey('name')</code></li>
+<li>“<em>Give/Tell</em> (me) the <em>names</em> of restaurants/museums/etc. …”: <code>findkey('name')</code></li>
+<li>“<em>Show/Give/Tell</em> (me) restaurants/museums/etc. …”: <code>latlong</code></li>
+<li>“<em>Where</em> are restaurants/museums/etc. …”: <code>latlong</code></li>
+<li>“<em>Location/Coordinates</em> of restaurants/museums/etc. …”: <code>latlong</code></li>
+</ul></li>
+<li><p>Don’t repeat the same query with only a different location. Adjust the wording, as well.</p></li>
+<li><p>Some queries will not return results even if they are correct (e.g. rare tags like gluten-free etc.). Please base your judgement primarily on the MRL, not on the answer or map.</p></li>
+<li><p>Avoid querying too much data (“trees in Berlin”) or too large areas (“restaurants in Bangladesh”) to put less stress on servers and your browser.</p></li>
+<li><p>“Show all restaurants in X that are wheelchair-accessible!”: Target tags include <code>wheelchair=yes</code>, QType is <code>latlong</code></p></li>
+<li><p>“Is X accessible by wheelchair?”: Use QType <code>findkey('wheelchair')</code>, no <code>wheelchair=*</code> target tag</p></li>
+<li><p>Questions looking for the closest thing to some other thing should always have a maxdist of <code>DIST_INTOWN</code>. In theory, this doesn’t make sense. It’s just a limitation of the current system.</p></li>
+<li><p>Use the appropriate maxdist value according to the table in <a href="https://nlmaps.gorgor.de/tutorial?chapter=4">chapter 4 of the tutorial</a>. E.g., when using the word “near” in your query, use <code>DIST_INTOWN</code>.</p></li>
+</ul>
+<h1 id="counting-annotations">Counting Annotations</h1>
+<p>A natural language query and the corresponding MRL are considered one <em>complete annotation</em>. If you don’t know what the correct MRL looks like, you can choose “Wrong, but I cannot help” and it will be considered an <em>incomplete annotation</em>. This is still valuable; four incomplete annotations will count as one complete annotation.</p>
+{% endblock %}
