@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% set page = 'faq' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Frequently Asked Questions</span>
+    </div>
+    <div class="block-body">
+        <h3>How do I activate annotation mode?</h3>
+        <p>First, register and log in. Then click on your name to reach your
+        profile and click on “Edit Profile”. Here you can activate the
+        annotation mode.</p>
+
+        <h3>How much do I need to vary my place and area names?</h3>
+        <p>Since it’s very difficult for a human to come up with lots of
+        different place names, you don’t need to focus on this. It’s alright if
+        you reuse your locations and I will diversify the reused ones
+        automatically.</p>
+
+        <h3>Is the order of the two locations important in queries of clas “Dist
+        Between”?</h3>
+        <p>Yes! Please put the location that is first in the NL query also as
+        the first location in the MRL query.</p>
+
+        <h3>The system misspells my locations!</h3>
+        <p>Yes, that happens sometimes, unfortunately. I hope it doesn’t occur
+        too often.</p>
+    </div>
+</div>
+{% endblock %}
