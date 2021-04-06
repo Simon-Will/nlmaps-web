@@ -16,6 +16,7 @@ with open(ASSETS_DIR / 'secret_key.txt') as f:
 
 MODELS = [
     'n3epsilon.noise.plusv2_web2to1_ratio05_prod.yaml',
+    'n3epsilon.noise.plusv2_5515_prod.yaml',
 ]
-CURRENT_MODEL = 'n3epsilon.noise.plusv2_web2to1_ratio05_prod.yaml'
+CURRENT_MODEL = 'n3epsilon.noise.plusv2_5515_prod.yaml'
 FALLBACK_MODEL = 'n3epsilon.noise.plusv2.yaml'
