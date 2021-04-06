@@ -38,6 +38,9 @@ def linearise(mrl):
 
 
 def mrl_to_features(mrl, is_escaped=False):
+    if not mrl:
+        return None
+
     features = FeaturesCacheEntry.get_features_by_mrl(mrl)
     if features:
         return features
@@ -60,6 +63,9 @@ def mrl_to_features(mrl, is_escaped=False):
 
 
 def features_to_mrl(features, escape=False):
+    if not features:
+        return None
+
     # TODO: Put this into nlmaps-tools.
     if features['query_type'] in ['dist_closest', 'dist_between']:
         features['query_type'] = 'dist'
