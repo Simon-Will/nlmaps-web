@@ -124,7 +124,8 @@ def create_feedback():
             return jsonify(response_dict), status_code
 
         if current_app.config.get('REPLACE_DUPLICATE_NAMES'):
-            replacement, replaced_mrl = replace_feedback(feedback, correct_mrl)
+            replacement, replaced_mrl = replace_feedback(feedback, correct_mrl,
+                                                         feedback['user_id'])
         else:
             replacement = None
 
@@ -165,7 +166,11 @@ def replace_feedback_view(id):
     feedback = response.json()
     correct_mrl = functionalise(feedback['correct_lin'])
 
-    replacement, replaced_mrl = replace_feedback(feedback, correct_mrl)
+    if not feedback.get('user_id'):
+        return jsonify({'error': 'Feedback has no user id.'}), 500
+
+    replacement, replaced_mrl = replace_feedback(feedback, correct_mrl,
+                                                 feedback['user_id'])
     if replacement:
         replacement['parent_id'] = feedback['id']
         response = mt_server.post('save_feedback', json=replacement)
@@ -478,7 +483,8 @@ def replace_existing_feedback():
                 increment_name_occurrences(correct_mrl, piece['user_id'])
                 continue
 
-            replacement, replaced_mrl = replace_feedback(piece, correct_mrl)
+            replacement, replaced_mrl = replace_feedback(piece, correct_mrl,
+                                                         piece['user_id'])
             if not replacement:
                 increment_name_occurrences(correct_mrl, piece['user_id'])
                 continue
