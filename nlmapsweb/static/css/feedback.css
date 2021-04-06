@@ -42,6 +42,11 @@
     font-size: smaller;
 }
 
+.feedback-split {
+    font-size: smaller;
+    font-style: italic;
+}
+
 .feedback-date {
     float: right;
     font-size: smaller;

@@ -19,4 +19,3 @@ MODELS = [
 ]
 CURRENT_MODEL = 'n3epsilon.noise.plusv2_web2to1_ratio05_prod.yaml'
 FALLBACK_MODEL = 'n3epsilon.noise.plusv2.yaml'
-

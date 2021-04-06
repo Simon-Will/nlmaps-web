@@ -9,11 +9,13 @@ from flask import (abort, current_app, jsonify, redirect, render_template,
 from nlmapsweb.app import db
 from nlmapsweb.forms import (AdminFeedbackListForm, FeedbackCreateForm,
                              FeedbackEditForm, FeedbackListForm)
-from nlmapsweb.models import FeedbackState
+from nlmapsweb.models import FeedbackState, NameOccurrence
 import nlmapsweb.mt_server as mt_server
 from nlmapsweb.processing.comparing import get_feedback_type, get_opcodes
 from nlmapsweb.processing.converting import functionalise, linearise
+from nlmapsweb.processing.replacing import increment_name_occurrences, replace_feedback
 from nlmapsweb.tutorial import tutorial_dummy_saver
+from nlmapsweb.utils.auth import admin_required
 from nlmapsweb.utils.paging import make_paging_info
 
 
@@ -121,14 +123,67 @@ def create_feedback():
             response_dict, status_code = tutorial_dummy_saver(feedback)
             return jsonify(response_dict), status_code
 
-        response = mt_server.post('save_feedback', json=feedback)
+        if current_app.config.get('REPLACE_DUPLICATE_NAMES'):
+            replacement, replaced_mrl = replace_feedback(feedback, correct_mrl)
+        else:
+            replacement = None
 
-        response_dict = response.json()
-        response_dict['correct_mrl'] = correct_mrl
-        print('RESPONSE:', response_dict)
-        return jsonify(response_dict), response.status_code
+        if replacement:
+            feedback['split'] = 'replaced'
+            response = mt_server.post('save_feedback', json=feedback)
+            returned_feedback = response.json()
+            increment_name_occurrences(correct_mrl)
+
+            if 'id' in returned_feedback:
+                replacement['parent_id'] = returned_feedback['id']
+                mt_server.post('save_feedback', json=replacement)
+                increment_name_occurrences(replaced_mrl)
+        else:
+            response = mt_server.post('save_feedback', json=feedback)
+            returned_feedback = response.json()
+            increment_name_occurrences(correct_mrl)
+
+        returned_feedback['correct_mrl'] = correct_mrl
+        print('RESPONSE:', returned_feedback)
+        return jsonify(returned_feedback), response.status_code
 
     return 'Bad Request', 400
+
+
+@current_app.route('/replace_feedback/<id>', methods=['GET'])
+@admin_required
+def replace_feedback_view(id):
+    try:
+        id = int(id)
+    except ValueError:
+        return 'Bad Request', 400
+
+    payload = {'id': id}
+    response = mt_server.post('get_feedback', json=payload)
+    if not response.ok:
+        abort(response.status_code)
+    feedback = response.json()
+    correct_mrl = functionalise(feedback['correct_lin'])
+
+    replacement, replaced_mrl = replace_feedback(feedback, correct_mrl)
+    if replacement:
+        replacement['parent_id'] = feedback['id']
+        response = mt_server.post('save_feedback', json=replacement)
+        if not response.ok:
+            return jsonify({'error': 'Saving replacement failed.'}), 500
+        returned_replacement = response.json()
+        returned_replacement['correct_mrl'] = replaced_mrl
+
+        response = mt_server.post(
+            'edit_feedback',
+            json={'id': feedback['id'], 'split': 'replaced'}
+        )
+        if not response.ok:
+            return jsonify({'error':
+                            'Editing original feedback’s split failed.'}), 500
+        return jsonify(returned_replacement), 200
+    else:
+        return jsonify({'error': 'Generating replacement failed.'}), 500
 
 
 @current_app.route('/export_feedback', methods=['GET'])
@@ -389,6 +444,71 @@ def check_feedback_states():
 
     db.session.commit()
     return jsonify(response_data)
+
+
+@current_app.route('/reset_name_occurrences', methods=['GET'])
+@admin_required
+def reset_name_occurrences():
+    response = mt_server.post('list_feedback', json={})
+
+    NameOccurrence.query.delete()
+    for piece in response.json():
+        if piece['correct_lin'] and piece['user_id']:
+            correct_mrl = functionalise(piece['correct_lin'])
+            if correct_mrl:
+                increment_name_occurrences(correct_mrl, piece['user_id'])
+
+    return jsonify({'success': True})
+
+
+@current_app.route('/replace_existing_feedback', methods=['GET'])
+@admin_required
+def replace_existing_feedback():
+    response = mt_server.post('list_feedback', json={})
+    replaced_count = 0
+    NameOccurrence.query.delete()
+    for piece in response.json():
+        if piece['user_id']:
+            correct_mrl = functionalise(piece['correct_lin'])
+            if not correct_mrl:
+                continue
+
+            if (not piece['split'] or 'replaced' in piece['split']
+                    or piece['parent_id']):
+                increment_name_occurrences(correct_mrl, piece['user_id'])
+                continue
+
+            replacement, replaced_mrl = replace_feedback(piece, correct_mrl)
+            if not replacement:
+                increment_name_occurrences(correct_mrl, piece['user_id'])
+                continue
+
+            replacement['parent_id'] = piece['id']
+            response = mt_server.post('save_feedback',
+                                      json=replacement)
+            if not response.ok:
+                msg = ('Saving replacement {} for feedback {} failed.'
+                       .format(replacement, piece))
+                current_app.logger.warning(msg)
+                return jsonify({'error': msg}), 500
+
+            increment_name_occurrences(replaced_mrl, piece['user_id'])
+
+            response = mt_server.post(
+                'edit_feedback',
+                json={'id': piece['id'], 'split': 'replaced'}
+            )
+            if not response.ok:
+                msg = (
+                    'Editing original feedback’s split failed. Feedback: {}'
+                    .format(piece)
+                )
+                current_app.logger.warning(msg)
+                return jsonify({'error': msg}), 500
+            increment_name_occurrences(correct_mrl, piece['user_id'])
+
+            replaced_count += 1
+    return jsonify({'replaced': replaced_count})
 
 
 @current_app.route('/update_parse_taggings', methods=['POST'])

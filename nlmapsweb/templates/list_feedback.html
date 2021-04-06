@@ -108,6 +108,18 @@
                 <p class="feedback-sys mrl">{{ piece.model_mrl if model else piece.original_mrl }}</p>
                 <p class="feedback-corr mrl">{{ piece.correct_mrl }}</p>
                 <p class="feedback-date">{{ piece.created }}</p>
+                {% if piece.split == 'train' %}
+                <p class="feedback-split">Used for training</p>
+                {% elif piece.split in ['dev', 'test'] %}
+                <p class="feedback-split">Used for testing</p>
+                {% elif piece.split.endswith('replaced') %}
+                <p class="feedback-split">Replaced</p>
+                {% else %}
+                <p class="feedback-split">Other use ({{ piece.split }})</p>
+                {% endif %}
+                {% if current_user.admin %}
+                <button class="replace-button" data-feedback-id="{{ piece.id }}">Replace</button>
+                {% endif %}
             </div>
             {% for child in piece.children %}
             <div class="feedback-piece feedback-type-{{ child.get_type(model=model) }}" data-opcodes="{{ child.get_opcodes(model=model) }}">

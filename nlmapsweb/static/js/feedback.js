@@ -172,4 +172,31 @@ window.addEventListener('load', function() {
             return false;
         };
     });
+
+    document.querySelectorAll('.replace-button').forEach(function(button) {
+        const feedbackId = button.getAttribute('data-feedback-id');
+        button.onclick = function() {
+            ajaxGet(
+                '/replace_feedback/' + feedbackId,
+                function(xhr) {
+                    const fb = JSON.parse(xhr.responseText);
+                    const message = 'Saved feedback with ID ' + fb.id
+                        + ', NL "' + fb.nl
+                        + '" and MRL "' + fb.correct_mrl + '"';
+                    flashMessage(button.closest('.feedback-piece'), message,
+                                 'bg-success', null);
+                },
+                function(xhr) {
+                    const fb = JSON.parse(xhr.responseText);
+                    let message = 'Unknown error';
+                    if (fb.error) {
+                        message = fb.error;
+                    }
+                    flashMessage(button.closest('.feedback-piece'), message,
+                                 'bg-danger', null);
+                },
+            );
+            return false;
+        };
+    });
 });

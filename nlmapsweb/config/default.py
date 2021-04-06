@@ -53,3 +53,6 @@ QUESTS = {
         'diet:': 20,
     }
 }
+
+REPLACE_DUPLICATE_NAMES = True
+REPLACE_DUPLICATE_NAMES_THRESHOLD = 3
