@@ -29,7 +29,11 @@ def annotation_progress():
     mrls = [mrl for mrl
             in (functionalise(lin) for lin in lins if lin)
             if mrl]
-    all_features = [mrl_to_features(mrl) for mrl in mrls]
+    all_features = []
+    for mrl in mrls:
+        features = mrl_to_features(mrl)
+        if features:
+            all_features.append(features)
 
     quests = current_app.config.get('QUESTS', {})
     quests.setdefault('total', 0)
