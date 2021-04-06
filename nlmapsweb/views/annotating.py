@@ -23,7 +23,8 @@ def get_progress(achieved, expected):
 def annotation_progress():
     filters = {'user_id': current_user.id}
     response = mt_server.post('list_feedback', json=filters)
-    lins = [piece['correct_lin'] for piece in response.json()]
+    lins = [piece['correct_lin'] for piece in response.json()
+            if not piece.get('parent_id')]
     total_feedback = len(lins)
     mrls = [mrl for mrl
             in (functionalise(lin) for lin in lins if lin)
