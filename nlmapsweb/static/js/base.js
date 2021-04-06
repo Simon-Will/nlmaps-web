@@ -495,7 +495,7 @@ function checkFeedbackStates() {
     }
 }
 
-window.addEventListener('load', checkFeedbackStates);
+//window.addEventListener('load', checkFeedbackStates);
 
 window.addEventListener('keydown', function (event) {
     if (event.key === 'Escape') {
