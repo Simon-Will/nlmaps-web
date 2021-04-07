@@ -251,4 +251,5 @@ input[type="checkbox"] {
 
 .page-nav * {
     margin: 0em 1em;
+    flex-wrap: wrap;
 }
