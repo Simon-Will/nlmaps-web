@@ -249,7 +249,10 @@ input[type="checkbox"] {
     max-width: 1em;
 }
 
+.page-nav {
+    flex-wrap: wrap;
+}
+
 .page-nav * {
     margin: 0em 1em;
-    flex-wrap: wrap;
 }
