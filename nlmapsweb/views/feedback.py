@@ -123,7 +123,8 @@ def create_feedback():
             response_dict, status_code = tutorial_dummy_saver(feedback)
             return jsonify(response_dict), status_code
 
-        if current_app.config.get('REPLACE_DUPLICATE_NAMES'):
+        if (current_app.config.get('REPLACE_DUPLICATE_NAMES')
+            and feedback.get('user_id')):
             replacement, replaced_mrl = replace_feedback(feedback, correct_mrl,
                                                          feedback['user_id'])
         else:
