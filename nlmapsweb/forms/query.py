@@ -185,7 +185,9 @@ class QueryFeaturesForm(BaseForm):
             if self.around_topx.data:
                 features['around_topx'] = Symbol(str(self.around_topx.data))
 
-        if self.center_nwr.data:
+        if (self.center_nwr.data
+            and (features.get('query_type') == 'around_query'
+                 or self.query_type.data == 'dist_closest')):
             features['query_type'] = 'around_query'
             features['center_nwr'] = sort_nwr(self.center_nwr.data)
         else:
