@@ -53,7 +53,7 @@
                 <a class="nav-element" href="{{ url_for('query') }}">Query</a>
                 <a class="nav-element" href="{{ url_for('tutorial') }}">Tutorial</a>
                 {% if current_user.is_authenticated %}
-                <a class="nav-element" href="{{ url_for('list_feedback') }}">Feedback List</a>
+                <a class="nav-element" href="{{ url_for('list_feedback') }}">Query History</a>
                 <a class="nav-element" href="{{ url_for('logout') }}">Log Out</a>
                 <span class="nav-element">👤 <a href="{{ url_for('profile') }}">{{ current_user.name }}</a></span>
                 {% else %}
