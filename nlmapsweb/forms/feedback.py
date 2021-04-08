@@ -36,6 +36,7 @@ class FeedbackEditForm(BaseForm):
 
 class FeedbackListForm(ParsingModelForm):
     page = IntegerField('Page', default=1)
+    nl_part = StringField('NL Substring')
 
 
 class AdminFeedbackListForm(FeedbackListForm):

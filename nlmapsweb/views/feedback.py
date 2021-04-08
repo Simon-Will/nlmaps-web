@@ -366,6 +366,8 @@ def list_feedback():
     filters = {'model': model, 'offset': offset, 'limit': page_size}
     if user_id is not None:
         filters['user_id'] = user_id
+    if feedback_list_form.nl_part.data:
+        filters['nl_part'] = feedback_list_form.nl_part.data
 
     response = mt_server.post('query_feedback', json=filters)
     response_data = response.json()
