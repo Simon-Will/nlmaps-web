@@ -655,7 +655,7 @@ window.addEventListener('load', function() {
 
                         thisMrlEditBlock.alternatives.appendChild(taginfo);
 
-                        if (count <= 1000) {
+                        if (count <= 1000 && val != '*') {
                             const warning = document.createElement('p');
                             warning.id = 'bad-tag-warning';
                             warning.classList.add('tag-usage-' + usageClass.slug);
