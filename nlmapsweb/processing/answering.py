@@ -20,7 +20,7 @@ def answer_query(mrl_query):
         current_app.logger.info('Received py answering result')
         return result
 
-    return {'type': 'error', 'error': 'Unknown MRL interpretation error'}
+    return {'type': 'error', 'error':  'Failed to convert mrl to features'}
 
 
 class AnswerResult(Result):
