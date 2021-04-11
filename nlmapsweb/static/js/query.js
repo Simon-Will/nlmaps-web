@@ -777,6 +777,12 @@ window.addEventListener('load', function() {
                 query_type_select.dispatchEvent(new Event('change'));
             } else {
                 this.featuresForm.reset();
+                let qts = this.featuresForm.querySelector("select[name='query_type']");
+                qts.value = 'in_query';
+                let evt = document.createEvent("HTMLEvents");
+                evt.initEvent("change", false, true);
+                qts.dispatchEvent(evt);
+                this.featuresForm.querySelector("input[name='target_nwr']").value = '[]';
             }
         }
     }
