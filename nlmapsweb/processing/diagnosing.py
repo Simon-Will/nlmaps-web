@@ -137,13 +137,14 @@ class DiagnoseResult(Result):
             tokens = nl.split(' ')
         custom_suggestions = get_suggestions(tokens)
 
-        return cls(success=True, nl=nl, mrl=mrl, taginfo=taginfo,
-                   tf_idf_scores=tf_idf_scores,
+        return cls(success=success, error=error, nl=nl, mrl=mrl,
+                   taginfo=taginfo, tf_idf_scores=tf_idf_scores,
                    custom_suggestions=custom_suggestions)
 
     def to_dict(self):
         return {
             'nl': self.nl, 'mrl': self.mrl, 'taginfo': self.taginfo,
             'tf_idf_scores': self.tf_idf_scores,
-            'custom_suggestions': self.custom_suggestions
+            'custom_suggestions': self.custom_suggestions,
+            'error': self.error
         }

@@ -149,7 +149,12 @@ window.addEventListener('load', function() {
                 callback(diagnoseResult);
             },
             function(xhr) {
-                messagesBlock.addMessage('Diagnosing failed.', true);
+                const diagnoseResult = JSON.parse(xhr.responseText);
+                let msg = 'Diagnosing failed.';
+                if (diagnoseResult.error) {
+                    msg += ' ' + diagnoseResult.error;
+                }
+                messagesBlock.addMessage(msg, true);
             },
             null,
             formData
