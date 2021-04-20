@@ -68,10 +68,6 @@ def replace_names_in_nwr(nwr_features, nl, user_id, threshold):
                 parts.append(('name', ('or', *new_names)))
             else:
                 parts.append(feat)
-            or_part = ['or']
-            for val in feat[1][1:]:
-                or_part.append((feat[0], val))
-            parts.append(tuple(or_part))
         elif len(feat) == 2 and all(isinstance(f, str) for f in feat):
             if feat[0] == 'name':
                 old_name = feat[1]
