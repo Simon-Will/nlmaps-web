@@ -220,6 +220,4 @@ def increment_name_occurrences(mrl, user_id=None):
         names = get_names_from_non_dist_features(features)
 
     for name in names:
-        count = NameOccurrence.increment(name, user_id)
-
-    return count
+        NameOccurrence.increment(name, user_id)

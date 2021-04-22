@@ -229,7 +229,8 @@ def export_feedback():
     mrl = []
 
     def append_piece(piece):
-        if piece.nl and piece.correct_lin and piece.correct_mrl:
+        if (piece.nl and piece.correct_lin and piece.correct_mrl
+                and 'replaced' not in piece.split):
             nl.append(piece.nl)
             lin.append(piece.correct_lin)
             mrl.append(piece.correct_mrl)
