@@ -20,5 +20,5 @@ MODELS = [
     'n3_ar_ratio05.yaml',
     'n3_arc_ratio05.yaml',
 ]
-CURRENT_MOrEL = 'n3_arc_ratio05.yaml'
+CURRENT_MODEL = 'n3_arc_ratio05.yaml'
 FALLBACK_MODEL = 'n3.yaml'
