@@ -155,6 +155,7 @@ def create_feedback():
 @current_app.route('/replace_feedback/<id>', methods=['GET'])
 @admin_required
 def replace_feedback_view(id):
+    """Replace overused locations in feedback."""
     try:
         id = int(id)
     except ValueError:

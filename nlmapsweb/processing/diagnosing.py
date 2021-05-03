@@ -1,9 +1,8 @@
 import itertools
 from pathlib import Path
-import re
+from typing import Any, Container, Dict, List, Optional, Tuple
 
 from flask import current_app
-import requests
 
 from nlmaps_tools.answer_mrl import canonicalize_nwr_features
 
@@ -16,7 +15,18 @@ from nlmapsweb.processing.taginfo import (find_alternatives, taginfo_lookup,
 from nlmapsweb.processing.tf_idf import get_tf_idf_scores, load_tf_idf_pipeline
 
 
-def get_tags_in_features(features, exclude=tuple()):
+def get_tags_in_features(
+        features: Dict[str, Any],
+        exclude: Container[str] = tuple()) -> List[Tuple[str, str]]:
+    """Get all tags that occur in features.
+
+    :param features: MRL features.
+    :param exclude: Keys that should be skipped when extracting the tags. E.g.
+        supply ['name'] to skip the name=* tags.
+    :return: Tags occurring in features.
+    """
+    # TODO: Why does this function not care about center_nwr? Maybe a bug?
+
     if 'sub' in features:
         features = features['sub'][0]
     features['target_nwr'] = canonicalize_nwr_features(features['target_nwr'])
@@ -36,7 +46,15 @@ def get_tags_in_features(features, exclude=tuple()):
     return tags
 
 
-def get_name_tokens(features):
+def get_name_tokens(features: Dict[str, Any]) -> List[str]:
+    """Get named entities from features.
+
+    This function extracts the value of the area field and all values of any
+    name=* tags.
+
+    :param features: MRL features.
+    :return: The named entities.
+    """
     if features:
         if 'sub' in features:
             # For dist query features
@@ -65,8 +83,24 @@ def get_name_tokens(features):
 
 class DiagnoseResult(Result):
 
-    def __init__(self, success, nl, mrl, taginfo, tf_idf_scores,
-                 custom_suggestions, error=None):
+    def __init__(self, success: bool, nl: str, mrl: str,
+                 taginfo: Optional[List[Tuple]],
+                 tf_idf_scores: Dict[str, float],
+                 custom_suggestions: Dict[str, Dict[str, str]], error=None):
+        """Initialize the DiagnoseResult.
+
+        :param success: Whether diagnosing was successful. If false, error
+            should be specified.
+        :param nl: NL query issued by user.
+        :param mrl: Corresponding MRL query.
+        :param taginfo: Information about the frequency of the used tags and
+            similarly spelled tags.
+        :param tf_idf_scores: TF IDF scores for the tokens in the NL. The
+            higher the score, the more surprising/key it is for the query.
+        :param custom_suggestions: Custom tag suggestions based on the tokens
+            in the query.
+        :param error: Error that occurred during parsing.
+        """
         super().__init__(success, error)
         self.nl = nl
         self.mrl = mrl
@@ -75,7 +109,15 @@ class DiagnoseResult(Result):
         self.custom_suggestions = custom_suggestions
 
     @classmethod
-    def from_nl_mrl(cls, nl, mrl):
+    def from_nl_mrl(cls: 'DiagnoseResult', nl: str,
+                    mrl: str) ->  'DiagnoseResult':
+        """Diagnose a NL-MRL mapping and return a DiagnoseResult.
+
+        :param nl: NL query issued by user.
+        :param mrl: Corresponding MRL query.
+        :return: The resulting DiagnoseResult holding help for judging and
+            improving the MRL.
+        """
         success = True
         error = None
         taginfo = None
@@ -89,8 +131,8 @@ class DiagnoseResult(Result):
             # the alternatives list. But in json, we need string keys, so we
             # use a list instead of a dict.
             taginfo = []
-            # Tag info for names doesn’t make sense.
-            # Names are often unique.
+            # Tag info for names doesn’t make sense because names are usually
+            # unique (or nearly so.)
             key_val_pairs = get_tags_in_features(features, exclude=['name'])
             try:
                 counts = taginfo_lookup(key_val_pairs) or {}
@@ -120,7 +162,7 @@ class DiagnoseResult(Result):
                     if token in tokens_to_be_deleted or is_stop_word(token):
                         del tf_idf_scores[token]
 
-                # Singularization
+                # Very naive singularization.
                 #tok_score_to_add = [
                 #    (token, score) for token, score
                 #    in tf_idf_scores.items() if token.endswith('s')
@@ -142,6 +184,10 @@ class DiagnoseResult(Result):
                    custom_suggestions=custom_suggestions)
 
     def to_dict(self):
+        """Serialize this object into a dict.
+
+        :return: Serialized DiagnoseResult.
+        """
         return {
             'nl': self.nl, 'mrl': self.mrl, 'taginfo': self.taginfo,
             'tf_idf_scores': self.tf_idf_scores,

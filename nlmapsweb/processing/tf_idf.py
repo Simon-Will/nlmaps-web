@@ -4,19 +4,22 @@ import argparse
 from collections import OrderedDict
 import pickle
 import random
+from typing import Dict, List
 
 from sklearn.feature_extraction.text import CountVectorizer, TfidfTransformer
 from sklearn.pipeline import Pipeline
 
 
-def fit_tf_idf_pipeline(dataset):
+def fit_tf_idf_pipeline(dataset: List[str]) -> Pipeline:
+    """Create a TF-IDF pipeline and fit it on a dataset."""
     pipeline = Pipeline([('count', CountVectorizer()),
                          ('tfidf', TfidfTransformer())])
     pipeline.fit(dataset)
     return pipeline
 
 
-def load_tf_idf_pipeline(pickle_file):
+def load_tf_idf_pipeline(pickle_file: str) -> Pipeline:
+    """Load TF-IDF pipeline from a file."""
     try:
         with open(pickle_file, 'rb') as f:
             pipeline = pickle.load(f)
@@ -26,7 +29,8 @@ def load_tf_idf_pipeline(pickle_file):
     return pipeline
 
 
-def get_tf_idf_scores(pipeline, sentence):
+def get_tf_idf_scores(pipeline: Pipeline, sentence: str) -> Dict[str, float]:
+    """Calculate TF-IDF scores for each token in a sentence."""
     tf_idf = pipeline.transform([sentence])
     feature_names = pipeline['count'].get_feature_names()
     processed_tokens = [feature_names[idx] for idx in tf_idf.indices]
@@ -71,11 +75,12 @@ def main(dataset_file, test_sentence=None, save_file=None):
 
 
 def parse_args():
-    parser = argparse.ArgumentParser()
-    parser.add_argument('dataset_file')
+    desc = 'Create a TF-IDF pipeline from a text dataset and save it.'
+    parser = argparse.ArgumentParser(description=desc)
+    parser.add_argument('dataset_file', help='File with one document per line.')
     parser.add_argument('--test-sentence', '-t', help='Sentence to test on.')
     parser.add_argument('--save-file', '-s',
-                        help='File to save the pipeline in')
+                        help='File to save the pipeline in.')
 
     args = parser.parse_args()
     return args
