@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% set page = 'datasets' %}
+
+{% block content %}
+<div class="row block">
+    <div class="block-header">
+        <span class="block-title">Datasets</span>
+    </div>
+    <div class="block-body">
+        {% if datasets %}
+        <p>These are the datasets that were published together with the Master’s thesis on “An Online Learning System for Parsing and Answering Geographical Queries in Natural Language”, which is available <a href="https://gitlab.cl.uni-heidelberg.de/will/nlmaps-ma/-/raw/thesis/thesis/thesis.pdf">here</a>. The thesis also explains how they were created.</p>
+        <div class="container-vertical-flex">
+            {% for dataset in datasets %}
+            <div class="dataset container-vertical-flex">
+              <strong class="dataset-name"><a href="{{ dataset.url_path }}">{{ dataset.name }}</a></strong>
+                <span class="dataset-license">License: <a href="{{ dataset.license_url }}">{{ dataset.license }}</a></span>
+                {% if dataset.original_url %}
+                <span><a href="{{ dataset.original_url }}">Original dataset</a></span>
+                {% endif %}
+                {% if dataset.comment %}
+                <p class="dataset-comment">{{ dataset.comment }}</p>
+                {% endif %}
+            </div>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p>No datasets available.</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

@@ -23,3 +23,50 @@ MODELS = [
 ]
 CURRENT_MODEL = 'n3_arc_ratio05_prod.yaml'
 FALLBACK_MODEL = 'n3.yaml'
+
+DATASETS = [
+    {
+        'name': 'NLMaps 2.1',
+        'url_path': '/static/datasets/nlmaps_v2.1.zip',
+        'license': 'CC BY-NC-SA 4.0',
+        'license_url':  'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+        'original_url': 'https://www.cl.uni-heidelberg.de/statnlpgroup/nlmaps/',
+        'comment': 'Modification of NLMaps v2, published by Carolin Lawrence and Stefan Riezler.',
+    },
+    {
+        'name': 'NLMaps 3a',
+        'url_path': '/static/datasets/nlmaps_v3a.zip',
+        'license': 'CC BY-SA 4.0',
+        'license_url': 'https://creativecommons.org/licenses/by-sa/4.0/',
+    },
+    {
+        'name': 'NLMaps 3b',
+        'url_path': '/static/datasets/nlmaps_v3b.zip',
+        'license': 'CC BY-SA 4.0',
+        'license_url': 'https://creativecommons.org/licenses/by-sa/4.0/',
+    },
+    {
+        'name': 'NLMaps 3',
+        'url_path': '/static/datasets/nlmaps_v3.zip',
+        'license': 'CC BY-NC-SA 4.0',
+        'license_url':  'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+    },
+    {
+        'name': 'NLMaps 3 (no noise)',
+        'url_path': '/static/datasets/nlmaps_v3_no_noise.zip',
+        'license': 'CC BY-NC-SA 4.0',
+        'license_url':  'https://creativecommons.org/licenses/by-nc-sa/4.0/',
+    },
+    {
+        'name': 'NLMaps 4 (raw)',
+        'url_path': '/static/datasets/nlmaps_v4_raw.zip',
+        'license': 'CC BY-SA 4.0',
+        'license_url':  'https://creativecommons.org/licenses/by-sa/4.0/',
+    },
+    {
+        'name': 'NLMaps 4',
+        'url_path': '/static/datasets/nlmaps_v4.zip',
+        'license': 'CC BY-SA 4.0',
+        'license_url':  'https://creativecommons.org/licenses/by-sa/4.0/',
+    },
+]

@@ -58,3 +58,22 @@ REPLACE_DUPLICATE_NAMES = True
 REPLACE_DUPLICATE_NAMES_THRESHOLD = 3
 
 WTF_CSRF_ENABLED = False
+
+# Example for downloadable datasets. name, url_path, license and license_url
+# are required fields.
+DATASETS = [
+    {
+        'name': 'NLMaps Web',
+        'url_path': '/static/datasets/nlmapsweb.zip',
+        'license': 'CC BY-SA',
+        'license_url': 'CC BY-SA',
+        'original_url': 'https://www.cl.uni-heidelberg.de/statnlpgroup/nlmaps/',
+        'comment': 'Collected by different annotators'
+    },
+    {
+        'name': 'NLMaps Web 2',
+        'url_path': '/static/datasets/nlmapsweb.zip',
+        'license': 'CC BY-SA 4.0',
+        'license_url': 'https://creativecommons.org/licenses/by-sa/4.0/',
+    }
+]
