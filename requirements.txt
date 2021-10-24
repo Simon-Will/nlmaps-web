@@ -5,7 +5,7 @@ Flask-Migrate
 Flask-SQLAlchemy
 Flask-WTF
 matplotlib
-nlmaps_tools
+nlmaps-tools
 pyparsing
 requests
 scikit-learn

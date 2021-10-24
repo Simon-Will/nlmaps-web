@@ -1,6 +1,6 @@
-include nlmapsweb/data/areas.txt
-include nlmapsweb/data/most_common_tags.json
-include nlmapsweb/data/pois.txt
-include nlmapsweb/data/stopwords.txt
-include nlmapsweb/data/suggestions.json
-include nlmapsweb/data/tf_idf_pipeline.pickle
+include nlmaps_web/data/areas.txt
+include nlmaps_web/data/most_common_tags.json
+include nlmaps_web/data/pois.txt
+include nlmaps_web/data/stopwords.txt
+include nlmaps_web/data/suggestions.json
+include nlmaps_web/data/tf_idf_pipeline.pickle

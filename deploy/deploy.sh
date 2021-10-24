@@ -20,20 +20,20 @@ check() {
 
 repo_sync() {
     log 'Pulling changes from repositories'
-    if [ -d "$NLMAPSWEB_REPO" ]; then
-        pushd "$NLMAPSWEB_REPO"
+    if [ -d "$NLMAPS_WEB_REPO" ]; then
+        pushd "$NLMAPS_WEB_REPO"
         git pull origin master
         popd
     else
-        git clone "$NLMAPSWEB_REMOTE" "$NLMAPSWEB_REPO"
+        git clone "$NLMAPS_WEB_REMOTE" "$NLMAPS_WEB_REPO"
     fi
 
-    if [ -d "$NLMAPSTOOLS_REPO" ]; then
-        pushd "$NLMAPSTOOLS_REPO"
+    if [ -d "$NLMAPS_TOOLS_REPO" ]; then
+        pushd "$NLMAPS_TOOLS_REPO"
         git pull origin master
         popd
     else
-        git clone "$NLMAPSTOOLS_REMOTE" "$NLMAPSTOOLS_REPO"
+        git clone "$NLMAPS_TOOLS_REMOTE" "$NLMAPS_TOOLS_REPO"
     fi
 }
 
@@ -46,11 +46,11 @@ python_install() {
         log 'Activating virtual environment'
         . "$ASSETS/venv/bin/activate"
 
-        log 'Installing nlmapsweb'
+        log 'Installing nlmaps-web'
         pip3 install -U pip wheel
         pip3 install -U setuptools uwsgi
-        pip3 install -e "$NLMAPSTOOLS_REPO"
-        pip3 install -e "$NLMAPSWEB_REPO"
+        pip3 install -e "$NLMAPS_TOOLS_REPO"
+        pip3 install -e "$NLMAPS_WEB_REPO"
     else
         log 'Activating virtual environment'
         . "$ASSETS/venv/bin/activate"
@@ -59,7 +59,7 @@ python_install() {
 
 external_js_install() {
     local openlayers_url='https://github.com/openlayers/openlayers/releases/download/v6.5.0/v6.5.0-dist.zip'
-    local libdir="$NLMAPSWEB_REPO/nlmapsweb/static/lib"
+    local libdir="$NLMAPS_WEB_REPO/nlmaps_web/static/lib"
     if [ "$REINSTALL" = 1 ] || ! [ -d "$libdir" ]; then
         log 'Downloading and installing OpenLayers'
         wget "$openlayers_url" -O /tmp/ol-dist.zip
@@ -78,16 +78,16 @@ ensure_secret_key() {
     fi
 }
 
-install_nlmapsweb_ini() {
-    if [ -f "$NLMAPSWEB_INI" ]; then
-        log 'Installing nlmapsweb.ini'
-        cp "$NLMAPSWEB_INI" "$ASSETS/nlmapsweb.ini"
+install_nlmaps_web_ini() {
+    if [ -f "$NLMAPS_WEB_INI" ]; then
+        log 'Installing nlmaps-web.ini'
+        cp "$NLMAPS_WEB_INI" "$ASSETS/nlmaps-web.ini"
     fi
 }
 
 create_setup_sh() {
     cat >"$ASSETS/setup.sh" <<EOT
-export FLASK_APP=nlmapsweb.fullapp
+export FLASK_APP=nlmaps_web.fullapp
 export FLASK_ENV=production
 export ASSETS='$ASSETS'
 . '$ASSETS/venv/bin/activate'
@@ -96,21 +96,21 @@ EOT
 
 migrate() {
     log 'Running migrations'
-    pushd "$NLMAPSWEB_REPO"
+    pushd "$NLMAPS_WEB_REPO"
     flask db upgrade
     popd
 }
 
 start_app() {
     log 'Starting app'
-    bash "$NLMAPSWEB_REPO/deploy/run_uwsgi.sh"
+    bash "$NLMAPS_WEB_REPO/deploy/run_uwsgi.sh"
 }
 
 main() {
     REINSTALL=0
-    NLMAPSWEB_PORT=8000
-    ASSETS="$HOME/assets"
-    NLMAPSWEB_INI=''
+    NLMAPS_WEB_PORT=8000
+    ASSETS="$HOME/nlmaps-web-assets"
+    NLMAPS_WEB_INI=''
 
     while getopts ':rp:a:i:' opt; do
         case $opt in
@@ -118,13 +118,13 @@ main() {
                 REINSTALL=1
                 ;;
             p)
-                NLMAPSWEB_PORT="$OPTARG"
+                NLMAPS_WEB_PORT="$OPTARG"
                 ;;
             a)
                 ASSETS="$OPTARG"
                 ;;
             i)
-                NLMAPSWEB_INI="$OPTARG"
+                NLMAPS_WEB_INI="$OPTARG"
                 ;;
             \?)
                 err_with_help "Invalid option: -$OPTARG"
@@ -137,14 +137,14 @@ main() {
 
     shift $((OPTIND-1))
 
-    export NLMAPSWEB_REPO=${1:-$HOME/nlmapsweb}
-    NLMAPSTOOLS_REPO=${2:-$HOME/nlmaps-tools}
-    NLMAPSWEB_REMOTE='git@gitlab.cl.uni-heidelberg.de:will/nlmapsweb.git'
-    NLMAPSTOOLS_REMOTE='git@gitlab.cl.uni-heidelberg.de:will/nlmaps-tools.git'
+    export NLMAPS_WEB_REPO=${1:-$HOME/nlmaps-web}
+    NLMAPS_TOOLS_REPO=${2:-$HOME/nlmaps-tools}
+    NLMAPS_WEB_REMOTE='git@github.com:Simon-Will/nlmaps-web.git'
+    NLMAPS_TOOLS_REMOTE='git@github.com:Simon-Will/nlmaps-tools.git'
 
     export ASSETS
-    export NLMAPSWEB_PORT
-    export FLASK_APP=nlmapsweb.fullapp:app
+    export NLMAPS_WEB_PORT
+    export FLASK_APP=nlmaps_web.fullapp:app
     export FLASK_ENV=production
 
     check
@@ -153,7 +153,7 @@ main() {
     python_install
     external_js_install
     ensure_secret_key
-    install_nlmapsweb_ini
+    install_nlmaps_web_ini
     create_setup_sh
     migrate
     start_app

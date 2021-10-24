@@ -3,14 +3,14 @@
 if [ -z "$ASSETS" ]; then
     echo 'ERROR: ASSETS is not set.'
     exit 1
-elif [ -z "$NLMAPSWEB_PORT" ]; then
-    echo 'ERROR: NLMAPSWEB_PORT is not set.'
+elif [ -z "$NLMAPS_WEB_PORT" ]; then
+    echo 'ERROR: NLMAPS_WEB_PORT is not set.'
     exit 2
 elif [ -z "$FLASK_ENV" ]; then
     echo 'ERROR: FLASK_ENV is not set.'
     exit 3
-elif [ -z "$NLMAPSWEB_REPO" ]; then
-    echo 'ERROR: NLMAPSWEB_REPO is not set.'
+elif [ -z "$NLMAPS_WEB_REPO" ]; then
+    echo 'ERROR: NLMAPS_WEB_REPO is not set.'
     exit 4
 fi
 
@@ -33,7 +33,7 @@ printenv
 echo '===================='
 
 start_uwsgi() {
-    "$UWSGI_EXECUTABLE" "$NLMAPSWEB_REPO/deploy/uwsgi.ini"
+    "$UWSGI_EXECUTABLE" "$NLMAPS_WEB_REPO/deploy/uwsgi.ini"
 }
 
 if [ -f "$PID_FILE" ]; then

@@ -7,7 +7,7 @@ def in_this_dir(basename):
 
 
 def get_version():
-    init_file = os.path.join(in_this_dir('nlmapsweb'), '__init__.py')
+    init_file = os.path.join(in_this_dir('nlmaps_web'), '__init__.py')
     version_indicator = '__version__ = '
     with open(init_file) as f:
         for line in f:
@@ -29,7 +29,7 @@ with open(in_this_dir('requirements.txt')) as f:
 VERSION = get_version()
 
 setup(
-    name='nlmapsweb',
+    name='nlmaps-web',
     version=VERSION,
     packages=find_packages(),
     long_description=LONG_DESCRIPTION,
